@@ -144,6 +144,14 @@
             background: rgba(45, 62, 90, 0.8);
             transform: translateY(-2px);
         }
+        .btn-danger {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+            border: 1px solid rgba(255, 68, 68, 0.2);
+        }
+        .btn-danger:hover {
+            background: rgba(255, 68, 68, 0.3);
+        }
         .btn-small {
             padding: 4px 10px;
             background: rgba(35, 48, 68, 0.8);
@@ -152,6 +160,7 @@
             border-radius: 4px;
             font-size: 11px;
             cursor: pointer;
+            transition: all 0.3s;
         }
         .btn-small:hover {
             background: rgba(45, 62, 90, 0.8);
@@ -208,10 +217,16 @@
         }
         .peer-item.online {
             border-left: 2px solid #00ff88;
+            background: rgba(0, 255, 136, 0.05);
         }
         .peer-item.offline {
             border-left: 2px solid #ff4444;
             opacity: 0.5;
+        }
+        .peer-item.current {
+            border-left: 2px solid #00d4ff;
+            background: rgba(0, 212, 255, 0.05);
+            margin-bottom: 8px;
         }
         .peer-item .status-dot {
             width: 6px;
@@ -224,6 +239,23 @@
         }
         .peer-item .status-dot.offline {
             background: #ff4444;
+        }
+        .peer-item .peer-actions {
+            display: flex;
+            gap: 3px;
+        }
+        .peer-item .peer-actions button {
+            background: none;
+            border: none;
+            color: #8892b0;
+            cursor: pointer;
+            font-size: 11px;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .peer-item .peer-actions button:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #00d4ff;
         }
         .chat-main {
             flex: 1;
@@ -245,6 +277,24 @@
         .chat-header .chat-title {
             font-size: 16px;
             font-weight: 600;
+        }
+        .chat-header .chat-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .connection-status {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+        .connection-status.connected {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+        }
+        .connection-status.disconnected {
+            background: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
         }
         .messages-area {
             flex: 1;
@@ -321,23 +371,11 @@
             font-size: 12px;
             cursor: pointer;
             transition: all 0.3s;
+            white-space: nowrap;
         }
         .input-area .private-toggle.active {
             background: rgba(255, 170, 0, 0.2);
             border-color: #ffaa00;
-        }
-        .connection-status {
-            font-size: 12px;
-            padding: 4px 12px;
-            border-radius: 12px;
-        }
-        .connection-status.connected {
-            background: rgba(0, 255, 136, 0.1);
-            color: #00ff88;
-        }
-        .connection-status.disconnected {
-            background: rgba(255, 68, 68, 0.1);
-            color: #ff4444;
         }
         @keyframes fadeIn {
             from {
@@ -363,16 +401,31 @@
             display: none;
         }
         .room-info {
-            font-size: 12px;
+            font-size: 11px;
             color: #8892b0;
             padding: 4px 0;
+            margin-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 8px;
         }
         .room-info code {
             background: rgba(13, 20, 33, 0.5);
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 10px;
             color: #00d4ff;
+            word-break: break-all;
+        }
+        .room-info .copy-btn {
+            background: none;
+            border: none;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 11px;
+            padding: 2px 6px;
+        }
+        .room-info .copy-btn:hover {
+            text-decoration: underline;
         }
         @media (max-width: 768px) {
             .container {
@@ -385,7 +438,7 @@
             .sidebar {
                 width: 100%;
                 min-width: unset;
-                max-height: 100px;
+                max-height: 120px;
             }
             .sidebar .peer-list {
                 display: flex;
@@ -400,6 +453,13 @@
             .message {
                 max-width: 90%;
                 font-size: 13px;
+            }
+            .chat-header .chat-title {
+                font-size: 14px;
+            }
+            .input-area .private-toggle {
+                font-size: 10px;
+                padding: 6px 8px;
             }
         }
     </style>
@@ -417,7 +477,7 @@
             <div class="setup-section">
                 <h2>🚀 Create a Workspace</h2>
                 <p class="hint">Start your own private chat workspace</p>
-                <input type="text" id="create-username" placeholder="Your name..." class="input-field" value="ChaseDaVision">
+                <input type="text" id="create-username" placeholder="Your name..." class="input-field">
                 <button id="create-room" class="btn btn-primary">Create Workspace</button>
             </div>
             <div class="divider"><span>or</span></div>
@@ -442,14 +502,15 @@
                 <div class="sidebar">
                     <h3>👥 Online</h3>
                     <div class="peer-list" id="peer-list">
-                        <div class="peer-item current" style="border-left:2px solid #00d4ff;">
+                        <div class="peer-item current">
                             <span>👤 You</span>
                             <span class="status-dot online"></span>
                         </div>
                     </div>
-                    <div class="room-info" id="room-info" style="margin-top:8px;font-size:11px;">
+                    <div class="room-info" id="room-info">
                         Room: <code id="room-id-display">---</code>
                         <br>Key: <code id="key-display" style="font-size:9px;">---</code>
+                        <br><button class="copy-btn" id="copy-room-btn">📋 Copy Room Info</button>
                     </div>
                 </div>
 
@@ -457,21 +518,22 @@
                 <div class="chat-main">
                     <div class="chat-header">
                         <div class="chat-title" id="chat-title">💬 General</div>
-                        <div>
+                        <div class="chat-actions">
+                            <button class="btn-small" id="clear-chat-btn" title="Clear chat">🗑️ Clear</button>
                             <span class="connection-status disconnected" id="conn-status">⚪</span>
-                            <button class="btn-small" id="leave-btn">🚪 Leave</button>
+                            <button class="btn-small btn-danger" id="leave-btn">🚪 Leave</button>
                         </div>
                     </div>
 
                     <div id="messages" class="messages-area">
-                        <div class="system-message">🔒 Select a room to start chatting</div>
+                        <div class="system-message">🔒 Waiting for messages...</div>
                     </div>
 
                     <div class="input-area">
                         <input type="text" id="message-input" placeholder="Type a message..." class="input-field" disabled>
                         <button class="private-toggle" id="private-toggle">🔒</button>
                         <div class="action-buttons">
-                            <button id="file-btn" class="btn btn-secondary" disabled>📎</button>
+                            <button id="file-btn" class="btn btn-secondary" disabled title="Send file">📎</button>
                             <button id="send-btn" class="btn btn-primary" disabled>Send</button>
                         </div>
                     </div>
@@ -483,7 +545,7 @@
 
     <script>
         // ============================================================
-        //  ENCRYPTION MODULE
+        //  ENCRYPTION
         // ============================================================
         class ChatEncryption {
             async generateKey() {
@@ -516,7 +578,7 @@
         }
 
         // ============================================================
-        //  P2P CHAT - FIXED WITH PROPER STATE MANAGEMENT
+        //  P2P CHAT - SIMPLIFIED FIXED VERSION
         // ============================================================
         class P2PChat {
             constructor(signalingUrl) {
@@ -528,19 +590,15 @@
                 this.encryptionKey = null;
                 this.encryption = new ChatEncryption();
                 
-                // Store peer connections with proper state
-                this.peers = {}; // peerId -> { username, connected, pc, dc, isInitiator }
+                this.peers = {};
                 this.isConnected = false;
-                this.pendingMessages = [];
                 this.messageHistory = [];
                 this.storageKey = 'p2p_chat_';
                 
-                // Callbacks
                 this.onMessage = null;
                 this.onPeerUpdate = null;
                 this.onConnectionChange = null;
 
-                // WebRTC config with multiple STUN servers
                 this.configuration = {
                     iceServers: [
                         { urls: 'stun:stun.l.google.com:19302' },
@@ -555,17 +613,16 @@
                 this.loadState();
             }
 
-            // ---- SESSION PERSISTENCE ----
             saveState() {
                 try {
                     const state = {
                         roomId: this.roomId,
                         username: this.username,
                         encryptionKey: this.encryptionKey ? 'saved' : null,
-                        messageHistory: this.messageHistory.slice(-100) // Keep last 100 messages
+                        messageHistory: this.messageHistory.slice(-200)
                     };
                     localStorage.setItem(this.storageKey + 'state', JSON.stringify(state));
-                } catch (e) { console.error('Save error:', e); }
+                } catch (e) {}
             }
 
             loadState() {
@@ -580,7 +637,7 @@
                         }
                         return state;
                     }
-                } catch (e) { console.error('Load error:', e); }
+                } catch (e) {}
                 return null;
             }
 
@@ -588,122 +645,73 @@
                 localStorage.removeItem(this.storageKey + 'state');
             }
 
-            // ---- CONNECTION ----
             async connect() {
                 return new Promise((resolve, reject) => {
-                    console.log('🔌 Connecting to signaling server...');
                     this.ws = new WebSocket(this.signalingUrl);
-
                     this.ws.onopen = () => {
-                        console.log('✅ WebSocket connected');
                         this.isConnected = true;
                         if (this.onConnectionChange) this.onConnectionChange(true);
                         resolve();
                     };
-
-                    this.ws.onmessage = (event) => {
-                        try {
-                            const data = JSON.parse(event.data);
-                            this.handleSignaling(data);
-                        } catch (e) {
-                            console.error('Message error:', e);
-                        }
+                    this.ws.onmessage = (e) => {
+                        try { this.handleSignaling(JSON.parse(e.data)); } catch (err) {}
                     };
-
                     this.ws.onclose = () => {
-                        console.log('❌ WebSocket closed');
                         this.isConnected = false;
                         if (this.onConnectionChange) this.onConnectionChange(false);
-                        // Auto-reconnect
                         setTimeout(() => {
                             if (this.roomId && this.username) {
-                                console.log('🔄 Attempting reconnect...');
                                 this.connect().catch(() => {});
                             }
                         }, 3000);
                     };
-
-                    this.ws.onerror = (error) => {
-                        console.error('WebSocket error:', error);
-                        reject(error);
-                    };
-
-                    setTimeout(() => {
-                        if (!this.isConnected) {
-                            reject(new Error('Connection timeout'));
-                        }
-                    }, 10000);
+                    this.ws.onerror = () => reject(new Error('WebSocket error'));
                 });
             }
 
-            // ---- SIGNALING ----
             handleSignaling(data) {
-                console.log(`📨 Signaling: ${data.type}${data.from ? ' from ' + data.from : ''}`);
-
                 switch (data.type) {
                     case 'connected':
-                        console.log('✅ Connected to signaling server');
                         break;
-
                     case 'registered':
                         this.peerId = data.peerId;
-                        console.log(`✅ Registered as ${this.peerId}`);
                         this.saveState();
-
-                        // Connect to existing peers
-                        if (data.existingPeers && data.existingPeers.length > 0) {
-                            console.log(`📋 Connecting to ${data.existingPeers.length} existing peers`);
-                            data.existingPeers.forEach(peer => {
-                                this.connectToPeer(peer.peerId, peer.username);
-                            });
+                        if (data.existingPeers) {
+                            data.existingPeers.forEach(p => this.connectToPeer(p.peerId, p.username));
                         }
                         break;
-
                     case 'peer-joined':
-                        console.log(`👋 Peer joined: ${data.username} (${data.peerId})`);
                         this.connectToPeer(data.peerId, data.username);
                         if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
                         break;
-
                     case 'peer-left':
-                        console.log(`👋 Peer left: ${data.peerId}`);
                         this.disconnectFromPeer(data.peerId);
                         if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
                         break;
-
                     case 'offer':
                         this.handleOffer(data);
                         break;
-
                     case 'answer':
                         this.handleAnswer(data);
                         break;
-
                     case 'candidate':
                         this.handleCandidate(data);
                         break;
-
-                    default:
-                        console.log('Unknown message type:', data.type);
                 }
             }
 
-            // ---- CREATE/JOIN ROOM ----
             async createRoom(username) {
                 this.username = username;
                 this.roomId = this.generateRoomId();
                 this.encryptionKey = await this.encryption.generateKey();
                 const exportedKey = await this.encryption.exportKey(this.encryptionKey);
-
                 await this.connect();
-
                 this.ws.send(JSON.stringify({
                     type: 'register',
                     roomId: this.roomId,
                     peerId: this.generatePeerId(),
                     username: username
                 }));
-
                 this.saveState();
                 return { roomId: this.roomId, encryptionKey: exportedKey };
             }
@@ -712,16 +720,13 @@
                 this.roomId = roomId;
                 this.username = username;
                 this.encryptionKey = await this.encryption.importKey(encryptionKeyBase64);
-
                 await this.connect();
-
                 this.ws.send(JSON.stringify({
                     type: 'register',
                     roomId: roomId,
                     peerId: this.generatePeerId(),
                     username: username
                 }));
-
                 this.saveState();
             }
 
@@ -733,41 +738,24 @@
                 return 'user_' + Math.random().toString(36).substring(2, 10);
             }
 
-            // ---- CONNECT TO PEER ----
             async connectToPeer(peerId, username) {
-                if (this.peers[peerId]) {
-                    console.log(`Already connecting to ${username}`);
-                    return;
-                }
+                if (this.peers[peerId]) return;
+                console.log(`🔗 Connecting to ${username}`);
 
-                console.log(`🔗 Connecting to ${username}...`);
-                
-                // Store peer info
-                this.peers[peerId] = {
-                    username: username,
-                    connected: false,
-                    pc: null,
-                    dc: null,
-                    isInitiator: true
-                };
+                this.peers[peerId] = { username, connected: false, pc: null, dc: null };
 
-                // Create peer connection
                 const pc = new RTCPeerConnection(this.configuration);
                 this.peers[peerId].pc = pc;
 
-                // Create data channel
                 const dc = pc.createDataChannel('chat');
                 this.setupDataChannel(dc, peerId);
                 this.peers[peerId].dc = dc;
 
-                // Handle incoming data channels
                 pc.ondatachannel = (event) => {
-                    console.log(`📡 Incoming data channel from ${username}`);
                     this.setupDataChannel(event.channel, peerId);
                     this.peers[peerId].dc = event.channel;
                 };
 
-                // Handle ICE candidates
                 pc.onicecandidate = (event) => {
                     if (event.candidate) {
                         this.sendSignaling('candidate', {
@@ -777,22 +765,17 @@
                     }
                 };
 
-                // Handle connection state changes
                 pc.oniceconnectionstatechange = () => {
                     const state = pc.iceConnectionState;
-                    console.log(`ICE state for ${username}: ${state}`);
-                    
                     if (state === 'connected' || state === 'completed') {
                         this.peers[peerId].connected = true;
                         if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
                     }
-                    
                     if (state === 'failed' || state === 'disconnected' || state === 'closed') {
                         this.disconnectFromPeer(peerId);
                     }
                 };
 
-                // Create and send offer
                 try {
                     const offer = await pc.createOffer();
                     await pc.setLocalDescription(offer);
@@ -800,8 +783,8 @@
                         targetPeerId: peerId,
                         sdp: offer
                     });
-                } catch (error) {
-                    console.error('Offer error:', error);
+                } catch (err) {
+                    console.error('Offer error:', err);
                 }
             }
 
@@ -812,15 +795,6 @@
                 channel.onopen = () => {
                     console.log(`✅ Data channel open with ${peer.username}`);
                     peer.connected = true;
-                    
-                    // Send pending messages
-                    while (this.pendingMessages.length > 0) {
-                        const msg = this.pendingMessages.shift();
-                        if (channel.readyState === 'open') {
-                            channel.send(JSON.stringify(msg));
-                        }
-                    }
-                    
                     if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
                 };
 
@@ -853,43 +827,27 @@
                                 this.onMessage(data.sender, decrypted, false, true);
                             }
                         }
-                    } catch (e) {
-                        console.error('Message handling error:', e);
+                    } catch (err) {
+                        console.error('Message error:', err);
                     }
                 };
             }
 
-            // ---- HANDLE OFFER ----
             async handleOffer(data) {
                 const peerId = data.from;
                 const username = data.username || 'unknown';
-                
-                console.log(`📤 Handling offer from ${username}`);
 
-                // If we already have a connection, ignore duplicate offer
-                if (this.peers[peerId] && this.peers[peerId].connected) {
-                    console.log(`Already connected to ${username}, ignoring offer`);
-                    return;
-                }
+                if (this.peers[peerId] && this.peers[peerId].connected) return;
 
-                // If we already have a peer object but no connection, reuse it
                 if (!this.peers[peerId]) {
-                    this.peers[peerId] = {
-                        username: username,
-                        connected: false,
-                        pc: null,
-                        dc: null,
-                        isInitiator: false
-                    };
+                    this.peers[peerId] = { username, connected: false, pc: null, dc: null };
                 }
 
-                // Create peer connection if needed
                 if (!this.peers[peerId].pc) {
                     const pc = new RTCPeerConnection(this.configuration);
                     this.peers[peerId].pc = pc;
 
                     pc.ondatachannel = (event) => {
-                        console.log(`📡 Incoming data channel from ${username}`);
                         this.setupDataChannel(event.channel, peerId);
                         this.peers[peerId].dc = event.channel;
                     };
@@ -905,13 +863,10 @@
 
                     pc.oniceconnectionstatechange = () => {
                         const state = pc.iceConnectionState;
-                        console.log(`ICE state for ${username}: ${state}`);
-                        
                         if (state === 'connected' || state === 'completed') {
                             this.peers[peerId].connected = true;
                             if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
                         }
-                        
                         if (state === 'failed' || state === 'disconnected' || state === 'closed') {
                             this.disconnectFromPeer(peerId);
                         }
@@ -919,68 +874,41 @@
                 }
 
                 const pc = this.peers[peerId].pc;
-
                 try {
-                    // Check if we're in the right state
-                    if (pc.signalingState === 'stable' || pc.signalingState === 'have-remote-offer') {
-                        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
-                        const answer = await pc.createAnswer();
-                        await pc.setLocalDescription(answer);
-                        this.sendSignaling('answer', {
-                            targetPeerId: peerId,
-                            sdp: answer
-                        });
-                        console.log(`✅ Answer sent to ${username}`);
-                    } else {
-                        console.log(`⏳ Skipping offer - wrong state: ${pc.signalingState}`);
-                    }
-                } catch (error) {
-                    console.error('Answer error:', error);
+                    await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+                    const answer = await pc.createAnswer();
+                    await pc.setLocalDescription(answer);
+                    this.sendSignaling('answer', {
+                        targetPeerId: peerId,
+                        sdp: answer
+                    });
+                } catch (err) {
+                    console.error('Answer error:', err);
                 }
             }
 
-            // ---- HANDLE ANSWER ----
             async handleAnswer(data) {
                 const peerId = data.from;
                 const peer = this.peers[peerId];
-                if (!peer || !peer.pc) {
-                    console.log(`⚠️ No peer connection for ${peerId}`);
-                    return;
-                }
-
+                if (!peer || !peer.pc) return;
                 try {
-                    const pc = peer.pc;
-                    // Only set remote description if we're in the right state
-                    if (pc.signalingState === 'have-local-offer') {
-                        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
-                        console.log(`✅ Answer set for ${peer.username}`);
-                    } else {
-                        console.log(`⏳ Skipping answer - wrong state: ${pc.signalingState}`);
-                    }
-                } catch (error) {
-                    console.error('Answer handling error:', error);
+                    await peer.pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+                } catch (err) {
+                    console.error('Set remote description error:', err);
                 }
             }
 
-            // ---- HANDLE CANDIDATE ----
             async handleCandidate(data) {
                 const peerId = data.from;
                 const peer = this.peers[peerId];
-                if (!peer || !peer.pc) {
-                    console.log(`⚠️ No peer connection for candidate from ${peerId}`);
-                    return;
-                }
-
+                if (!peer || !peer.pc || !data.candidate) return;
                 try {
-                    if (data.candidate) {
-                        await peer.pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-                    }
-                } catch (error) {
-                    console.error('Candidate error:', error);
+                    await peer.pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+                } catch (err) {
+                    console.error('Candidate error:', err);
                 }
             }
 
-            // ---- SEND MESSAGES ----
             async sendMessage(text) {
                 if (!text.trim()) return;
 
@@ -993,7 +921,6 @@
                     timestamp: Date.now()
                 };
 
-                // Store in history
                 this.messageHistory.push({
                     sender: this.username,
                     message: text,
@@ -1001,21 +928,14 @@
                     isOwn: true
                 });
 
-                // Send to all connected peers
                 let sent = false;
                 for (const [peerId, peer] of Object.entries(this.peers)) {
                     if (peer.dc && peer.dc.readyState === 'open') {
                         try {
                             peer.dc.send(JSON.stringify(payload));
                             sent = true;
-                        } catch (e) {
-                            console.error(`Send error to ${peer.username}:`, e);
-                        }
+                        } catch (e) {}
                     }
-                }
-
-                if (!sent) {
-                    this.pendingMessages.push(payload);
                 }
 
                 if (this.onMessage) {
@@ -1025,7 +945,6 @@
                 this.saveState();
             }
 
-            // ---- UTILITY ----
             sendSignaling(type, data) {
                 if (this.ws && this.ws.readyState === WebSocket.OPEN) {
                     this.ws.send(JSON.stringify({
@@ -1039,36 +958,18 @@
             disconnectFromPeer(peerId) {
                 const peer = this.peers[peerId];
                 if (peer) {
-                    if (peer.pc) {
-                        try { peer.pc.close(); } catch(e) {}
-                    }
-                    peer.connected = false;
+                    if (peer.pc) try { peer.pc.close(); } catch (e) {}
                     delete this.peers[peerId];
-                    console.log(`❌ Disconnected from ${peer.username || peerId}`);
-                    if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
                 }
+                if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
             }
 
             getPeerList() {
                 return Object.entries(this.peers).map(([id, info]) => ({
                     peerId: id,
                     username: info.username,
-                    connected: info.connected
+                    connected: info.connected || false
                 }));
-            }
-
-            leave() {
-                if (this.ws) {
-                    try { this.ws.send(JSON.stringify({ type: 'peer-disconnect' })); } catch(e) {}
-                    try { this.ws.close(); } catch(e) {}
-                }
-                for (const peerId of Object.keys(this.peers)) {
-                    this.disconnectFromPeer(peerId);
-                }
-                this.clearState();
-                this.roomId = null;
-                this.username = null;
-                this.peerId = null;
             }
 
             getHistory() {
@@ -1080,16 +981,18 @@
                 this.saveState();
             }
 
-            restoreSession() {
-                const state = this.loadState();
-                if (state && state.roomId && state.username) {
-                    return {
-                        roomId: state.roomId,
-                        username: state.username,
-                        hasKey: state.encryptionKey === 'saved'
-                    };
+            leave() {
+                if (this.ws) {
+                    try { this.ws.send(JSON.stringify({ type: 'peer-disconnect' })); } catch (e) {}
+                    try { this.ws.close(); } catch (e) {}
                 }
-                return null;
+                for (const peerId of Object.keys(this.peers)) {
+                    this.disconnectFromPeer(peerId);
+                }
+                this.clearState();
+                this.roomId = null;
+                this.username = null;
+                this.peerId = null;
             }
         }
 
@@ -1103,7 +1006,6 @@
             const signalingUrl = 'wss://chasedavision.onrender.com';
             const chat = new P2PChat(signalingUrl);
 
-            // DOM refs
             const setupScreen = document.getElementById('setup-screen');
             const chatScreen = document.getElementById('chat-screen');
             const peerList = document.getElementById('peer-list');
@@ -1120,18 +1022,19 @@
             const roomIdDisplay = document.getElementById('room-id-display');
             const keyDisplay = document.getElementById('key-display');
             const chatTitle = document.getElementById('chat-title');
+            const clearChatBtn = document.getElementById('clear-chat-btn');
+            const copyRoomBtn = document.getElementById('copy-room-btn');
 
             let isPrivateMode = false;
             let privateTarget = null;
 
-            // ---- RESTORE SESSION ----
-            const session = chat.restoreSession();
+            // Restore session
+            const session = chat.loadState();
             if (session && session.roomId && session.username) {
                 document.getElementById('join-room-id').value = session.roomId;
                 document.getElementById('join-username').value = session.username;
             }
 
-            // ---- CHAT CALLBACKS ----
             chat.onMessage = (sender, message, isOwn, isPrivate = false) => {
                 displayMessage(sender, message, isOwn, isPrivate);
             };
@@ -1148,7 +1051,7 @@
                     connStatus.className = 'connection-status connected';
                     document.getElementById('connection-status').textContent = '🟢 Connected';
                     document.getElementById('connection-status').style.color = '#00ff88';
-                    document.getElementById('server-status').textContent = '✅ Connected to server';
+                    document.getElementById('server-status').textContent = '✅ Connected';
                     document.getElementById('server-status').style.color = '#00ff88';
                 } else {
                     connStatus.textContent = '🔴';
@@ -1160,13 +1063,10 @@
                 }
             };
 
-            // ---- CREATE ROOM ----
+            // CREATE ROOM
             createBtn.addEventListener('click', async () => {
                 const username = document.getElementById('create-username').value.trim();
-                if (!username) {
-                    alert('Please enter a username');
-                    return;
-                }
+                if (!username) { alert('Please enter a username'); return; }
 
                 createBtn.disabled = true;
                 createBtn.textContent = 'Creating...';
@@ -1183,17 +1083,16 @@
                     sendBtn.disabled = false;
                     fileBtn.disabled = false;
 
-                    showSystemMessage(`🚀 Workspace created! Share this ID: ${roomInfo.roomId}`);
+                    showSystemMessage(`🚀 Workspace created! ID: ${roomInfo.roomId}`);
                     updatePeerList([]);
 
-                    // Copy room info to clipboard
+                    // Copy to clipboard
                     const info = `Room ID: ${roomInfo.roomId}\nKey: ${roomInfo.encryptionKey}`;
                     navigator.clipboard.writeText(info).then(() => {
                         showSystemMessage('📋 Room info copied to clipboard!');
                     });
 
                 } catch (error) {
-                    console.error('Create error:', error);
                     alert('Failed to create room: ' + error.message);
                 } finally {
                     createBtn.disabled = false;
@@ -1201,7 +1100,7 @@
                 }
             });
 
-            // ---- JOIN ROOM ----
+            // JOIN ROOM
             joinBtn.addEventListener('click', async () => {
                 const roomId = document.getElementById('join-room-id').value.trim().toUpperCase();
                 const key = document.getElementById('join-encryption-key').value.trim();
@@ -1231,7 +1130,6 @@
                     updatePeerList([]);
 
                 } catch (error) {
-                    console.error('Join error:', error);
                     alert('Failed to join room: ' + error.message);
                 } finally {
                     joinBtn.disabled = false;
@@ -1239,12 +1137,10 @@
                 }
             });
 
-            // ---- SEND MESSAGE ----
+            // SEND
             sendBtn.addEventListener('click', sendMessage);
             messageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
+                if (e.key === 'Enter') sendMessage();
             });
 
             async function sendMessage() {
@@ -1274,21 +1170,19 @@
                     messageInput.value = '';
                 } catch (error) {
                     console.error('Send error:', error);
-                    alert('Failed to send message: ' + error.message);
                 }
             }
 
-            // ---- PRIVATE TOGGLE ----
+            // PRIVATE TOGGLE
             privateToggle.addEventListener('click', () => {
                 const peers = chat.getPeerList().filter(p => p.connected);
                 if (peers.length === 0) {
-                    alert('No peers online to send private messages to');
+                    alert('No peers online');
                     return;
                 }
 
                 if (!isPrivateMode) {
-                    const peerNames = peers.map(p => p.username).join(', ');
-                    const target = prompt(`Send private message to:\n${peerNames}`, peers[0]?.username);
+                    const target = prompt('Send private to:\n' + peers.map(p => p.username).join(', '));
                     if (target) {
                         const found = peers.find(p => p.username === target);
                         if (found) {
@@ -1310,20 +1204,38 @@
                 }
             });
 
-            // ---- FILE UPLOAD ----
+            // FILE
             fileBtn.addEventListener('click', () => fileInput.click());
             fileInput.addEventListener('change', async (e) => {
                 const files = e.target.files;
-                if (!files || files.length === 0) return;
-
+                if (!files) return;
                 for (const file of files) {
-                    const text = `📁 ${file.name} (${(file.size/1024).toFixed(1)}KB)`;
-                    await chat.sendMessage(text);
+                    await chat.sendMessage(`📁 ${file.name} (${(file.size/1024).toFixed(1)}KB)`);
                 }
                 fileInput.value = '';
             });
 
-            // ---- LEAVE ----
+            // CLEAR CHAT
+            clearChatBtn.addEventListener('click', () => {
+                if (confirm('Clear all messages?')) {
+                    chat.clearHistory();
+                    messagesDiv.innerHTML = '';
+                    showSystemMessage('🗑️ Chat cleared');
+                }
+            });
+
+            // COPY ROOM INFO
+            copyRoomBtn.addEventListener('click', () => {
+                const roomId = roomIdDisplay.textContent;
+                const key = keyDisplay.textContent;
+                const info = `Room ID: ${roomId}\nKey: ${key}`;
+                navigator.clipboard.writeText(info).then(() => {
+                    copyRoomBtn.textContent = '✅ Copied!';
+                    setTimeout(() => copyRoomBtn.textContent = '📋 Copy Room Info', 3000);
+                });
+            });
+
+            // LEAVE
             leaveBtn.addEventListener('click', () => {
                 if (confirm('Leave the workspace?')) {
                     chat.leave();
@@ -1336,27 +1248,26 @@
                 }
             });
 
-            // ---- UI HELPERS ----
+            // UI HELPERS
             function displayMessage(sender, message, isOwn, isPrivate = false) {
-                // Remove empty system message if present
-                if (messagesDiv.children.length === 1 && 
+                // Remove empty system message
+                if (messagesDiv.children.length === 1 &&
                     messagesDiv.children[0].classList.contains('system-message') &&
-                    messagesDiv.children[0].textContent.includes('Select a room')) {
+                    messagesDiv.children[0].textContent.includes('Waiting')) {
                     messagesDiv.innerHTML = '';
                 }
 
                 const msgElement = document.createElement('div');
                 msgElement.className = `message ${isOwn ? 'own' : 'other'} ${isPrivate ? 'private' : ''}`;
-                const privateBadge = isPrivate ? ' 🔒' : '';
+                const badge = isPrivate ? ' 🔒' : '';
                 msgElement.innerHTML = `
-                    <strong>${sender}${privateBadge}</strong>
+                    <strong>${sender}${badge}</strong>
                     <span>${message}</span>
                     <small>${new Date().toLocaleTimeString()}</small>
                 `;
                 messagesDiv.appendChild(msgElement);
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-                // Limit messages
                 while (messagesDiv.children.length > 200) {
                     messagesDiv.removeChild(messagesDiv.children[0]);
                 }
@@ -1372,19 +1283,20 @@
 
             function updatePeerList(peers) {
                 let html = `
-                    <div class="peer-item current" style="border-left:2px solid #00d4ff;margin-bottom:6px;">
-                        <span>👤 You (${chat.username || 'Loading...'})</span>
+                    <div class="peer-item current">
+                        <span>👤 You (${chat.username || '...'})</span>
                         <span class="status-dot online"></span>
                     </div>
                 `;
 
                 peers.forEach(peer => {
                     html += `
-                        <div class="peer-item ${peer.connected ? 'online' : 'offline'}" 
-                             onclick="window.startPrivate('${peer.peerId}', '${peer.username}')"
-                             style="cursor:pointer;">
+                        <div class="peer-item ${peer.connected ? 'online' : 'offline'}">
                             <span>${peer.username}</span>
-                            <span class="status-dot ${peer.connected ? 'online' : 'offline'}"></span>
+                            <div style="display:flex;align-items:center;gap:6px;">
+                                <span class="status-dot ${peer.connected ? 'online' : 'offline'}"></span>
+                                <button class="btn-small" onclick="window.startPrivateChat('${peer.peerId}','${peer.username}')" style="font-size:10px;padding:2px 6px;">💬</button>
+                            </div>
                         </div>
                     `;
                 });
@@ -1396,18 +1308,22 @@
                 peerList.innerHTML = html;
             }
 
-            // ---- GLOBAL ----
-            window.startPrivate = function(peerId, username) {
-                if (confirm(`Start private chat with ${username}?`)) {
-                    privateTarget = peerId;
-                    isPrivateMode = true;
-                    privateToggle.classList.add('active');
-                    privateToggle.textContent = `🔒 ${username}`;
-                    showSystemMessage(`🔒 Private chat with ${username}`);
+            // Global function for private chat from peer list
+            window.startPrivateChat = function(peerId, username) {
+                const peers = chat.getPeerList().filter(p => p.connected);
+                const found = peers.find(p => p.peerId === peerId);
+                if (!found) {
+                    alert('Peer not connected');
+                    return;
                 }
+                privateTarget = peerId;
+                isPrivateMode = true;
+                privateToggle.classList.add('active');
+                privateToggle.textContent = `🔒 ${username}`;
+                showSystemMessage(`🔒 Private chat with ${username}`);
             };
 
-            // ---- LOAD HISTORY ----
+            // Load history
             function loadHistory() {
                 const history = chat.getHistory();
                 if (history.length > 0) {
@@ -1418,7 +1334,6 @@
                 }
             }
 
-            // Show history when chat loads
             const observer = new MutationObserver(() => {
                 if (chatScreen.classList.contains('active')) {
                     loadHistory();
