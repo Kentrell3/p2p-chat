@@ -7,7 +7,6 @@ const PORT = process.env.PORT || 8080;
 console.log(`🚀 Starting server on port ${PORT}...`);
 
 const server = http.createServer((req, res) => {
-    // Try to serve index.html if it exists
     fs.readFile('index.html', (err, data) => {
         if (err) {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -31,7 +30,7 @@ wss.on('connection', (ws) => {
     ws.on('message', (data) => {
         try {
             const msg = JSON.parse(data);
-            console.log(`📨 Received: ${msg.type}`);
+            console.log(`📨 Received: ${msg.type} from ${username || 'unknown'}`);
 
             switch(msg.type) {
                 case 'register':
@@ -52,6 +51,9 @@ wss.on('connection', (ws) => {
                             username: info.username 
                         }));
                     
+                    console.log(`✅ ${username} registered in room ${roomId}`);
+                    console.log(`📊 Room has ${room.size} peers`);
+                    
                     ws.send(JSON.stringify({
                         type: 'registered',
                         peerId: peerId,
@@ -66,13 +68,29 @@ wss.on('connection', (ws) => {
                     break;
                     
                 case 'offer':
-                case 'answer':
-                case 'candidate':
+                    console.log(`📤 Forwarding offer from ${username} to ${msg.targetPeerId}`);
                     forwardToPeer(msg.targetPeerId, {
-                        type: msg.type,
+                        type: 'offer',
                         from: peerId,
                         username: username,
-                        sdp: msg.sdp,
+                        sdp: msg.sdp
+                    });
+                    break;
+                    
+                case 'answer':
+                    console.log(`📤 Forwarding answer from ${username} to ${msg.targetPeerId}`);
+                    forwardToPeer(msg.targetPeerId, {
+                        type: 'answer',
+                        from: peerId,
+                        sdp: msg.sdp
+                    });
+                    break;
+                    
+                case 'candidate':
+                    console.log(`📤 Forwarding ICE candidate from ${username} to ${msg.targetPeerId}`);
+                    forwardToPeer(msg.targetPeerId, {
+                        type: 'candidate',
+                        from: peerId,
                         candidate: msg.candidate
                     });
                     break;
@@ -104,11 +122,15 @@ wss.on('connection', (ws) => {
                     break;
                     
                 case 'peer-disconnect':
+                    console.log(`👋 ${username} disconnecting`);
                     handleDisconnect(peerId, roomId);
                     break;
+                    
+                default:
+                    console.log(`❓ Unknown message type: ${msg.type}`);
             }
         } catch(e) {
-            console.error('Error processing message:', e);
+            console.error('❌ Error processing message:', e);
         }
     });
     
@@ -129,15 +151,20 @@ function broadcastToRoom(roomId, message, exclude = []) {
 }
 
 function forwardToPeer(targetPeerId, message) {
+    console.log(`🔍 Looking for peer: ${targetPeerId}`);
     for (const [roomId, room] of rooms) {
         if (room.has(targetPeerId)) {
             const info = room.get(targetPeerId);
             if (info.ws.readyState === WebSocket.OPEN) {
+                console.log(`✅ Forwarding to ${targetPeerId}`);
                 info.ws.send(JSON.stringify(message));
                 return true;
+            } else {
+                console.log(`❌ Peer ${targetPeerId} websocket not open`);
             }
         }
     }
+    console.log(`❌ Peer ${targetPeerId} not found in any room`);
     return false;
 }
 
@@ -155,4 +182,5 @@ function handleDisconnect(peerId, roomId) {
 
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server running on port ${PORT}`);
+    console.log(`🔗 WebSocket: ws://0.0.0.0:${PORT}`);
 });
