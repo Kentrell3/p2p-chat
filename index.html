@@ -150,7 +150,7 @@
             <div class="setup-section">
                 <h2>🚀 Create a Room</h2>
                 <p class="hint">Start a new chat room</p>
-                <input type="text" id="create-username" placeholder="Your name..." class="input-field">
+                <input type="text" id="create-username" placeholder="Your name..." class="input-field" value="ChaseDaVision">
                 <button id="create-room" class="btn btn-primary">Create Room</button>
             </div>
             <div class="divider"><span>or</span></div>
@@ -158,6 +158,7 @@
                 <h2>🔗 Join a Room</h2>
                 <p class="hint">Enter the room details from your friend</p>
                 <input type="text" id="join-room-id" placeholder="Room ID" class="input-field">
+                <input type="text" id="join-encryption-key" placeholder="Encryption Key" class="input-field">
                 <input type="text" id="join-username" placeholder="Your name..." class="input-field">
                 <button id="join-room" class="btn btn-secondary">Join Room</button>
             </div>
@@ -324,7 +325,7 @@
         }
 
         // ============================================================
-        //  CHAT CLIENT
+        //  CHAT CLIENT - FIXED DUPLICATES
         // ============================================================
         class SecureChat {
             constructor(serverUrl) {
@@ -360,7 +361,8 @@
                         encryptionKey: this.encryption.key ? 'saved' : null,
                         chats: this.chats,
                         currentChatId: this.currentChatId,
-                        deletedIds: Array.from(this.deletedIds)
+                        deletedIds: Array.from(this.deletedIds),
+                        processedIds: Array.from(this.processedIds)
                     };
                     localStorage.setItem(this.storageKey + 'data', JSON.stringify(session));
                 } catch (e) { console.error('Save error:', e); }
@@ -379,6 +381,9 @@
                         }
                         if (session.deletedIds) {
                             this.deletedIds = new Set(session.deletedIds);
+                        }
+                        if (session.processedIds) {
+                            this.processedIds = new Set(session.processedIds);
                         }
                         return session;
                     }
@@ -442,11 +447,12 @@
                 }
                 
                 const chat = this.chats[chatId];
+                // Check if already exists
                 if (message.id && chat.messages.some(m => m.id === message.id)) {
-                    return;
+                    return false;
                 }
                 if (this.deletedIds.has(message.id)) {
-                    return;
+                    return false;
                 }
                 
                 chat.messages.push(message);
@@ -459,6 +465,7 @@
                 
                 this.saveSession();
                 if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                return true;
             }
 
             markChatRead(chatId) {
@@ -654,6 +661,7 @@
                 switch (data.type) {
                     case 'history':
                         for (const msg of data.messages) {
+                            // Skip if already processed OR deleted
                             if (this.processedIds.has(msg.id) || this.deletedIds.has(msg.id)) continue;
                             this.processedIds.add(msg.id);
                             
@@ -662,8 +670,8 @@
                             msg.message = decrypted;
                             
                             if (msg.sender !== this.username) {
-                                this.addMessageToChat(chatId, msg, false);
-                                if (this.onMessage) {
+                                const added = this.addMessageToChat(chatId, msg, false);
+                                if (added && this.onMessage) {
                                     this.onMessage(msg, false, chatId);
                                 }
                             }
@@ -685,8 +693,8 @@
                             msg.isPrivate = true;
                             
                             const isOwn = msg.sender === this.username;
-                            this.addMessageToChat(chatId, msg, isOwn);
-                            if (this.onMessage) {
+                            const added = this.addMessageToChat(chatId, msg, isOwn);
+                            if (added && this.onMessage) {
                                 this.onMessage(msg, isOwn, chatId);
                             }
                         }
@@ -703,8 +711,8 @@
                         data.message.message = decrypted;
                         
                         if (data.message.sender !== this.username) {
-                            this.addMessageToChat(chatId, data.message, false);
-                            if (this.onMessage) {
+                            const added = this.addMessageToChat(chatId, data.message, false);
+                            if (added && this.onMessage) {
                                 this.onMessage(data.message, false, chatId);
                             }
                         }
@@ -724,8 +732,8 @@
                         data.message.isPrivate = true;
                         
                         const isOwn = data.message.sender === this.username;
-                        this.addMessageToChat(pChatId, data.message, isOwn);
-                        if (this.onMessage) {
+                        const added = this.addMessageToChat(pChatId, data.message, isOwn);
+                        if (added && this.onMessage) {
                             this.onMessage(data.message, isOwn, pChatId);
                         }
                         this.saveSession();
@@ -747,8 +755,8 @@
                         
                         data.message.isFile = true;
                         if (data.message.sender !== this.username) {
-                            this.addMessageToChat(fileChatId, data.message, false);
-                            if (this.onMessage) {
+                            const added = this.addMessageToChat(fileChatId, data.message, false);
+                            if (added && this.onMessage) {
                                 this.onMessage(data.message, false, fileChatId);
                             }
                         }
@@ -1197,15 +1205,13 @@
             // ---- JOIN ROOM ----
             joinBtn.addEventListener('click', async () => {
                 const roomId = document.getElementById('join-room-id').value.trim().toUpperCase();
+                const key = document.getElementById('join-encryption-key').value.trim();
                 const username = document.getElementById('join-username').value.trim();
 
-                if (!roomId || !username) {
+                if (!roomId || !key || !username) {
                     alert('Please fill in all fields');
                     return;
                 }
-
-                const key = prompt('Enter the encryption key:');
-                if (!key) return;
 
                 joinBtn.disabled = true;
                 joinBtn.textContent = 'Joining...';
