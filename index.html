@@ -153,6 +153,9 @@
             font-size: 11px;
             cursor: pointer;
         }
+        .btn-small:hover {
+            background: rgba(45, 62, 90, 0.8);
+        }
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -414,7 +417,7 @@
             <div class="setup-section">
                 <h2>🚀 Create a Workspace</h2>
                 <p class="hint">Start your own private chat workspace</p>
-                <input type="text" id="create-username" placeholder="Your name..." class="input-field">
+                <input type="text" id="create-username" placeholder="Your name..." class="input-field" value="ChaseDaVision">
                 <button id="create-room" class="btn btn-primary">Create Workspace</button>
             </div>
             <div class="divider"><span>or</span></div>
@@ -513,7 +516,7 @@
         }
 
         // ============================================================
-        //  P2P CHAT - FIXED VERSION
+        //  P2P CHAT - FIXED WITH PROPER STATE MANAGEMENT
         // ============================================================
         class P2PChat {
             constructor(signalingUrl) {
@@ -524,19 +527,20 @@
                 this.username = null;
                 this.encryptionKey = null;
                 this.encryption = new ChatEncryption();
-                this.peerConnections = {};
-                this.dataChannels = {};
-                this.peers = {};
+                
+                // Store peer connections with proper state
+                this.peers = {}; // peerId -> { username, connected, pc, dc, isInitiator }
                 this.isConnected = false;
                 this.pendingMessages = [];
                 this.messageHistory = [];
                 this.storageKey = 'p2p_chat_';
-
+                
                 // Callbacks
                 this.onMessage = null;
                 this.onPeerUpdate = null;
                 this.onConnectionChange = null;
 
+                // WebRTC config with multiple STUN servers
                 this.configuration = {
                     iceServers: [
                         { urls: 'stun:stun.l.google.com:19302' },
@@ -558,7 +562,7 @@
                         roomId: this.roomId,
                         username: this.username,
                         encryptionKey: this.encryptionKey ? 'saved' : null,
-                        messageHistory: this.messageHistory
+                        messageHistory: this.messageHistory.slice(-100) // Keep last 100 messages
                     };
                     localStorage.setItem(this.storageKey + 'state', JSON.stringify(state));
                 } catch (e) { console.error('Save error:', e); }
@@ -614,7 +618,7 @@
                         setTimeout(() => {
                             if (this.roomId && this.username) {
                                 console.log('🔄 Attempting reconnect...');
-                                this.connect();
+                                this.connect().catch(() => {});
                             }
                         }, 3000);
                     };
@@ -634,7 +638,7 @@
 
             // ---- SIGNALING ----
             handleSignaling(data) {
-                console.log(`📨 Signaling: ${data.type}`);
+                console.log(`📨 Signaling: ${data.type}${data.from ? ' from ' + data.from : ''}`);
 
                 switch (data.type) {
                     case 'connected':
@@ -647,7 +651,8 @@
                         this.saveState();
 
                         // Connect to existing peers
-                        if (data.existingPeers) {
+                        if (data.existingPeers && data.existingPeers.length > 0) {
+                            console.log(`📋 Connecting to ${data.existingPeers.length} existing peers`);
                             data.existingPeers.forEach(peer => {
                                 this.connectToPeer(peer.peerId, peer.username);
                             });
@@ -676,10 +681,6 @@
 
                     case 'candidate':
                         this.handleCandidate(data);
-                        break;
-
-                    case 'message':
-                        this.handleMessage(data);
                         break;
 
                     default:
@@ -734,27 +735,39 @@
 
             // ---- CONNECT TO PEER ----
             async connectToPeer(peerId, username) {
-                if (this.peerConnections[peerId]) {
-                    console.log(`Already connected to ${username}`);
+                if (this.peers[peerId]) {
+                    console.log(`Already connecting to ${username}`);
                     return;
                 }
 
                 console.log(`🔗 Connecting to ${username}...`);
-                this.peers[peerId] = { username, connected: false };
+                
+                // Store peer info
+                this.peers[peerId] = {
+                    username: username,
+                    connected: false,
+                    pc: null,
+                    dc: null,
+                    isInitiator: true
+                };
 
+                // Create peer connection
                 const pc = new RTCPeerConnection(this.configuration);
-                this.peerConnections[peerId] = pc;
+                this.peers[peerId].pc = pc;
 
                 // Create data channel
                 const dc = pc.createDataChannel('chat');
                 this.setupDataChannel(dc, peerId);
-                this.dataChannels[peerId] = dc;
+                this.peers[peerId].dc = dc;
 
+                // Handle incoming data channels
                 pc.ondatachannel = (event) => {
+                    console.log(`📡 Incoming data channel from ${username}`);
                     this.setupDataChannel(event.channel, peerId);
-                    this.dataChannels[peerId] = event.channel;
+                    this.peers[peerId].dc = event.channel;
                 };
 
+                // Handle ICE candidates
                 pc.onicecandidate = (event) => {
                     if (event.candidate) {
                         this.sendSignaling('candidate', {
@@ -764,17 +777,22 @@
                     }
                 };
 
+                // Handle connection state changes
                 pc.oniceconnectionstatechange = () => {
-                    console.log(`ICE state for ${username}: ${pc.iceConnectionState}`);
-                    if (pc.iceConnectionState === 'connected') {
+                    const state = pc.iceConnectionState;
+                    console.log(`ICE state for ${username}: ${state}`);
+                    
+                    if (state === 'connected' || state === 'completed') {
                         this.peers[peerId].connected = true;
                         if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
                     }
-                    if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
+                    
+                    if (state === 'failed' || state === 'disconnected' || state === 'closed') {
                         this.disconnectFromPeer(peerId);
                     }
                 };
 
+                // Create and send offer
                 try {
                     const offer = await pc.createOffer();
                     await pc.setLocalDescription(offer);
@@ -788,34 +806,52 @@
             }
 
             setupDataChannel(channel, peerId) {
-                channel.onopen = () => {
-                    console.log(`✅ Data channel open with ${this.peers[peerId]?.username || peerId}`);
-                    this.peers[peerId].connected = true;
+                const peer = this.peers[peerId];
+                if (!peer) return;
 
+                channel.onopen = () => {
+                    console.log(`✅ Data channel open with ${peer.username}`);
+                    peer.connected = true;
+                    
                     // Send pending messages
                     while (this.pendingMessages.length > 0) {
                         const msg = this.pendingMessages.shift();
-                        channel.send(JSON.stringify(msg));
+                        if (channel.readyState === 'open') {
+                            channel.send(JSON.stringify(msg));
+                        }
                     }
-
+                    
                     if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
                 };
 
                 channel.onclose = () => {
-                    console.log(`❌ Data channel closed with ${peerId}`);
-                    this.peers[peerId].connected = false;
+                    console.log(`❌ Data channel closed with ${peer.username}`);
+                    peer.connected = false;
                     if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
                 };
 
                 channel.onmessage = async (event) => {
                     try {
                         const data = JSON.parse(event.data);
-                        console.log(`📩 Received from ${peerId}:`, data.type);
-
+                        console.log(`📩 Received from ${peer.username}: ${data.type}`);
+                        
                         if (data.type === 'message') {
-                            await this.handleMessage(data);
+                            const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
+                            this.messageHistory.push({
+                                sender: data.sender,
+                                message: decrypted,
+                                timestamp: data.timestamp,
+                                isOwn: false
+                            });
+                            if (this.onMessage) {
+                                this.onMessage(data.sender, decrypted, false);
+                            }
+                            this.saveState();
                         } else if (data.type === 'private') {
-                            await this.handlePrivateMessage(data);
+                            const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
+                            if (this.onMessage) {
+                                this.onMessage(data.sender, decrypted, false, true);
+                            }
                         }
                     } catch (e) {
                         console.error('Message handling error:', e);
@@ -823,19 +859,39 @@
                 };
             }
 
-            // ---- HANDLE OFFERS ----
+            // ---- HANDLE OFFER ----
             async handleOffer(data) {
                 const peerId = data.from;
-                console.log(`📤 Handling offer from ${data.username}`);
+                const username = data.username || 'unknown';
+                
+                console.log(`📤 Handling offer from ${username}`);
 
-                if (!this.peerConnections[peerId]) {
-                    this.peers[peerId] = { username: data.username || 'unknown', connected: false };
+                // If we already have a connection, ignore duplicate offer
+                if (this.peers[peerId] && this.peers[peerId].connected) {
+                    console.log(`Already connected to ${username}, ignoring offer`);
+                    return;
+                }
+
+                // If we already have a peer object but no connection, reuse it
+                if (!this.peers[peerId]) {
+                    this.peers[peerId] = {
+                        username: username,
+                        connected: false,
+                        pc: null,
+                        dc: null,
+                        isInitiator: false
+                    };
+                }
+
+                // Create peer connection if needed
+                if (!this.peers[peerId].pc) {
                     const pc = new RTCPeerConnection(this.configuration);
-                    this.peerConnections[peerId] = pc;
+                    this.peers[peerId].pc = pc;
 
                     pc.ondatachannel = (event) => {
+                        console.log(`📡 Incoming data channel from ${username}`);
                         this.setupDataChannel(event.channel, peerId);
-                        this.dataChannels[peerId] = event.channel;
+                        this.peers[peerId].dc = event.channel;
                     };
 
                     pc.onicecandidate = (event) => {
@@ -848,50 +904,79 @@
                     };
 
                     pc.oniceconnectionstatechange = () => {
-                        if (pc.iceConnectionState === 'connected') {
+                        const state = pc.iceConnectionState;
+                        console.log(`ICE state for ${username}: ${state}`);
+                        
+                        if (state === 'connected' || state === 'completed') {
                             this.peers[peerId].connected = true;
                             if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
                         }
-                        if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
+                        
+                        if (state === 'failed' || state === 'disconnected' || state === 'closed') {
                             this.disconnectFromPeer(peerId);
                         }
                     };
                 }
 
-                const pc = this.peerConnections[peerId];
+                const pc = this.peers[peerId].pc;
+
                 try {
-                    await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
-                    const answer = await pc.createAnswer();
-                    await pc.setLocalDescription(answer);
-                    this.sendSignaling('answer', {
-                        targetPeerId: peerId,
-                        sdp: answer
-                    });
+                    // Check if we're in the right state
+                    if (pc.signalingState === 'stable' || pc.signalingState === 'have-remote-offer') {
+                        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+                        const answer = await pc.createAnswer();
+                        await pc.setLocalDescription(answer);
+                        this.sendSignaling('answer', {
+                            targetPeerId: peerId,
+                            sdp: answer
+                        });
+                        console.log(`✅ Answer sent to ${username}`);
+                    } else {
+                        console.log(`⏳ Skipping offer - wrong state: ${pc.signalingState}`);
+                    }
                 } catch (error) {
                     console.error('Answer error:', error);
                 }
             }
 
+            // ---- HANDLE ANSWER ----
             async handleAnswer(data) {
                 const peerId = data.from;
-                if (this.peerConnections[peerId]) {
-                    try {
-                        await this.peerConnections[peerId].setRemoteDescription(new RTCSessionDescription(data.sdp));
-                        console.log(`✅ Answer set for ${peerId}`);
-                    } catch (error) {
-                        console.error('Answer handling error:', error);
+                const peer = this.peers[peerId];
+                if (!peer || !peer.pc) {
+                    console.log(`⚠️ No peer connection for ${peerId}`);
+                    return;
+                }
+
+                try {
+                    const pc = peer.pc;
+                    // Only set remote description if we're in the right state
+                    if (pc.signalingState === 'have-local-offer') {
+                        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+                        console.log(`✅ Answer set for ${peer.username}`);
+                    } else {
+                        console.log(`⏳ Skipping answer - wrong state: ${pc.signalingState}`);
                     }
+                } catch (error) {
+                    console.error('Answer handling error:', error);
                 }
             }
 
+            // ---- HANDLE CANDIDATE ----
             async handleCandidate(data) {
                 const peerId = data.from;
-                if (this.peerConnections[peerId] && data.candidate) {
-                    try {
-                        await this.peerConnections[peerId].addIceCandidate(new RTCIceCandidate(data.candidate));
-                    } catch (error) {
-                        console.error('Candidate error:', error);
+                const peer = this.peers[peerId];
+                if (!peer || !peer.pc) {
+                    console.log(`⚠️ No peer connection for candidate from ${peerId}`);
+                    return;
+                }
+
+                try {
+                    if (data.candidate) {
+                        await peer.pc.addIceCandidate(new RTCIceCandidate(data.candidate));
                     }
+                } catch (error) {
+                    console.error('Candidate error:', error);
                 }
             }
 
@@ -918,13 +1003,13 @@
 
                 // Send to all connected peers
                 let sent = false;
-                for (const [peerId, dc] of Object.entries(this.dataChannels)) {
-                    if (dc.readyState === 'open') {
+                for (const [peerId, peer] of Object.entries(this.peers)) {
+                    if (peer.dc && peer.dc.readyState === 'open') {
                         try {
-                            dc.send(JSON.stringify(payload));
+                            peer.dc.send(JSON.stringify(payload));
                             sent = true;
                         } catch (e) {
-                            console.error(`Send error to ${peerId}:`, e);
+                            console.error(`Send error to ${peer.username}:`, e);
                         }
                     }
                 }
@@ -940,36 +1025,6 @@
                 this.saveState();
             }
 
-            async handleMessage(data) {
-                try {
-                    const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
-                    this.messageHistory.push({
-                        sender: data.sender,
-                        message: decrypted,
-                        timestamp: data.timestamp,
-                        isOwn: false
-                    });
-
-                    if (this.onMessage) {
-                        this.onMessage(data.sender, decrypted, false);
-                    }
-                    this.saveState();
-                } catch (e) {
-                    console.error('Decrypt error:', e);
-                }
-            }
-
-            async handlePrivateMessage(data) {
-                try {
-                    const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
-                    if (this.onMessage) {
-                        this.onMessage(data.sender, decrypted, false, true);
-                    }
-                } catch (e) {
-                    console.error('Private decrypt error:', e);
-                }
-            }
-
             // ---- UTILITY ----
             sendSignaling(type, data) {
                 if (this.ws && this.ws.readyState === WebSocket.OPEN) {
@@ -982,17 +1037,16 @@
             }
 
             disconnectFromPeer(peerId) {
-                if (this.peerConnections[peerId]) {
-                    this.peerConnections[peerId].close();
-                    delete this.peerConnections[peerId];
+                const peer = this.peers[peerId];
+                if (peer) {
+                    if (peer.pc) {
+                        try { peer.pc.close(); } catch(e) {}
+                    }
+                    peer.connected = false;
+                    delete this.peers[peerId];
+                    console.log(`❌ Disconnected from ${peer.username || peerId}`);
+                    if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
                 }
-                if (this.dataChannels[peerId]) {
-                    delete this.dataChannels[peerId];
-                }
-                if (this.peers[peerId]) {
-                    this.peers[peerId].connected = false;
-                }
-                if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
             }
 
             getPeerList() {
@@ -1003,16 +1057,12 @@
                 }));
             }
 
-            getPeerCount() {
-                return Object.keys(this.peerConnections).length;
-            }
-
             leave() {
                 if (this.ws) {
-                    this.ws.send(JSON.stringify({ type: 'peer-disconnect' }));
-                    this.ws.close();
+                    try { this.ws.send(JSON.stringify({ type: 'peer-disconnect' })); } catch(e) {}
+                    try { this.ws.close(); } catch(e) {}
                 }
-                for (const peerId of Object.keys(this.peerConnections)) {
+                for (const peerId of Object.keys(this.peers)) {
                     this.disconnectFromPeer(peerId);
                 }
                 this.clearState();
@@ -1079,9 +1129,6 @@
             if (session && session.roomId && session.username) {
                 document.getElementById('join-room-id').value = session.roomId;
                 document.getElementById('join-username').value = session.username;
-                document.getElementById('join-encryption-key').value = '';
-                // Show a notification to re-enter key
-                alert(`Welcome back ${session.username}! Please enter your encryption key to reconnect.`);
             }
 
             // ---- CHAT CALLBACKS ----
@@ -1091,6 +1138,8 @@
 
             chat.onPeerUpdate = (peers) => {
                 updatePeerList(peers);
+                const count = peers.filter(p => p.connected).length;
+                chatTitle.textContent = `💬 General (${count} online)`;
             };
 
             chat.onConnectionChange = (connected) => {
@@ -1099,11 +1148,15 @@
                     connStatus.className = 'connection-status connected';
                     document.getElementById('connection-status').textContent = '🟢 Connected';
                     document.getElementById('connection-status').style.color = '#00ff88';
+                    document.getElementById('server-status').textContent = '✅ Connected to server';
+                    document.getElementById('server-status').style.color = '#00ff88';
                 } else {
                     connStatus.textContent = '🔴';
                     connStatus.className = 'connection-status disconnected';
                     document.getElementById('connection-status').textContent = '🔴 Disconnected';
                     document.getElementById('connection-status').style.color = '#ff4444';
+                    document.getElementById('server-status').textContent = '❌ Disconnected';
+                    document.getElementById('server-status').style.color = '#ff4444';
                 }
             };
 
@@ -1200,7 +1253,6 @@
 
                 try {
                     if (isPrivateMode && privateTarget) {
-                        // Private message - send directly
                         const encrypted = await chat.encryption.encrypt(text, chat.encryptionKey);
                         const payload = {
                             type: 'private',
@@ -1209,9 +1261,9 @@
                             message: encrypted,
                             timestamp: Date.now()
                         };
-                        const dc = chat.dataChannels[privateTarget];
-                        if (dc && dc.readyState === 'open') {
-                            dc.send(JSON.stringify(payload));
+                        const peer = chat.peers[privateTarget];
+                        if (peer && peer.dc && peer.dc.readyState === 'open') {
+                            peer.dc.send(JSON.stringify(payload));
                             displayMessage(chat.username, text, true, true);
                         } else {
                             alert('Peer not connected');
@@ -1286,6 +1338,13 @@
 
             // ---- UI HELPERS ----
             function displayMessage(sender, message, isOwn, isPrivate = false) {
+                // Remove empty system message if present
+                if (messagesDiv.children.length === 1 && 
+                    messagesDiv.children[0].classList.contains('system-message') &&
+                    messagesDiv.children[0].textContent.includes('Select a room')) {
+                    messagesDiv.innerHTML = '';
+                }
+
                 const msgElement = document.createElement('div');
                 msgElement.className = `message ${isOwn ? 'own' : 'other'} ${isPrivate ? 'private' : ''}`;
                 const privateBadge = isPrivate ? ' 🔒' : '';
@@ -1297,8 +1356,8 @@
                 messagesDiv.appendChild(msgElement);
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-                // Auto-scroll
-                if (messagesDiv.children.length > 100) {
+                // Limit messages
+                while (messagesDiv.children.length > 200) {
                     messagesDiv.removeChild(messagesDiv.children[0]);
                 }
             }
@@ -1312,10 +1371,9 @@
             }
 
             function updatePeerList(peers) {
-                // Keep "You" at the top
                 let html = `
                     <div class="peer-item current" style="border-left:2px solid #00d4ff;margin-bottom:6px;">
-                        <span>👤 You (${chat.username})</span>
+                        <span>👤 You (${chat.username || 'Loading...'})</span>
                         <span class="status-dot online"></span>
                     </div>
                 `;
@@ -1331,11 +1389,11 @@
                     `;
                 });
 
-                peerList.innerHTML = html;
+                if (peers.length === 0) {
+                    html += `<div style="color:#556;font-size:11px;padding:8px;text-align:center;">No peers online</div>`;
+                }
 
-                // Update title with peer count
-                const count = peers.filter(p => p.connected).length;
-                chatTitle.textContent = `💬 General (${count} online)`;
+                peerList.innerHTML = html;
             }
 
             // ---- GLOBAL ----
@@ -1352,9 +1410,12 @@
             // ---- LOAD HISTORY ----
             function loadHistory() {
                 const history = chat.getHistory();
-                history.forEach(msg => {
-                    displayMessage(msg.sender, msg.message, msg.isOwn);
-                });
+                if (history.length > 0) {
+                    messagesDiv.innerHTML = '';
+                    history.forEach(msg => {
+                        displayMessage(msg.sender, msg.message, msg.isOwn);
+                    });
+                }
             }
 
             // Show history when chat loads
