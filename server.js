@@ -1,4 +1,4 @@
-// server.js - With message deletion support
+// server.js - FIXED: Properly filter deleted messages on reconnect
 const WebSocket = require('ws');
 const http = require('http');
 const fs = require('fs');
@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 8080;
 // ===== STORAGE =====
 const publicMessages = {};
 const privateMessages = {};
-const deletedMessages = {}; // Track deleted message IDs per user
+const deletedMessages = {}; // roomId -> { username: Set(messageIds) }
 const clients = {};
 
 const server = http.createServer((req, res) => {
@@ -45,7 +45,9 @@ wss.on('connection', (ws) => {
                     if (!clients[roomId]) clients[roomId] = {};
                     if (!publicMessages[roomId]) publicMessages[roomId] = [];
                     if (!deletedMessages[roomId]) deletedMessages[roomId] = {};
-                    if (!deletedMessages[roomId][username]) deletedMessages[roomId][username] = new Set();
+                    if (!deletedMessages[roomId][username]) {
+                        deletedMessages[roomId][username] = new Set();
+                    }
                     
                     // Close old connection
                     if (clients[roomId][username]) {
@@ -58,20 +60,23 @@ wss.on('connection', (ws) => {
                     
                     clients[roomId][username] = ws;
                     
-                    // ===== SEND PUBLIC HISTORY (filter deleted) =====
+                    // ===== GET USER'S DELETED MESSAGE IDs =====
                     const userDeleted = deletedMessages[roomId][username] || new Set();
-                    const history = publicMessages[roomId]
+                    
+                    // ===== SEND PUBLIC HISTORY (FILTER DELETED) =====
+                    const publicHistory = publicMessages[roomId]
                         .filter(m => !userDeleted.has(m.id))
                         .slice(-50);
                     
                     ws.send(JSON.stringify({
                         type: 'history',
-                        messages: history
+                        messages: publicHistory
                     }));
                     
-                    // ===== SEND PRIVATE HISTORY (filter deleted) =====
+                    // ===== SEND PRIVATE HISTORY (FILTER DELETED) =====
                     const userPrivateMessages = [];
                     for (const [key, messages] of Object.entries(privateMessages)) {
+                        // Check if this message involves this user
                         if (key.includes(username) || key.startsWith(roomId + '_')) {
                             const relevant = messages.filter(m => 
                                 m.sender === username || m.targetUser === username
@@ -80,6 +85,7 @@ wss.on('connection', (ws) => {
                         }
                     }
                     
+                    // Remove duplicates and filter deleted
                     const uniquePrivate = [];
                     const seenIds = new Set();
                     for (const msg of userPrivateMessages) {
@@ -103,6 +109,8 @@ wss.on('connection', (ws) => {
                     });
                     
                     console.log(`✅ ${username} joined/refreshed room ${roomId}`);
+                    console.log(`📚 Public messages: ${publicMessages[roomId].length}`);
+                    console.log(`🗑️ Deleted for ${username}: ${userDeleted.size}`);
                     break;
 
                 case 'message':
@@ -199,40 +207,35 @@ wss.on('connection', (ws) => {
                     break;
 
                 case 'delete-message':
-                    // Delete a specific message for a specific user
                     if (!currentUsername || !currentRoomId) return;
                     
                     const { messageId, isPrivate, targetUser } = msg;
                     console.log(`🗑️ ${currentUsername} deleting message ${messageId}`);
                     
-                    // Store deletion for this user
                     if (!deletedMessages[currentRoomId]) deletedMessages[currentRoomId] = {};
                     if (!deletedMessages[currentRoomId][currentUsername]) {
                         deletedMessages[currentRoomId][currentUsername] = new Set();
                     }
                     deletedMessages[currentRoomId][currentUsername].add(messageId);
                     
-                    // Notify the user that the message was deleted
+                    // Notify the user
                     ws.send(JSON.stringify({
                         type: 'message-deleted',
                         messageId: messageId
                     }));
                     
-                    // If it's a private message, also notify the other user if they're online
                     if (isPrivate && targetUser) {
                         if (clients[currentRoomId][targetUser]) {
+                            if (!deletedMessages[currentRoomId][targetUser]) {
+                                deletedMessages[currentRoomId][targetUser] = new Set();
+                            }
+                            deletedMessages[currentRoomId][targetUser].add(messageId);
                             clients[currentRoomId][targetUser].send(JSON.stringify({
                                 type: 'message-deleted',
                                 messageId: messageId
                             }));
                         }
-                        // Also store deletion for the target user
-                        if (!deletedMessages[currentRoomId][targetUser]) {
-                            deletedMessages[currentRoomId][targetUser] = new Set();
-                        }
-                        deletedMessages[currentRoomId][targetUser].add(messageId);
                     } else {
-                        // For public messages, notify all users in the room
                         broadcast(currentRoomId, {
                             type: 'message-deleted',
                             messageId: messageId
@@ -243,7 +246,6 @@ wss.on('connection', (ws) => {
                     break;
 
                 case 'clear-chat':
-                    // Clear ALL messages for a user in a specific chat
                     if (!currentUsername || !currentRoomId) return;
                     
                     const { chatType, targetUser: clearTarget } = msg;
@@ -254,9 +256,7 @@ wss.on('connection', (ws) => {
                         deletedMessages[currentRoomId][currentUsername] = new Set();
                     }
                     
-                    // Get all messages in this chat and mark them as deleted
                     if (chatType === 'private' && clearTarget) {
-                        // Private chat - get messages between these two users
                         const privateKey = currentRoomId + '_' + currentUsername + '_' + clearTarget;
                         const reverseKey = currentRoomId + '_' + clearTarget + '_' + currentUsername;
                         
@@ -270,7 +270,6 @@ wss.on('connection', (ws) => {
                         
                         for (const m of messagesToDelete) {
                             deletedMessages[currentRoomId][currentUsername].add(m.id);
-                            // Also delete for the other user
                             if (clients[currentRoomId][clearTarget]) {
                                 if (!deletedMessages[currentRoomId][clearTarget]) {
                                     deletedMessages[currentRoomId][clearTarget] = new Set();
@@ -279,7 +278,6 @@ wss.on('connection', (ws) => {
                             }
                         }
                         
-                        // Notify both users
                         ws.send(JSON.stringify({
                             type: 'chat-cleared',
                             chatId: 'private_' + clearTarget
@@ -292,7 +290,6 @@ wss.on('connection', (ws) => {
                             }));
                         }
                     } else {
-                        // Public chat - clear all public messages for this user
                         const allPublicMessages = publicMessages[currentRoomId] || [];
                         for (const m of allPublicMessages) {
                             deletedMessages[currentRoomId][currentUsername].add(m.id);
@@ -383,10 +380,10 @@ server.listen(PORT, '0.0.0.0', () => {
     ║   Running on: http://0.0.0.0:${PORT}                            ║
     ║                                                                 ║
     ║   🔒 End-to-end encryption                                     ║
-    ║   🗑️ Delete individual messages                                ║
-    ║   🗑️ Clear entire chat permanently                             ║
+    ║   🗑️ Delete individual messages (permanently)                 ║
+    ║   🗑️ Clear entire chat (permanently)                          ║
     ║   🔒 Private messages: ONLY sender + recipient see them       ║
-    ║   🔄 Auto-reconnect support                                    ║
+    ║   🔄 Deleted messages stay deleted after refresh              ║
     ║   📎 File sharing                                              ║
     ╚══════════════════════════════════════════════════════════════════╝
     `);
