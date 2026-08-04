@@ -249,6 +249,14 @@
         .peer-item .status-dot.offline {
             background: #ff4444;
         }
+        .peer-item .status-dot.connecting {
+            background: #ffaa00;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
         .peer-item .peer-actions {
             display: flex;
             gap: 3px;
@@ -312,15 +320,6 @@
             background: rgba(255, 170, 0, 0.1);
             color: #ffaa00;
             animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.4;
-            }
         }
         .messages-area {
             flex: 1;
@@ -406,14 +405,8 @@
             border-color: #ffaa00;
         }
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .messages-area::-webkit-scrollbar {
             width: 4px;
@@ -463,6 +456,17 @@
             border-radius: 4px;
             margin-top: 4px;
             font-family: monospace;
+            max-height: 40px;
+            overflow-y: auto;
+        }
+        .turn-warning {
+            background: rgba(255, 170, 0, 0.1);
+            border: 1px solid rgba(255, 170, 0, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #ffaa00;
         }
         @media (max-width: 768px) {
             .container {
@@ -475,7 +479,7 @@
             .sidebar {
                 width: 100%;
                 min-width: unset;
-                max-height: 140px;
+                max-height: 160px;
             }
             .sidebar .peer-list {
                 display: flex;
@@ -538,6 +542,9 @@
                 <!-- Sidebar -->
                 <div class="sidebar">
                     <h3>👥 Online</h3>
+                    <div id="turn-warning" class="turn-warning" style="display:none;">
+                        ⚠️ TURN servers added for internet connections
+                    </div>
                     <div class="peer-list" id="peer-list">
                         <div class="peer-item current">
                             <span>👤 You</span>
@@ -617,7 +624,7 @@
         }
 
         // ============================================================
-        //  P2P CHAT - DEBUGGABLE VERSION
+        //  P2P CHAT - WITH TURN SERVERS
         // ============================================================
         class P2PChat {
             constructor(signalingUrl) {
@@ -638,17 +645,42 @@
                 this.onConnectionChange = null;
                 this.onDebug = null;
 
+                // ===== CRITICAL FIX: ADD TURN SERVERS =====
                 this.configuration = {
                     iceServers: [
+                        // STUN servers (for local network connections)
                         { urls: 'stun:stun.l.google.com:19302' },
                         { urls: 'stun:stun1.l.google.com:19302' },
                         { urls: 'stun:stun2.l.google.com:19302' },
                         { urls: 'stun:stun3.l.google.com:19302' },
-                        { urls: 'stun:stun4.l.google.com:19302' }
+                        { urls: 'stun:stun4.l.google.com:19302' },
+                        
+                        // ===== TURN SERVERS (for internet connections) =====
+                        // Free public TURN servers
+                        {
+                            urls: [
+                                'turn:openrelay.metered.ca:80',
+                                'turn:openrelay.metered.ca:443',
+                                'turn:openrelay.metered.ca:3478'
+                            ],
+                            username: 'openrelayproject',
+                            credential: 'openrelayproject'
+                        },
+                        // Another free TURN server
+                        {
+                            urls: [
+                                'turn:turn.anyfirewall.com:443?transport=tcp',
+                                'turn:turn.anyfirewall.com:3478?transport=udp'
+                            ],
+                            username: 'anyfirewall',
+                            credential: 'anyfirewall'
+                        }
                     ],
-                    iceCandidatePoolSize: 10
+                    iceCandidatePoolSize: 10,
+                    iceTransportPolicy: 'all'  // Use both relay and direct
                 };
 
+                this.log('🔧 TURN servers configured for internet connections');
                 this.loadState();
             }
 
@@ -868,6 +900,11 @@
                     }
                 };
 
+                // Log ICE gathering state
+                pc.onicegatheringstatechange = () => {
+                    this.log(`🧊 ICE gathering state for ${username}: ${pc.iceGatheringState}`);
+                };
+
                 try {
                     const offer = await pc.createOffer();
                     await pc.setLocalDescription(offer);
@@ -886,7 +923,7 @@
                 if (!peer) return;
 
                 channel.onopen = () => {
-                    this.log(`✅ Data channel OPEN with ${peer.username}`);
+                    this.log(`✅✅✅ DATA CHANNEL OPEN with ${peer.username} ✅✅✅`);
                     peer.connected = true;
                     peer.state = 'connected';
                     if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
@@ -899,6 +936,10 @@
                     peer.connected = false;
                     peer.state = 'closed';
                     if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
+                };
+
+                channel.onerror = (err) => {
+                    this.log(`⚠️ Data channel error with ${peer.username}: ${err.message}`);
                 };
 
                 channel.onmessage = async (event) => {
@@ -989,6 +1030,10 @@
                             this.log(`❌ Peer ${username} disconnected`);
                             if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
                         }
+                    };
+
+                    pc.onicegatheringstatechange = () => {
+                        this.log(`🧊 ICE gathering state for ${username}: ${pc.iceGatheringState}`);
                     };
                 }
 
@@ -1196,9 +1241,13 @@
             const copyRoomBtn = document.getElementById('copy-room-btn');
             const reconnectBtn = document.getElementById('reconnect-btn');
             const debugInfo = document.getElementById('debug-info');
+            const turnWarning = document.getElementById('turn-warning');
 
             let isPrivateMode = false;
             let privateTarget = null;
+
+            // Show TURN warning
+            turnWarning.style.display = 'block';
 
             // Restore session
             const session = chat.loadState();
@@ -1263,7 +1312,6 @@
 
                     showSystemMessage(`🚀 Workspace created! ID: ${roomInfo.roomId}`);
 
-                    // Copy to clipboard
                     const info = `Room ID: ${roomInfo.roomId}\nKey: ${roomInfo.encryptionKey}`;
                     navigator.clipboard.writeText(info).then(() => {
                         showSystemMessage('📋 Room info copied to clipboard!');
@@ -1471,12 +1519,13 @@
                 `;
 
                 peers.forEach(peer => {
-                    const statusText = peer.connected ? 'online' : 'offline';
+                    const statusText = peer.connected ? 'online' : (peer.state === 'connecting' ? 'connecting' : 'offline');
+                    const dotClass = peer.connected ? 'online' : (peer.state === 'connecting' ? 'connecting' : 'offline');
                     html += `
                         <div class="peer-item ${peer.connected ? 'online' : 'offline'}">
                             <span>${peer.username}</span>
                             <div style="display:flex;align-items:center;gap:6px;">
-                                <span class="status-dot ${peer.connected ? 'online' : 'offline'}"></span>
+                                <span class="status-dot ${dotClass}"></span>
                                 <span style="font-size:9px;color:#556;">${peer.state || 'unknown'}</span>
                                 <button class="btn-small" onclick="window.startPrivateChat('${peer.peerId}','${peer.username}')" style="font-size:10px;padding:2px 6px;">💬</button>
                             </div>
@@ -1525,26 +1574,11 @@
             });
             observer.observe(chatScreen, { attributes: true, attributeFilter: ['class'] });
 
-            // Status checker
-            setInterval(() => {
-                if (chatScreen.classList.contains('active')) {
-                    const status = chat.getPeerStatus();
-                    const connected = Object.values(status).filter(p => p.connected).length;
-                    const total = Object.keys(status).length;
-                    if (total > 0 && connected === 0) {
-                        debugInfo.textContent = `🔍 ${total} peer(s) found, 0 connected. Check console for details.`;
-                        connStatus.textContent = '⚠️';
-                        connStatus.className = 'connection-status connecting';
-                    } else if (total > 0 && connected > 0) {
-                        debugInfo.textContent = `🔍 ${connected}/${total} peers connected`;
-                    }
-                }
-            }, 5000);
-
             console.log('🔒 Secure P2P Chat loaded!');
             console.log(`📡 Signaling: ${signalingUrl}`);
+            console.log('🔧 TURN servers: openrelay.metered.ca and turn.anyfirewall.com');
             console.log('💡 Check the debug panel for connection status');
-            console.log('💡 Open browser console (F12) for detailed logs');
+            console.log('💡 If data channel stays "connecting", TURN may need more time');
         });
     </script>
 
