@@ -2,33 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔒 Secure P2P Chat</title>
     <style>
-        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #0a0e17 0%, #141b2b 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e17;
             color: #e0e0e0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 10px;
-            margin: 0;
         }
-
         .container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1000px;
             background: rgba(20, 27, 43, 0.95);
-            backdrop-filter: blur(10px);
             border-radius: 16px;
             padding: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
@@ -37,38 +32,30 @@
             display: flex;
             flex-direction: column;
         }
-
         header {
             text-align: center;
             margin-bottom: 16px;
             flex-shrink: 0;
         }
-
         header h1 {
             background: linear-gradient(135deg, #00d4ff, #0099cc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-size: 28px;
         }
-
         header p {
             color: #8892b0;
             font-size: 13px;
         }
-
-        /* ===== SCREENS ===== */
         .screen {
             display: none;
             flex: 1;
             flex-direction: column;
             min-height: 0;
         }
-
         .screen.active {
             display: flex;
         }
-
-        /* ===== SETUP SCREEN ===== */
         .setup-section {
             background: rgba(26, 35, 50, 0.8);
             padding: 20px;
@@ -76,26 +63,22 @@
             margin-bottom: 16px;
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
-
         .setup-section h2 {
             color: #00d4ff;
             font-size: 17px;
             margin-bottom: 4px;
         }
-
         .setup-section .hint {
             color: #8892b0;
             font-size: 12px;
             margin-bottom: 12px;
         }
-
         .divider {
             text-align: center;
             color: #8892b0;
             margin: 12px 0;
             position: relative;
         }
-
         .divider::before,
         .divider::after {
             content: '';
@@ -105,20 +88,17 @@
             height: 1px;
             background: rgba(255, 255, 255, 0.05);
         }
-
         .divider::before {
             left: 0;
         }
         .divider::after {
             right: 0;
         }
-
         .divider span {
             background: #141b2b;
             padding: 0 12px;
             font-size: 13px;
         }
-
         .input-field {
             width: 100%;
             padding: 10px 14px;
@@ -130,18 +110,11 @@
             margin-bottom: 10px;
             transition: all 0.3s;
         }
-
         .input-field:focus {
             border-color: #00d4ff;
             outline: none;
             box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
         }
-
-        .input-field:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
         .btn {
             padding: 10px 20px;
             border: none;
@@ -151,52 +124,26 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .btn-primary {
             background: linear-gradient(135deg, #00d4ff, #0099cc);
             color: #0a0e17;
         }
-
         .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 4px 16px rgba(0, 212, 255, 0.3);
         }
-
         .btn-primary:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-
         .btn-secondary {
             background: rgba(35, 48, 68, 0.8);
             color: #e0e0e0;
         }
-
         .btn-secondary:hover:not(:disabled) {
             background: rgba(45, 62, 90, 0.8);
             transform: translateY(-2px);
         }
-
-        .btn-success {
-            background: rgba(0, 255, 136, 0.15);
-            color: #00ff88;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-        }
-
-        .btn-success:hover {
-            background: rgba(0, 255, 136, 0.25);
-        }
-
-        .btn-danger {
-            background: rgba(255, 68, 68, 0.2);
-            color: #ff4444;
-            border: 1px solid rgba(255, 68, 68, 0.2);
-        }
-
-        .btn-danger:hover {
-            background: rgba(255, 68, 68, 0.3);
-        }
-
         .btn-small {
             padding: 4px 10px;
             background: rgba(35, 48, 68, 0.8);
@@ -205,13 +152,7 @@
             border-radius: 4px;
             font-size: 11px;
             cursor: pointer;
-            transition: all 0.3s;
         }
-
-        .btn-small:hover {
-            background: rgba(45, 62, 90, 0.8);
-        }
-
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -224,19 +165,15 @@
             flex-wrap: wrap;
             gap: 4px;
         }
-
-        /* ===== CHAT SCREEN ===== */
         .chat-layout {
             display: flex;
             gap: 12px;
             flex: 1;
             min-height: 0;
         }
-
-        /* ===== LEFT SIDEBAR - Rooms & Contacts ===== */
         .sidebar {
-            width: 220px;
-            min-width: 200px;
+            width: 200px;
+            min-width: 170px;
             background: rgba(13, 20, 33, 0.5);
             border-radius: 12px;
             padding: 12px;
@@ -245,124 +182,52 @@
             max-height: 100%;
             overflow: hidden;
         }
-
-        .sidebar-tabs {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 8px;
-        }
-
-        .sidebar-tabs button {
-            flex: 1;
-            padding: 6px 8px;
-            background: transparent;
-            border: none;
-            color: #8892b0;
+        .sidebar h3 {
             font-size: 11px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: all 0.3s;
-            font-weight: 500;
+            text-transform: uppercase;
+            color: #8892b0;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
         }
-
-        .sidebar-tabs button.active {
-            background: rgba(0, 212, 255, 0.1);
-            color: #00d4ff;
-        }
-
-        .sidebar-tabs button:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .sidebar-content {
+        .sidebar .peer-list {
             flex: 1;
             overflow-y: auto;
         }
-
-        .sidebar-content .section-title {
-            font-size: 10px;
-            text-transform: uppercase;
-            color: #556;
-            letter-spacing: 1px;
-            margin: 8px 0 4px 0;
-        }
-
-        .room-item, .contact-item {
+        .peer-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 10px;
+            padding: 6px 10px;
             border-radius: 6px;
-            margin-bottom: 2px;
-            cursor: pointer;
+            margin-bottom: 3px;
+            font-size: 12px;
             transition: all 0.3s;
-            font-size: 13px;
         }
-
-        .room-item:hover, .contact-item:hover {
-            background: rgba(255, 255, 255, 0.05);
+        .peer-item.online {
+            border-left: 2px solid #00ff88;
         }
-
-        .room-item.active, .contact-item.active {
-            background: rgba(0, 212, 255, 0.08);
-            border-left: 2px solid #00d4ff;
+        .peer-item.offline {
+            border-left: 2px solid #ff4444;
+            opacity: 0.5;
         }
-
-        .room-item .badge, .contact-item .badge {
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            background: rgba(0, 212, 255, 0.1);
-            color: #00d4ff;
-        }
-
-        .room-item .badge.unread {
-            background: #ff4444;
-            color: white;
-        }
-
-        .contact-item .status {
+        .peer-item .status-dot {
             width: 6px;
             height: 6px;
             border-radius: 50%;
             display: inline-block;
         }
-
-        .contact-item .status.online {
+        .peer-item .status-dot.online {
             background: #00ff88;
         }
-
-        .contact-item .status.offline {
+        .peer-item .status-dot.offline {
             background: #ff4444;
         }
-
-        .create-room-btn {
-            width: 100%;
-            padding: 8px;
-            margin-top: 8px;
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px dashed rgba(0, 212, 255, 0.3);
-            border-radius: 6px;
-            color: #00d4ff;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s;
-        }
-
-        .create-room-btn:hover {
-            background: rgba(0, 212, 255, 0.2);
-        }
-
-        /* ===== CHAT MAIN ===== */
         .chat-main {
             flex: 1;
             display: flex;
             flex-direction: column;
             min-width: 0;
         }
-
         .chat-header {
             background: rgba(26, 35, 50, 0.8);
             padding: 10px 14px;
@@ -374,25 +239,10 @@
             justify-content: space-between;
             align-items: center;
         }
-
         .chat-header .chat-title {
             font-size: 16px;
             font-weight: 600;
-            color: #e0e0e0;
         }
-
-        .chat-header .chat-title small {
-            font-size: 12px;
-            font-weight: 400;
-            color: #8892b0;
-            margin-left: 8px;
-        }
-
-        .chat-header .chat-actions {
-            display: flex;
-            gap: 4px;
-        }
-
         .messages-area {
             flex: 1;
             overflow-y: auto;
@@ -402,7 +252,6 @@
             margin-bottom: 10px;
             min-height: 200px;
         }
-
         .system-message {
             text-align: center;
             color: #8892b0;
@@ -410,7 +259,6 @@
             padding: 8px;
             opacity: 0.7;
         }
-
         .message {
             margin-bottom: 8px;
             padding: 8px 12px;
@@ -420,66 +268,47 @@
             animation: fadeIn 0.25s ease;
             font-size: 14px;
         }
-
         .message.own {
             background: linear-gradient(135deg, #00d4ff, #0099cc);
             color: #0a0e17;
             margin-left: auto;
         }
-
         .message.other {
             background: rgba(26, 35, 50, 0.8);
             color: #e0e0e0;
         }
-
         .message.private {
             border-left: 3px solid #ffaa00;
         }
-
         .message strong {
             display: block;
             font-size: 10px;
             margin-bottom: 3px;
             opacity: 0.7;
         }
-
-        .message .private-badge {
-            font-size: 9px;
-            background: rgba(255, 170, 0, 0.2);
-            color: #ffaa00;
-            padding: 1px 6px;
-            border-radius: 10px;
-            margin-left: 6px;
-        }
-
         .message small {
             display: block;
             font-size: 9px;
             opacity: 0.5;
             margin-top: 3px;
         }
-
         .input-area {
             display: flex;
             gap: 8px;
             flex-shrink: 0;
         }
-
         .input-area .input-field {
             flex: 1;
             margin-bottom: 0;
         }
-
         .input-area .action-buttons {
             display: flex;
             gap: 4px;
         }
-
         .input-area .action-buttons .btn {
             padding: 8px 12px;
             font-size: 16px;
         }
-
         .input-area .private-toggle {
             padding: 8px 12px;
             background: rgba(255, 170, 0, 0.1);
@@ -489,764 +318,441 @@
             font-size: 12px;
             cursor: pointer;
             transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
-
         .input-area .private-toggle.active {
             background: rgba(255, 170, 0, 0.2);
             border-color: #ffaa00;
         }
-
-        /* ===== RESPONSIVE ===== */
+        .connection-status {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+        .connection-status.connected {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+        }
+        .connection-status.disconnected {
+            background: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .messages-area::-webkit-scrollbar {
+            width: 4px;
+        }
+        .messages-area::-webkit-scrollbar-track {
+            background: rgba(13, 20, 33, 0.5);
+        }
+        .messages-area::-webkit-scrollbar-thumb {
+            background: rgba(35, 48, 68, 0.8);
+            border-radius: 2px;
+        }
+        #file-input {
+            display: none;
+        }
+        .room-info {
+            font-size: 12px;
+            color: #8892b0;
+            padding: 4px 0;
+        }
+        .room-info code {
+            background: rgba(13, 20, 33, 0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #00d4ff;
+        }
         @media (max-width: 768px) {
             .container {
                 padding: 12px;
                 max-height: 100vh;
             }
-
             .chat-layout {
                 flex-direction: column;
             }
-
             .sidebar {
                 width: 100%;
                 min-width: unset;
-                max-height: 120px;
+                max-height: 100px;
             }
-
-            .sidebar-content {
+            .sidebar .peer-list {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 4px;
             }
-
-            .room-item, .contact-item {
+            .peer-item {
                 padding: 4px 8px;
-                font-size: 12px;
+                font-size: 11px;
                 flex: 0 1 auto;
             }
-
-            .chat-header .chat-title {
-                font-size: 14px;
-            }
-
-            .messages-area {
-                min-height: 150px;
-            }
-
             .message {
                 max-width: 90%;
                 font-size: 13px;
             }
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Scrollbar */
-        .messages-area::-webkit-scrollbar,
-        .sidebar-content::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .messages-area::-webkit-scrollbar-track,
-        .sidebar-content::-webkit-scrollbar-track {
-            background: rgba(13, 20, 33, 0.5);
-        }
-
-        .messages-area::-webkit-scrollbar-thumb,
-        .sidebar-content::-webkit-scrollbar-thumb {
-            background: rgba(35, 48, 68, 0.8);
-            border-radius: 2px;
-        }
-
-        /* Hidden file input */
-        #file-input {
-            display: none;
-        }
-
-        /* Call overlay (simplified) */
-        .call-overlay {
-            display: none;
-        }
-
-        .call-overlay.active {
-            display: flex;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Peer list in sidebar */
-        .peer-list-compact {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            padding: 4px 0;
-        }
-
-        .peer-list-compact .peer-chip {
-            padding: 2px 8px;
-            background: rgba(0, 212, 255, 0.05);
-            border-radius: 12px;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .peer-list-compact .peer-chip:hover {
-            background: rgba(0, 212, 255, 0.15);
-        }
-
-        .peer-list-compact .peer-chip .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .peer-list-compact .peer-chip .status-dot.online {
-            background: #00ff88;
-        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>🔒 Secure P2P Chat</h1>
-        <p>End-to-end encrypted · Group chats · Private messaging</p>
-    </header>
+    <div class="container">
+        <header>
+            <h1>🔒 Secure P2P Chat</h1>
+            <p>End-to-end encrypted · Real-time · Private</p>
+        </header>
 
-    <!-- ===== SETUP SCREEN ===== -->
-    <div id="setup-screen" class="screen active">
-        <div class="setup-section">
-            <h2>🚀 Create a Workspace</h2>
-            <p class="hint">Start your own private chat workspace</p>
-            <input type="text" id="create-username" placeholder="Your name..." class="input-field">
-            <button id="create-room" class="btn btn-primary">Create Workspace</button>
-        </div>
-
-        <div class="divider"><span>or</span></div>
-
-        <div class="setup-section">
-            <h2>🔗 Join a Workspace</h2>
-            <p class="hint">Enter the workspace details from your friend</p>
-            <input type="text" id="join-room-id" placeholder="Workspace ID" class="input-field">
-            <input type="text" id="join-encryption-key" placeholder="Encryption Key" class="input-field">
-            <input type="text" id="join-username" placeholder="Your name..." class="input-field">
-            <button id="join-room" class="btn btn-secondary">Join Workspace</button>
-        </div>
-
-        <div class="status-bar">
-            <span id="connection-status">⚪ Disconnected</span>
-            <span id="server-status">Server: Not connected</span>
-        </div>
-    </div>
-
-    <!-- ===== CHAT SCREEN ===== -->
-    <div id="chat-screen" class="screen">
-        <div class="chat-layout">
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <div class="sidebar-tabs">
-                    <button class="active" data-tab="rooms">💬 Rooms</button>
-                    <button data-tab="contacts">👥 Contacts</button>
-                </div>
-                <div class="sidebar-content" id="sidebar-content">
-                    <!-- Rooms will be rendered here -->
-                    <div id="rooms-list">
-                        <div class="section-title">Your Rooms</div>
-                        <div id="room-items"></div>
-                        <button class="create-room-btn" id="new-room-btn">+ New Room</button>
-                    </div>
-                    <div id="contacts-list" style="display:none;">
-                        <div class="section-title">Online Contacts</div>
-                        <div id="contact-items"></div>
-                    </div>
-                </div>
+        <!-- SETUP SCREEN -->
+        <div id="setup-screen" class="screen active">
+            <div class="setup-section">
+                <h2>🚀 Create a Workspace</h2>
+                <p class="hint">Start your own private chat workspace</p>
+                <input type="text" id="create-username" placeholder="Your name..." class="input-field">
+                <button id="create-room" class="btn btn-primary">Create Workspace</button>
             </div>
+            <div class="divider"><span>or</span></div>
+            <div class="setup-section">
+                <h2>🔗 Join a Workspace</h2>
+                <p class="hint">Enter the workspace details from your friend</p>
+                <input type="text" id="join-room-id" placeholder="Workspace ID" class="input-field">
+                <input type="text" id="join-encryption-key" placeholder="Encryption Key" class="input-field">
+                <input type="text" id="join-username" placeholder="Your name..." class="input-field">
+                <button id="join-room" class="btn btn-secondary">Join Workspace</button>
+            </div>
+            <div class="status-bar">
+                <span id="connection-status">⚪ Disconnected</span>
+                <span id="server-status">Server: Not connected</span>
+            </div>
+        </div>
 
-            <!-- Chat Main -->
-            <div class="chat-main">
-                <div class="chat-header">
-                    <div class="chat-title" id="current-chat-title">
-                        Select a room <small>or start a new one</small>
+        <!-- CHAT SCREEN -->
+        <div id="chat-screen" class="screen">
+            <div class="chat-layout">
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <h3>👥 Online</h3>
+                    <div class="peer-list" id="peer-list">
+                        <div class="peer-item current" style="border-left:2px solid #00d4ff;">
+                            <span>👤 You</span>
+                            <span class="status-dot online"></span>
+                        </div>
                     </div>
-                    <div class="chat-actions">
-                        <button class="btn-small" id="clear-chat-btn" title="Clear chat">🗑️</button>
-                        <button class="btn-small" id="leave-room-btn" title="Leave room">🚪</button>
+                    <div class="room-info" id="room-info" style="margin-top:8px;font-size:11px;">
+                        Room: <code id="room-id-display">---</code>
+                        <br>Key: <code id="key-display" style="font-size:9px;">---</code>
                     </div>
                 </div>
 
-                <div id="messages" class="messages-area">
-                    <div class="system-message">🔒 Select a room to start chatting</div>
-                </div>
-
-                <div class="input-area">
-                    <input type="text" id="message-input" placeholder="Type a message..." class="input-field" disabled>
-                    <button class="private-toggle" id="private-toggle" title="Send private message">🔒</button>
-                    <div class="action-buttons">
-                        <button id="file-send-btn" class="btn btn-secondary" title="Send file" disabled>📎</button>
-                        <button id="call-btn" class="btn btn-secondary" title="Voice call" disabled>📞</button>
-                        <button id="send-message" class="btn btn-primary" disabled>Send</button>
+                <!-- Chat Main -->
+                <div class="chat-main">
+                    <div class="chat-header">
+                        <div class="chat-title" id="chat-title">💬 General</div>
+                        <div>
+                            <span class="connection-status disconnected" id="conn-status">⚪</span>
+                            <button class="btn-small" id="leave-btn">🚪 Leave</button>
+                        </div>
                     </div>
+
+                    <div id="messages" class="messages-area">
+                        <div class="system-message">🔒 Select a room to start chatting</div>
+                    </div>
+
+                    <div class="input-area">
+                        <input type="text" id="message-input" placeholder="Type a message..." class="input-field" disabled>
+                        <button class="private-toggle" id="private-toggle">🔒</button>
+                        <div class="action-buttons">
+                            <button id="file-btn" class="btn btn-secondary" disabled>📎</button>
+                            <button id="send-btn" class="btn btn-primary" disabled>Send</button>
+                        </div>
+                    </div>
+                    <input type="file" id="file-input" multiple>
                 </div>
-                <input type="file" id="file-input" multiple>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    // ============================================================
-    //  ENCRYPTION MODULE
-    // ============================================================
-    class ChatEncryption {
-        constructor() {
-            this.encoder = new TextEncoder();
-            this.decoder = new TextDecoder();
-        }
-
-        async generateKey() {
-            return await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
-        }
-
-        async exportKey(key) {
-            const exported = await crypto.subtle.exportKey("raw", key);
-            return btoa(String.fromCharCode(...new Uint8Array(exported)));
-        }
-
-        async importKey(base64Key) {
-            const keyData = Uint8Array.from(atob(base64Key), c => c.charCodeAt(0));
-            return await crypto.subtle.importKey("raw", keyData, { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
-        }
-
-        async encrypt(message, key) {
-            const iv = crypto.getRandomValues(new Uint8Array(12));
-            const encoded = this.encoder.encode(message);
-            const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, encoded);
-            const result = new Uint8Array(iv.length + encrypted.byteLength);
-            result.set(iv, 0);
-            result.set(new Uint8Array(encrypted), iv.length);
-            return btoa(String.fromCharCode(...result));
-        }
-
-        async decrypt(encryptedBase64, key) {
-            const encrypted = Uint8Array.from(atob(encryptedBase64), c => c.charCodeAt(0));
-            const iv = encrypted.slice(0, 12);
-            const data = encrypted.slice(12);
-            const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
-            return this.decoder.decode(decrypted);
-        }
-
-        generateFileId() {
-            return 'file_' + crypto.randomUUID().replace(/-/g, '').substring(0, 16);
-        }
-    }
-
-    // ============================================================
-    //  P2P CHAT CLASS (UPDATED WITH GROUP & PRIVATE CHAT)
-    // ============================================================
-    class P2PChat {
-        constructor(signalingServerUrl) {
-            this.signalingServerUrl = signalingServerUrl;
-            this.ws = null;
-            this.peerId = null;
-            this.roomId = null;
-            this.username = null;
-            this.encryptionKey = null;
-            this.encryption = new ChatEncryption();
-
-            // Store all peer connections
-            this.peerConnections = new Map(); // peerId -> { pc, username, dataChannel, fileChannel, callChannel }
-            this.dataChannels = new Map(); // peerId -> RTCDataChannel
-
-            // Rooms management
-            this.rooms = new Map(); // roomId -> { name, peers: [], messages: [] }
-            this.currentRoomId = null;
-            this.currentPrivateChat = null; // peerId for private chat
-
-            // File transfers
-            this.fileTransfers = new Map();
-
-            // Message history per room
-            this.messageHistory = {};
-            this.storageKey = 'p2p_chat_history_';
-
-            // Connection state
-            this.isConnected = false;
-            this.pendingMessages = [];
-
-            this.configuration = {
-                iceServers: [
-                    { urls: 'stun:stun.l.google.com:19302' },
-                    { urls: 'stun:stun1.l.google.com:19302' },
-                    { urls: 'stun:stun2.l.google.com:19302' },
-                    { urls: 'stun:stun3.l.google.com:19302' },
-                    { urls: 'stun:stun4.l.google.com:19302' }
-                ],
-                iceCandidatePoolSize: 10
-            };
-
-            // Callbacks
-            this.onMessage = null;
-            this.onPeerJoined = null;
-            this.onPeerLeft = null;
-            this.onConnected = null;
-            this.onDisconnected = null;
-            this.onRoomCreated = null;
-            this.onPeerListUpdate = null;
-
-            this.loadHistory();
-        }
-
-        async connect() {
-            return new Promise((resolve, reject) => {
-                this.ws = new WebSocket(this.signalingServerUrl);
-
-                this.ws.onopen = () => {
-                    this.isConnected = true;
-                    if (this.onConnected) this.onConnected();
-                    resolve();
-                };
-
-                this.ws.onmessage = (event) => {
-                    try {
-                        const data = JSON.parse(event.data);
-                        this.handleSignalingMessage(data);
-                    } catch (error) {
-                        console.error('Error handling message:', error);
-                    }
-                };
-
-                this.ws.onclose = () => {
-                    this.isConnected = false;
-                    if (this.onDisconnected) this.onDisconnected();
-                };
-
-                this.ws.onerror = (error) => {
-                    reject(error);
-                };
-
-                const timeout = setTimeout(() => {
-                    if (!this.isConnected) {
-                        reject(new Error('Connection timeout'));
-                    }
-                }, 10000);
-
-                this.ws.onopen = () => {
-                    clearTimeout(timeout);
-                    this.isConnected = true;
-                    if (this.onConnected) this.onConnected();
-                    resolve();
-                };
-            });
-        }
-
-        handleSignalingMessage(data) {
-            switch (data.type) {
-                case 'registered':
-                    this.peerId = data.peerId;
-                    if (data.existingPeers && data.existingPeers.length > 0) {
-                        data.existingPeers.forEach(peer => {
-                            this.connectToPeer(peer.peerId, peer.username);
-                        });
-                    }
-                    break;
-
-                case 'peer-joined':
-                    this.connectToPeer(data.peerId, data.username);
-                    if (this.onPeerJoined) this.onPeerJoined(data.peerId, data.username);
-                    break;
-
-                case 'peer-left':
-                    this.disconnectFromPeer(data.peerId);
-                    if (this.onPeerLeft) this.onPeerLeft(data.peerId);
-                    break;
-
-                case 'offer':
-                case 'answer':
-                case 'candidate':
-                    this.handleSignaling(data);
-                    break;
-
-                case 'private-message':
-                    this.handlePrivateMessage(data);
-                    break;
-
-                default:
-                    console.log('Unknown message type:', data.type);
+    <script>
+        // ============================================================
+        //  ENCRYPTION MODULE
+        // ============================================================
+        class ChatEncryption {
+            async generateKey() {
+                return await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+            }
+            async exportKey(key) {
+                const exported = await crypto.subtle.exportKey("raw", key);
+                return btoa(String.fromCharCode(...new Uint8Array(exported)));
+            }
+            async importKey(base64Key) {
+                const keyData = Uint8Array.from(atob(base64Key), c => c.charCodeAt(0));
+                return await crypto.subtle.importKey("raw", keyData, { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
+            }
+            async encrypt(message, key) {
+                const iv = crypto.getRandomValues(new Uint8Array(12));
+                const encoded = new TextEncoder().encode(message);
+                const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, encoded);
+                const result = new Uint8Array(iv.length + encrypted.byteLength);
+                result.set(iv, 0);
+                result.set(new Uint8Array(encrypted), iv.length);
+                return btoa(String.fromCharCode(...result));
+            }
+            async decrypt(encryptedBase64, key) {
+                const encrypted = Uint8Array.from(atob(encryptedBase64), c => c.charCodeAt(0));
+                const iv = encrypted.slice(0, 12);
+                const data = encrypted.slice(12);
+                const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
+                return new TextDecoder().decode(decrypted);
             }
         }
 
-        async createRoom(username) {
-            this.username = username;
-            this.roomId = this.generateRoomId();
-            this.encryptionKey = await this.encryption.generateKey();
-            const exportedKey = await this.encryption.exportKey(this.encryptionKey);
+        // ============================================================
+        //  P2P CHAT - FIXED VERSION
+        // ============================================================
+        class P2PChat {
+            constructor(signalingUrl) {
+                this.signalingUrl = signalingUrl;
+                this.ws = null;
+                this.peerId = null;
+                this.roomId = null;
+                this.username = null;
+                this.encryptionKey = null;
+                this.encryption = new ChatEncryption();
+                this.peerConnections = {};
+                this.dataChannels = {};
+                this.peers = {};
+                this.isConnected = false;
+                this.pendingMessages = [];
+                this.messageHistory = [];
+                this.storageKey = 'p2p_chat_';
 
-            await this.connect();
+                // Callbacks
+                this.onMessage = null;
+                this.onPeerUpdate = null;
+                this.onConnectionChange = null;
 
-            this.ws.send(JSON.stringify({
-                type: 'register',
-                roomId: this.roomId,
-                peerId: this.generatePeerId(),
-                username: username
-            }));
+                this.configuration = {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' },
+                        { urls: 'stun:stun2.l.google.com:19302' },
+                        { urls: 'stun:stun3.l.google.com:19302' },
+                        { urls: 'stun:stun4.l.google.com:19302' }
+                    ],
+                    iceCandidatePoolSize: 10
+                };
 
-            // Create default room
-            this.createNewRoom('General');
-
-            return { roomId: this.roomId, encryptionKey: exportedKey };
-        }
-
-        async joinRoom(roomId, encryptionKeyBase64, username) {
-            this.roomId = roomId;
-            this.username = username;
-            this.encryptionKey = await this.encryption.importKey(encryptionKeyBase64);
-
-            await this.connect();
-
-            this.ws.send(JSON.stringify({
-                type: 'register',
-                roomId: roomId,
-                peerId: this.generatePeerId(),
-                username: username
-            }));
-        }
-
-        generateRoomId() {
-            return Math.random().toString(36).substring(2, 10).toUpperCase();
-        }
-
-        generatePeerId() {
-            return 'user_' + Math.random().toString(36).substring(2, 10);
-        }
-
-        // ---- ROOM MANAGEMENT ----
-        createNewRoom(name) {
-            const roomId = 'room_' + Math.random().toString(36).substring(2, 8);
-            this.rooms.set(roomId, {
-                id: roomId,
-                name: name,
-                peers: [],
-                messages: [],
-                createdBy: this.peerId,
-                createdAt: Date.now()
-            });
-            if (this.onRoomCreated) this.onRoomCreated(roomId, name);
-            this.switchRoom(roomId);
-            return roomId;
-        }
-
-        switchRoom(roomId) {
-            this.currentRoomId = roomId;
-            this.currentPrivateChat = null;
-            // Load messages for this room
-            const history = this.getHistory(roomId);
-            if (this.onMessage) {
-                // Clear and reload messages
-                this.onMessage('__clear__');
-                history.forEach(msg => {
-                    this.onMessage(msg.sender, msg.message, msg.isOwn, msg.isPrivate, msg.targetPeer);
-                });
+                this.loadState();
             }
-            if (this.onPeerListUpdate) this.onPeerListUpdate(this.getRoomPeers(roomId));
-        }
 
-        startPrivateChat(peerId, username) {
-            this.currentPrivateChat = peerId;
-            this.currentRoomId = null;
-            // Load private chat history
-            const history = this.getHistory('private_' + peerId);
-            if (this.onMessage) {
-                this.onMessage('__clear__');
-                history.forEach(msg => {
-                    this.onMessage(msg.sender, msg.message, msg.isOwn, true, msg.targetPeer);
-                });
-            }
-            if (this.onPeerListUpdate) this.onPeerListUpdate([{ peerId, username }]);
-            return { peerId, username };
-        }
-
-        getRoomPeers(roomId) {
-            const peers = [];
-            for (const [peerId, info] of this.peerConnections) {
-                peers.push({ peerId, username: info.username });
-            }
-            return peers;
-        }
-
-        // ---- CONNECT TO PEER ----
-        async connectToPeer(peerId, username) {
-            if (this.peerConnections.has(peerId)) return;
-
-            const pc = new RTCPeerConnection(this.configuration);
-            this.peerConnections.set(peerId, { pc, username });
-
-            // Main data channel
-            const dataChannel = pc.createDataChannel('chat');
-            this.setupDataChannel(dataChannel, peerId);
-            this.dataChannels.set(peerId, dataChannel);
-
-            pc.ondatachannel = (event) => {
-                const channel = event.channel;
-                if (channel.label === 'chat') {
-                    this.setupDataChannel(channel, peerId);
-                    this.dataChannels.set(peerId, channel);
-                }
-            };
-
-            pc.onicecandidate = (event) => {
-                if (event.candidate) {
-                    this.sendSignaling('candidate', {
-                        targetPeerId: peerId,
-                        candidate: event.candidate
-                    });
-                }
-            };
-
-            pc.oniceconnectionstatechange = () => {
-                if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
-                    this.disconnectFromPeer(peerId);
-                }
-            };
-
-            try {
-                const offer = await pc.createOffer();
-                await pc.setLocalDescription(offer);
-                this.sendSignaling('offer', {
-                    targetPeerId: peerId,
-                    sdp: offer
-                });
-            } catch (error) {
-                console.error('Error creating offer:', error);
-            }
-        }
-
-        setupDataChannel(channel, peerId) {
-            channel.onopen = () => {
-                console.log(`✅ Data channel opened with ${peerId}`);
-                // Send pending messages
-                while (this.pendingMessages.length > 0) {
-                    const msg = this.pendingMessages.shift();
-                    channel.send(JSON.stringify(msg));
-                }
-                if (this.onPeerListUpdate) {
-                    this.onPeerListUpdate(this.getRoomPeers(this.currentRoomId));
-                }
-            };
-
-            channel.onclose = () => {
-                console.log(`Data channel closed with ${peerId}`);
-            };
-
-            channel.onmessage = async (event) => {
+            // ---- SESSION PERSISTENCE ----
+            saveState() {
                 try {
-                    const data = JSON.parse(event.data);
-                    if (data.type === 'message') {
-                        await this.handleMessage(data, peerId);
-                    } else if (data.type === 'private-message') {
-                        await this.handlePrivateMessage(data, peerId);
-                    } else if (data.type === 'room-message') {
-                        await this.handleRoomMessage(data, peerId);
-                    }
-                } catch (error) {
-                    console.error('Error handling message:', error);
-                }
-            };
-        }
-
-        // ---- SEND MESSAGES ----
-        async sendMessage(text, isPrivate = false, targetPeerId = null) {
-            if (!text.trim()) return;
-
-            const encrypted = await this.encryption.encrypt(text, this.encryptionKey);
-            
-            let payload = {
-                type: 'message',
-                sender: this.username,
-                senderId: this.peerId,
-                message: encrypted,
-                timestamp: Date.now(),
-                isPrivate: isPrivate
-            };
-
-            if (isPrivate && targetPeerId) {
-                payload.type = 'private-message';
-                payload.targetPeerId = targetPeerId;
-                // Store in private chat history
-                this.addToHistory('private_' + targetPeerId, {
-                    sender: this.username,
-                    message: text,
-                    timestamp: payload.timestamp,
-                    isOwn: true,
-                    isPrivate: true,
-                    targetPeer: targetPeerId
-                });
-            } else {
-                // Store in room history
-                const roomId = this.currentRoomId || 'default';
-                this.addToHistory(roomId, {
-                    sender: this.username,
-                    message: text,
-                    timestamp: payload.timestamp,
-                    isOwn: true,
-                    isPrivate: false
-                });
+                    const state = {
+                        roomId: this.roomId,
+                        username: this.username,
+                        encryptionKey: this.encryptionKey ? 'saved' : null,
+                        messageHistory: this.messageHistory
+                    };
+                    localStorage.setItem(this.storageKey + 'state', JSON.stringify(state));
+                } catch (e) { console.error('Save error:', e); }
             }
 
-            // Send to all connected peers or specific peer
-            if (isPrivate && targetPeerId) {
-                const channel = this.dataChannels.get(targetPeerId);
-                if (channel && channel.readyState === 'open') {
-                    channel.send(JSON.stringify(payload));
-                } else {
-                    this.pendingMessages.push(payload);
-                }
-                if (this.onMessage) {
-                    this.onMessage(this.username, text, true, true, targetPeerId);
-                }
-            } else {
-                let sent = false;
-                for (const [peerId, channel] of this.dataChannels) {
-                    if (channel.readyState === 'open') {
-                        try {
-                            channel.send(JSON.stringify(payload));
-                            sent = true;
-                        } catch (error) {
-                            console.error(`Error sending to ${peerId}:`, error);
+            loadState() {
+                try {
+                    const data = localStorage.getItem(this.storageKey + 'state');
+                    if (data) {
+                        const state = JSON.parse(data);
+                        this.roomId = state.roomId;
+                        this.username = state.username;
+                        if (state.messageHistory) {
+                            this.messageHistory = state.messageHistory;
                         }
+                        return state;
                     }
-                }
-                if (!sent) {
-                    this.pendingMessages.push(payload);
-                }
-                if (this.onMessage) {
-                    this.onMessage(this.username, text, true, false);
-                }
+                } catch (e) { console.error('Load error:', e); }
+                return null;
             }
-        }
 
-        async handleMessage(data, fromPeerId) {
-            try {
-                const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
-                if (data.isPrivate) {
-                    // Private message
-                    this.addToHistory('private_' + fromPeerId, {
-                        sender: data.sender,
-                        message: decrypted,
-                        timestamp: data.timestamp,
-                        isOwn: false,
-                        isPrivate: true,
-                        targetPeer: fromPeerId
-                    });
-                    if (this.onMessage) {
-                        this.onMessage(data.sender, decrypted, false, true, fromPeerId);
-                    }
-                } else {
-                    // Room message
-                    const roomId = this.currentRoomId || 'default';
-                    this.addToHistory(roomId, {
-                        sender: data.sender,
-                        message: decrypted,
-                        timestamp: data.timestamp,
-                        isOwn: false,
-                        isPrivate: false
-                    });
-                    if (this.onMessage) {
-                        this.onMessage(data.sender, decrypted, false, false);
-                    }
-                }
-            } catch (error) {
-                console.error('Error decrypting message:', error);
+            clearState() {
+                localStorage.removeItem(this.storageKey + 'state');
             }
-        }
 
-        async handlePrivateMessage(data, fromPeerId) {
-            try {
-                const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
-                this.addToHistory('private_' + fromPeerId, {
-                    sender: data.sender,
-                    message: decrypted,
-                    timestamp: data.timestamp,
-                    isOwn: false,
-                    isPrivate: true,
-                    targetPeer: fromPeerId
+            // ---- CONNECTION ----
+            async connect() {
+                return new Promise((resolve, reject) => {
+                    console.log('🔌 Connecting to signaling server...');
+                    this.ws = new WebSocket(this.signalingUrl);
+
+                    this.ws.onopen = () => {
+                        console.log('✅ WebSocket connected');
+                        this.isConnected = true;
+                        if (this.onConnectionChange) this.onConnectionChange(true);
+                        resolve();
+                    };
+
+                    this.ws.onmessage = (event) => {
+                        try {
+                            const data = JSON.parse(event.data);
+                            this.handleSignaling(data);
+                        } catch (e) {
+                            console.error('Message error:', e);
+                        }
+                    };
+
+                    this.ws.onclose = () => {
+                        console.log('❌ WebSocket closed');
+                        this.isConnected = false;
+                        if (this.onConnectionChange) this.onConnectionChange(false);
+                        // Auto-reconnect
+                        setTimeout(() => {
+                            if (this.roomId && this.username) {
+                                console.log('🔄 Attempting reconnect...');
+                                this.connect();
+                            }
+                        }, 3000);
+                    };
+
+                    this.ws.onerror = (error) => {
+                        console.error('WebSocket error:', error);
+                        reject(error);
+                    };
+
+                    setTimeout(() => {
+                        if (!this.isConnected) {
+                            reject(new Error('Connection timeout'));
+                        }
+                    }, 10000);
                 });
-                if (this.onMessage) {
-                    this.onMessage(data.sender, decrypted, false, true, fromPeerId);
+            }
+
+            // ---- SIGNALING ----
+            handleSignaling(data) {
+                console.log(`📨 Signaling: ${data.type}`);
+
+                switch (data.type) {
+                    case 'connected':
+                        console.log('✅ Connected to signaling server');
+                        break;
+
+                    case 'registered':
+                        this.peerId = data.peerId;
+                        console.log(`✅ Registered as ${this.peerId}`);
+                        this.saveState();
+
+                        // Connect to existing peers
+                        if (data.existingPeers) {
+                            data.existingPeers.forEach(peer => {
+                                this.connectToPeer(peer.peerId, peer.username);
+                            });
+                        }
+                        break;
+
+                    case 'peer-joined':
+                        console.log(`👋 Peer joined: ${data.username} (${data.peerId})`);
+                        this.connectToPeer(data.peerId, data.username);
+                        if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
+                        break;
+
+                    case 'peer-left':
+                        console.log(`👋 Peer left: ${data.peerId}`);
+                        this.disconnectFromPeer(data.peerId);
+                        if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
+                        break;
+
+                    case 'offer':
+                        this.handleOffer(data);
+                        break;
+
+                    case 'answer':
+                        this.handleAnswer(data);
+                        break;
+
+                    case 'candidate':
+                        this.handleCandidate(data);
+                        break;
+
+                    case 'message':
+                        this.handleMessage(data);
+                        break;
+
+                    default:
+                        console.log('Unknown message type:', data.type);
                 }
-            } catch (error) {
-                console.error('Error decrypting private message:', error);
             }
-        }
 
-        async handleRoomMessage(data, fromPeerId) {
-            try {
-                const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
-                const roomId = data.roomId || this.currentRoomId || 'default';
-                this.addToHistory(roomId, {
-                    sender: data.sender,
-                    message: decrypted,
-                    timestamp: data.timestamp,
-                    isOwn: false,
-                    isPrivate: false
-                });
-                if (this.onMessage) {
-                    this.onMessage(data.sender, decrypted, false, false);
+            // ---- CREATE/JOIN ROOM ----
+            async createRoom(username) {
+                this.username = username;
+                this.roomId = this.generateRoomId();
+                this.encryptionKey = await this.encryption.generateKey();
+                const exportedKey = await this.encryption.exportKey(this.encryptionKey);
+
+                await this.connect();
+
+                this.ws.send(JSON.stringify({
+                    type: 'register',
+                    roomId: this.roomId,
+                    peerId: this.generatePeerId(),
+                    username: username
+                }));
+
+                this.saveState();
+                return { roomId: this.roomId, encryptionKey: exportedKey };
+            }
+
+            async joinRoom(roomId, encryptionKeyBase64, username) {
+                this.roomId = roomId;
+                this.username = username;
+                this.encryptionKey = await this.encryption.importKey(encryptionKeyBase64);
+
+                await this.connect();
+
+                this.ws.send(JSON.stringify({
+                    type: 'register',
+                    roomId: roomId,
+                    peerId: this.generatePeerId(),
+                    username: username
+                }));
+
+                this.saveState();
+            }
+
+            generateRoomId() {
+                return Math.random().toString(36).substring(2, 10).toUpperCase();
+            }
+
+            generatePeerId() {
+                return 'user_' + Math.random().toString(36).substring(2, 10);
+            }
+
+            // ---- CONNECT TO PEER ----
+            async connectToPeer(peerId, username) {
+                if (this.peerConnections[peerId]) {
+                    console.log(`Already connected to ${username}`);
+                    return;
                 }
-            } catch (error) {
-                console.error('Error decrypting room message:', error);
-            }
-        }
 
-        // ---- HANDLING SIGNALING ----
-        handleSignaling(data) {
-            const peerId = data.from;
+                console.log(`🔗 Connecting to ${username}...`);
+                this.peers[peerId] = { username, connected: false };
 
-            switch (data.type) {
-                case 'offer':
-                    this.handleOffer(data);
-                    break;
-
-                case 'answer':
-                    this.handleAnswer(data);
-                    break;
-
-                case 'candidate':
-                    this.handleIceCandidate(data);
-                    break;
-            }
-        }
-
-        async handleOffer(data) {
-            const peerId = data.from;
-
-            if (!this.peerConnections.has(peerId)) {
                 const pc = new RTCPeerConnection(this.configuration);
-                this.peerConnections.set(peerId, { pc, username: data.username });
+                this.peerConnections[peerId] = pc;
+
+                // Create data channel
+                const dc = pc.createDataChannel('chat');
+                this.setupDataChannel(dc, peerId);
+                this.dataChannels[peerId] = dc;
 
                 pc.ondatachannel = (event) => {
-                    const channel = event.channel;
-                    if (channel.label === 'chat') {
-                        this.setupDataChannel(channel, peerId);
-                        this.dataChannels.set(peerId, channel);
-                    }
+                    this.setupDataChannel(event.channel, peerId);
+                    this.dataChannels[peerId] = event.channel;
                 };
 
                 pc.onicecandidate = (event) => {
@@ -1257,534 +763,613 @@
                         });
                     }
                 };
+
+                pc.oniceconnectionstatechange = () => {
+                    console.log(`ICE state for ${username}: ${pc.iceConnectionState}`);
+                    if (pc.iceConnectionState === 'connected') {
+                        this.peers[peerId].connected = true;
+                        if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
+                    }
+                    if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
+                        this.disconnectFromPeer(peerId);
+                    }
+                };
+
+                try {
+                    const offer = await pc.createOffer();
+                    await pc.setLocalDescription(offer);
+                    this.sendSignaling('offer', {
+                        targetPeerId: peerId,
+                        sdp: offer
+                    });
+                } catch (error) {
+                    console.error('Offer error:', error);
+                }
             }
 
-            const { pc } = this.peerConnections.get(peerId);
+            setupDataChannel(channel, peerId) {
+                channel.onopen = () => {
+                    console.log(`✅ Data channel open with ${this.peers[peerId]?.username || peerId}`);
+                    this.peers[peerId].connected = true;
 
-            try {
-                await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
-                const answer = await pc.createAnswer();
-                await pc.setLocalDescription(answer);
+                    // Send pending messages
+                    while (this.pendingMessages.length > 0) {
+                        const msg = this.pendingMessages.shift();
+                        channel.send(JSON.stringify(msg));
+                    }
 
-                this.sendSignaling('answer', {
-                    targetPeerId: peerId,
-                    sdp: answer
-                });
-            } catch (error) {
-                console.error('Error handling offer:', error);
+                    if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
+                };
+
+                channel.onclose = () => {
+                    console.log(`❌ Data channel closed with ${peerId}`);
+                    this.peers[peerId].connected = false;
+                    if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
+                };
+
+                channel.onmessage = async (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        console.log(`📩 Received from ${peerId}:`, data.type);
+
+                        if (data.type === 'message') {
+                            await this.handleMessage(data);
+                        } else if (data.type === 'private') {
+                            await this.handlePrivateMessage(data);
+                        }
+                    } catch (e) {
+                        console.error('Message handling error:', e);
+                    }
+                };
             }
-        }
 
-        async handleAnswer(data) {
-            const peerId = data.from;
-            if (this.peerConnections.has(peerId)) {
-                const { pc } = this.peerConnections.get(peerId);
+            // ---- HANDLE OFFERS ----
+            async handleOffer(data) {
+                const peerId = data.from;
+                console.log(`📤 Handling offer from ${data.username}`);
+
+                if (!this.peerConnections[peerId]) {
+                    this.peers[peerId] = { username: data.username || 'unknown', connected: false };
+                    const pc = new RTCPeerConnection(this.configuration);
+                    this.peerConnections[peerId] = pc;
+
+                    pc.ondatachannel = (event) => {
+                        this.setupDataChannel(event.channel, peerId);
+                        this.dataChannels[peerId] = event.channel;
+                    };
+
+                    pc.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            this.sendSignaling('candidate', {
+                                targetPeerId: peerId,
+                                candidate: event.candidate
+                            });
+                        }
+                    };
+
+                    pc.oniceconnectionstatechange = () => {
+                        if (pc.iceConnectionState === 'connected') {
+                            this.peers[peerId].connected = true;
+                            if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
+                        }
+                        if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
+                            this.disconnectFromPeer(peerId);
+                        }
+                    };
+                }
+
+                const pc = this.peerConnections[peerId];
                 try {
                     await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+                    const answer = await pc.createAnswer();
+                    await pc.setLocalDescription(answer);
+                    this.sendSignaling('answer', {
+                        targetPeerId: peerId,
+                        sdp: answer
+                    });
                 } catch (error) {
-                    console.error('Error handling answer:', error);
+                    console.error('Answer error:', error);
                 }
             }
-        }
 
-        async handleIceCandidate(data) {
-            const peerId = data.from;
-            if (this.peerConnections.has(peerId)) {
-                const { pc } = this.peerConnections.get(peerId);
+            async handleAnswer(data) {
+                const peerId = data.from;
+                if (this.peerConnections[peerId]) {
+                    try {
+                        await this.peerConnections[peerId].setRemoteDescription(new RTCSessionDescription(data.sdp));
+                        console.log(`✅ Answer set for ${peerId}`);
+                    } catch (error) {
+                        console.error('Answer handling error:', error);
+                    }
+                }
+            }
+
+            async handleCandidate(data) {
+                const peerId = data.from;
+                if (this.peerConnections[peerId] && data.candidate) {
+                    try {
+                        await this.peerConnections[peerId].addIceCandidate(new RTCIceCandidate(data.candidate));
+                    } catch (error) {
+                        console.error('Candidate error:', error);
+                    }
+                }
+            }
+
+            // ---- SEND MESSAGES ----
+            async sendMessage(text) {
+                if (!text.trim()) return;
+
+                const encrypted = await this.encryption.encrypt(text, this.encryptionKey);
+                const payload = {
+                    type: 'message',
+                    sender: this.username,
+                    senderId: this.peerId,
+                    message: encrypted,
+                    timestamp: Date.now()
+                };
+
+                // Store in history
+                this.messageHistory.push({
+                    sender: this.username,
+                    message: text,
+                    timestamp: payload.timestamp,
+                    isOwn: true
+                });
+
+                // Send to all connected peers
+                let sent = false;
+                for (const [peerId, dc] of Object.entries(this.dataChannels)) {
+                    if (dc.readyState === 'open') {
+                        try {
+                            dc.send(JSON.stringify(payload));
+                            sent = true;
+                        } catch (e) {
+                            console.error(`Send error to ${peerId}:`, e);
+                        }
+                    }
+                }
+
+                if (!sent) {
+                    this.pendingMessages.push(payload);
+                }
+
+                if (this.onMessage) {
+                    this.onMessage(this.username, text, true);
+                }
+
+                this.saveState();
+            }
+
+            async handleMessage(data) {
                 try {
-                    await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-                } catch (error) {
-                    console.error('Error adding ICE candidate:', error);
+                    const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
+                    this.messageHistory.push({
+                        sender: data.sender,
+                        message: decrypted,
+                        timestamp: data.timestamp,
+                        isOwn: false
+                    });
+
+                    if (this.onMessage) {
+                        this.onMessage(data.sender, decrypted, false);
+                    }
+                    this.saveState();
+                } catch (e) {
+                    console.error('Decrypt error:', e);
                 }
             }
-        }
 
-        sendSignaling(type, data) {
-            if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-                this.ws.send(JSON.stringify({
-                    type: type,
-                    ...data,
-                    from: this.peerId
+            async handlePrivateMessage(data) {
+                try {
+                    const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
+                    if (this.onMessage) {
+                        this.onMessage(data.sender, decrypted, false, true);
+                    }
+                } catch (e) {
+                    console.error('Private decrypt error:', e);
+                }
+            }
+
+            // ---- UTILITY ----
+            sendSignaling(type, data) {
+                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                    this.ws.send(JSON.stringify({
+                        type: type,
+                        ...data,
+                        from: this.peerId
+                    }));
+                }
+            }
+
+            disconnectFromPeer(peerId) {
+                if (this.peerConnections[peerId]) {
+                    this.peerConnections[peerId].close();
+                    delete this.peerConnections[peerId];
+                }
+                if (this.dataChannels[peerId]) {
+                    delete this.dataChannels[peerId];
+                }
+                if (this.peers[peerId]) {
+                    this.peers[peerId].connected = false;
+                }
+                if (this.onPeerUpdate) this.onPeerUpdate(this.getPeerList());
+            }
+
+            getPeerList() {
+                return Object.entries(this.peers).map(([id, info]) => ({
+                    peerId: id,
+                    username: info.username,
+                    connected: info.connected
                 }));
             }
-        }
 
-        disconnectFromPeer(peerId) {
-            if (this.peerConnections.has(peerId)) {
-                const { pc } = this.peerConnections.get(peerId);
-                pc.close();
-                this.peerConnections.delete(peerId);
+            getPeerCount() {
+                return Object.keys(this.peerConnections).length;
             }
-            if (this.dataChannels.has(peerId)) {
-                this.dataChannels.delete(peerId);
-            }
-            if (this.onPeerListUpdate) {
-                this.onPeerListUpdate(this.getRoomPeers(this.currentRoomId));
-            }
-        }
 
-        // ---- HISTORY ----
-        addToHistory(key, message) {
-            if (!this.messageHistory[key]) {
-                this.messageHistory[key] = [];
-            }
-            this.messageHistory[key].push(message);
-            if (this.messageHistory[key].length > 1000) {
-                this.messageHistory[key].shift();
-            }
-            this.saveHistory();
-        }
-
-        getHistory(key) {
-            return this.messageHistory[key] || [];
-        }
-
-        saveHistory() {
-            try {
-                localStorage.setItem(this.storageKey + this.roomId, JSON.stringify(this.messageHistory));
-            } catch (error) {
-                console.error('Error saving history:', error);
-            }
-        }
-
-        loadHistory() {
-            try {
-                const data = localStorage.getItem(this.storageKey + this.roomId);
-                if (data) {
-                    this.messageHistory = JSON.parse(data);
+            leave() {
+                if (this.ws) {
+                    this.ws.send(JSON.stringify({ type: 'peer-disconnect' }));
+                    this.ws.close();
                 }
-            } catch (error) {
-                console.error('Error loading history:', error);
+                for (const peerId of Object.keys(this.peerConnections)) {
+                    this.disconnectFromPeer(peerId);
+                }
+                this.clearState();
+                this.roomId = null;
+                this.username = null;
+                this.peerId = null;
+            }
+
+            getHistory() {
+                return this.messageHistory;
+            }
+
+            clearHistory() {
+                this.messageHistory = [];
+                this.saveState();
+            }
+
+            restoreSession() {
+                const state = this.loadState();
+                if (state && state.roomId && state.username) {
+                    return {
+                        roomId: state.roomId,
+                        username: state.username,
+                        hasKey: state.encryptionKey === 'saved'
+                    };
+                }
+                return null;
             }
         }
 
-        clearHistory(key) {
-            this.messageHistory[key] = [];
-            this.saveHistory();
-        }
+        // ============================================================
+        //  UI CONTROLLER
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const defaultUsername = 'User_' + Math.random().toString(36).substring(2, 6);
+            document.getElementById('create-username').value = defaultUsername;
 
-        // ---- UTILITY ----
-        getPeers() {
-            const peers = [];
-            for (const [peerId, { username }] of this.peerConnections) {
-                peers.push({ peerId, username });
-            }
-            return peers;
-        }
+            const signalingUrl = 'wss://chasedavision.onrender.com';
+            const chat = new P2PChat(signalingUrl);
 
-        getRooms() {
-            return Array.from(this.rooms.values());
-        }
+            // DOM refs
+            const setupScreen = document.getElementById('setup-screen');
+            const chatScreen = document.getElementById('chat-screen');
+            const peerList = document.getElementById('peer-list');
+            const messagesDiv = document.getElementById('messages');
+            const messageInput = document.getElementById('message-input');
+            const sendBtn = document.getElementById('send-btn');
+            const createBtn = document.getElementById('create-room');
+            const joinBtn = document.getElementById('join-room');
+            const leaveBtn = document.getElementById('leave-btn');
+            const fileBtn = document.getElementById('file-btn');
+            const fileInput = document.getElementById('file-input');
+            const privateToggle = document.getElementById('private-toggle');
+            const connStatus = document.getElementById('conn-status');
+            const roomIdDisplay = document.getElementById('room-id-display');
+            const keyDisplay = document.getElementById('key-display');
+            const chatTitle = document.getElementById('chat-title');
 
-        leaveRoom() {
-            if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-                this.ws.send(JSON.stringify({ type: 'peer-disconnect' }));
-            }
-            this.cleanup();
-            this.roomId = null;
-        }
+            let isPrivateMode = false;
+            let privateTarget = null;
 
-        cleanup() {
-            for (const [peerId] of this.peerConnections) {
-                this.disconnectFromPeer(peerId);
-            }
-            if (this.ws) {
-                this.ws.close();
-                this.ws = null;
-            }
-            this.peerConnections.clear();
-            this.dataChannels.clear();
-            this.pendingMessages = [];
-            this.peerId = null;
-            this.isConnected = false;
-        }
-    }
-
-    // ============================================================
-    //  UI CONTROLLER
-    // ============================================================
-    document.addEventListener('DOMContentLoaded', () => {
-        const defaultUsername = 'User_' + Math.random().toString(36).substring(2, 6);
-        document.getElementById('create-username').value = defaultUsername;
-
-        const signalingUrl = 'wss://chasedavision.onrender.com';
-        const chat = new P2PChat(signalingUrl);
-        let currentUsername = '';
-        let isPrivateMode = false;
-        let privateTargetPeer = null;
-
-        // DOM refs
-        const setupScreen = document.getElementById('setup-screen');
-        const chatScreen = document.getElementById('chat-screen');
-        const connectionStatus = document.getElementById('connection-status');
-        const serverStatus = document.getElementById('server-status');
-
-        const createRoomBtn = document.getElementById('create-room');
-        const joinRoomBtn = document.getElementById('join-room');
-        const sendMessageBtn = document.getElementById('send-message');
-        const messageInput = document.getElementById('message-input');
-        const copyRoomInfoBtn = document.getElementById('copy-room-info');
-        const fileInput = document.getElementById('file-input');
-        const fileSendBtn = document.getElementById('file-send-btn');
-        const callBtn = document.getElementById('call-btn');
-        const privateToggle = document.getElementById('private-toggle');
-        const clearChatBtn = document.getElementById('clear-chat-btn');
-        const leaveRoomBtn = document.getElementById('leave-room-btn');
-        const newRoomBtn = document.getElementById('new-room-btn');
-
-        const messagesDiv = document.getElementById('messages');
-        const roomItemsDiv = document.getElementById('room-items');
-        const contactItemsDiv = document.getElementById('contact-items');
-        const currentChatTitle = document.getElementById('current-chat-title');
-
-        let currentRoomId = null;
-
-        // ---- CHAT CALLBACKS ----
-        chat.onConnected = () => {
-            updateStatus(true);
-            serverStatus.textContent = '✅ Connected to server';
-            serverStatus.style.color = '#00ff88';
-        };
-
-        chat.onDisconnected = () => {
-            updateStatus(false);
-            serverStatus.textContent = '❌ Disconnected';
-            serverStatus.style.color = '#ff4444';
-        };
-
-        chat.onMessage = (sender, message, isOwn, isPrivate = false, targetPeer = null) => {
-            if (sender === '__clear__') {
-                messagesDiv.innerHTML = '';
-                return;
-            }
-            displayMessage(sender, message, isOwn, isPrivate, targetPeer);
-        };
-
-        chat.onPeerJoined = (peerId, username) => {
-            showSystemMessage(`👋 ${username} joined`);
-            updatePeerList();
-            updateRoomList();
-        };
-
-        chat.onPeerLeft = (peerId) => {
-            showSystemMessage(`👋 Peer left`);
-            updatePeerList();
-            updateRoomList();
-        };
-
-        chat.onRoomCreated = (roomId, name) => {
-            updateRoomList();
-        };
-
-        chat.onPeerListUpdate = (peers) => {
-            updatePeerList();
-        };
-
-        // ---- CREATE ROOM ----
-        createRoomBtn.addEventListener('click', async () => {
-            const username = document.getElementById('create-username').value.trim();
-            if (!username) {
-                alert('Please enter a username');
-                return;
+            // ---- RESTORE SESSION ----
+            const session = chat.restoreSession();
+            if (session && session.roomId && session.username) {
+                document.getElementById('join-room-id').value = session.roomId;
+                document.getElementById('join-username').value = session.username;
+                document.getElementById('join-encryption-key').value = '';
+                // Show a notification to re-enter key
+                alert(`Welcome back ${session.username}! Please enter your encryption key to reconnect.`);
             }
 
-            createRoomBtn.disabled = true;
-            createRoomBtn.textContent = 'Creating...';
+            // ---- CHAT CALLBACKS ----
+            chat.onMessage = (sender, message, isOwn, isPrivate = false) => {
+                displayMessage(sender, message, isOwn, isPrivate);
+            };
 
-            try {
-                currentUsername = username;
-                const roomInfo = await chat.createRoom(username);
+            chat.onPeerUpdate = (peers) => {
+                updatePeerList(peers);
+            };
 
-                setupScreen.classList.remove('active');
-                chatScreen.classList.add('active');
-
-                messageInput.disabled = false;
-                sendMessageBtn.disabled = false;
-                fileSendBtn.disabled = false;
-                callBtn.disabled = false;
-
-                showSystemMessage('🚀 Workspace created! Share the ID and Key with friends.');
-                updateRoomList();
-                updatePeerList();
-
-            } catch (error) {
-                console.error('Error creating room:', error);
-                alert('Failed to create room: ' + error.message);
-            } finally {
-                createRoomBtn.disabled = false;
-                createRoomBtn.textContent = 'Create Workspace';
-            }
-        });
-
-        // ---- JOIN ROOM ----
-        joinRoomBtn.addEventListener('click', async () => {
-            const roomId = document.getElementById('join-room-id').value.trim().toUpperCase();
-            const key = document.getElementById('join-encryption-key').value.trim();
-            const username = document.getElementById('join-username').value.trim();
-
-            if (!roomId || !key || !username) {
-                alert('Please fill in all fields');
-                return;
-            }
-
-            joinRoomBtn.disabled = true;
-            joinRoomBtn.textContent = 'Joining...';
-
-            try {
-                currentUsername = username;
-                await chat.joinRoom(roomId, key, username);
-
-                setupScreen.classList.remove('active');
-                chatScreen.classList.add('active');
-
-                messageInput.disabled = false;
-                sendMessageBtn.disabled = false;
-                fileSendBtn.disabled = false;
-                callBtn.disabled = false;
-
-                showSystemMessage('🔗 Joined the workspace!');
-                updateRoomList();
-                updatePeerList();
-
-            } catch (error) {
-                console.error('Error joining room:', error);
-                alert('Failed to join room: ' + error.message);
-            } finally {
-                joinRoomBtn.disabled = false;
-                joinRoomBtn.textContent = 'Join Workspace';
-            }
-        });
-
-        // ---- SEND MESSAGE ----
-        sendMessageBtn.addEventListener('click', async () => {
-            const text = messageInput.value.trim();
-            if (!text) return;
-
-            try {
-                if (isPrivateMode && privateTargetPeer) {
-                    await chat.sendMessage(text, true, privateTargetPeer);
+            chat.onConnectionChange = (connected) => {
+                if (connected) {
+                    connStatus.textContent = '🟢';
+                    connStatus.className = 'connection-status connected';
+                    document.getElementById('connection-status').textContent = '🟢 Connected';
+                    document.getElementById('connection-status').style.color = '#00ff88';
                 } else {
-                    await chat.sendMessage(text, false);
+                    connStatus.textContent = '🔴';
+                    connStatus.className = 'connection-status disconnected';
+                    document.getElementById('connection-status').textContent = '🔴 Disconnected';
+                    document.getElementById('connection-status').style.color = '#ff4444';
                 }
-                messageInput.value = '';
-            } catch (error) {
-                console.error('Error sending message:', error);
-                alert('Failed to send message: ' + error.message);
-            }
-        });
+            };
 
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessageBtn.click();
-            }
-        });
-
-        // ---- PRIVATE TOGGLE ----
-        privateToggle.addEventListener('click', () => {
-            isPrivateMode = !isPrivateMode;
-            privateToggle.classList.toggle('active');
-            if (isPrivateMode) {
-                const peers = chat.getPeers();
-                if (peers.length === 0) {
-                    alert('No peers online to send private messages to');
-                    isPrivateMode = false;
-                    privateToggle.classList.remove('active');
+            // ---- CREATE ROOM ----
+            createBtn.addEventListener('click', async () => {
+                const username = document.getElementById('create-username').value.trim();
+                if (!username) {
+                    alert('Please enter a username');
                     return;
                 }
-                // Show peer selector
-                const peerNames = peers.map(p => p.username).join(', ');
-                const target = prompt(`Send private message to which peer?\nAvailable: ${peerNames}`, peers[0].username);
-                if (target) {
-                    const found = peers.find(p => p.username === target);
-                    if (found) {
-                        privateTargetPeer = found.peerId;
-                        privateToggle.textContent = `🔒 ${target}`;
-                        showSystemMessage(`🔒 Private chat with ${target}`);
+
+                createBtn.disabled = true;
+                createBtn.textContent = 'Creating...';
+
+                try {
+                    const roomInfo = await chat.createRoom(username);
+                    roomIdDisplay.textContent = roomInfo.roomId;
+                    keyDisplay.textContent = roomInfo.encryptionKey;
+
+                    setupScreen.classList.remove('active');
+                    chatScreen.classList.add('active');
+
+                    messageInput.disabled = false;
+                    sendBtn.disabled = false;
+                    fileBtn.disabled = false;
+
+                    showSystemMessage(`🚀 Workspace created! Share this ID: ${roomInfo.roomId}`);
+                    updatePeerList([]);
+
+                    // Copy room info to clipboard
+                    const info = `Room ID: ${roomInfo.roomId}\nKey: ${roomInfo.encryptionKey}`;
+                    navigator.clipboard.writeText(info).then(() => {
+                        showSystemMessage('📋 Room info copied to clipboard!');
+                    });
+
+                } catch (error) {
+                    console.error('Create error:', error);
+                    alert('Failed to create room: ' + error.message);
+                } finally {
+                    createBtn.disabled = false;
+                    createBtn.textContent = 'Create Workspace';
+                }
+            });
+
+            // ---- JOIN ROOM ----
+            joinBtn.addEventListener('click', async () => {
+                const roomId = document.getElementById('join-room-id').value.trim().toUpperCase();
+                const key = document.getElementById('join-encryption-key').value.trim();
+                const username = document.getElementById('join-username').value.trim();
+
+                if (!roomId || !key || !username) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                joinBtn.disabled = true;
+                joinBtn.textContent = 'Joining...';
+
+                try {
+                    await chat.joinRoom(roomId, key, username);
+                    roomIdDisplay.textContent = roomId;
+                    keyDisplay.textContent = key;
+
+                    setupScreen.classList.remove('active');
+                    chatScreen.classList.add('active');
+
+                    messageInput.disabled = false;
+                    sendBtn.disabled = false;
+                    fileBtn.disabled = false;
+
+                    showSystemMessage('🔗 Joined the workspace!');
+                    updatePeerList([]);
+
+                } catch (error) {
+                    console.error('Join error:', error);
+                    alert('Failed to join room: ' + error.message);
+                } finally {
+                    joinBtn.disabled = false;
+                    joinBtn.textContent = 'Join Workspace';
+                }
+            });
+
+            // ---- SEND MESSAGE ----
+            sendBtn.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            async function sendMessage() {
+                const text = messageInput.value.trim();
+                if (!text) return;
+
+                try {
+                    if (isPrivateMode && privateTarget) {
+                        // Private message - send directly
+                        const encrypted = await chat.encryption.encrypt(text, chat.encryptionKey);
+                        const payload = {
+                            type: 'private',
+                            sender: chat.username,
+                            senderId: chat.peerId,
+                            message: encrypted,
+                            timestamp: Date.now()
+                        };
+                        const dc = chat.dataChannels[privateTarget];
+                        if (dc && dc.readyState === 'open') {
+                            dc.send(JSON.stringify(payload));
+                            displayMessage(chat.username, text, true, true);
+                        } else {
+                            alert('Peer not connected');
+                        }
                     } else {
-                        alert('Peer not found');
-                        isPrivateMode = false;
-                        privateToggle.classList.remove('active');
-                        privateToggle.textContent = '🔒';
+                        await chat.sendMessage(text);
+                    }
+                    messageInput.value = '';
+                } catch (error) {
+                    console.error('Send error:', error);
+                    alert('Failed to send message: ' + error.message);
+                }
+            }
+
+            // ---- PRIVATE TOGGLE ----
+            privateToggle.addEventListener('click', () => {
+                const peers = chat.getPeerList().filter(p => p.connected);
+                if (peers.length === 0) {
+                    alert('No peers online to send private messages to');
+                    return;
+                }
+
+                if (!isPrivateMode) {
+                    const peerNames = peers.map(p => p.username).join(', ');
+                    const target = prompt(`Send private message to:\n${peerNames}`, peers[0]?.username);
+                    if (target) {
+                        const found = peers.find(p => p.username === target);
+                        if (found) {
+                            privateTarget = found.peerId;
+                            isPrivateMode = true;
+                            privateToggle.classList.add('active');
+                            privateToggle.textContent = `🔒 ${target}`;
+                            showSystemMessage(`🔒 Private chat with ${target}`);
+                        } else {
+                            alert('Peer not found');
+                        }
                     }
                 } else {
                     isPrivateMode = false;
+                    privateTarget = null;
                     privateToggle.classList.remove('active');
+                    privateToggle.textContent = '🔒';
+                    showSystemMessage('🔓 Switched to public chat');
                 }
-            } else {
-                privateTargetPeer = null;
-                privateToggle.textContent = '🔒';
-                showSystemMessage('Switched to public chat');
-            }
-        });
+            });
 
-        // ---- NEW ROOM ----
-        newRoomBtn.addEventListener('click', () => {
-            const name = prompt('Enter room name:', 'New Room');
-            if (name && name.trim()) {
-                chat.createNewRoom(name.trim());
-                updateRoomList();
-                showSystemMessage(`📁 Room "${name}" created`);
-            }
-        });
+            // ---- FILE UPLOAD ----
+            fileBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (!files || files.length === 0) return;
 
-        // ---- CLEAR CHAT ----
-        clearChatBtn.addEventListener('click', () => {
-            if (confirm('Clear all messages?')) {
-                messagesDiv.innerHTML = '';
-                const key = chat.currentRoomId || 'default';
-                chat.clearHistory(key);
-                showSystemMessage('🗑️ Chat cleared');
-            }
-        });
-
-        // ---- LEAVE ROOM ----
-        leaveRoomBtn.addEventListener('click', () => {
-            if (confirm('Leave the workspace?')) {
-                chat.leaveRoom();
-                setupScreen.classList.add('active');
-                chatScreen.classList.remove('active');
-                messageInput.disabled = true;
-                sendMessageBtn.disabled = true;
-                fileSendBtn.disabled = true;
-                callBtn.disabled = true;
-                showSystemMessage('You left the workspace');
-                updateStatus(false);
-            }
-        });
-
-        // ---- FILE SEND ----
-        fileSendBtn.addEventListener('click', () => {
-            fileInput.click();
-        });
-
-        fileInput.addEventListener('change', async (e) => {
-            const files = e.target.files;
-            if (!files || files.length === 0) return;
-
-            const peers = chat.getPeers();
-            if (peers.length === 0) {
-                alert('No peers connected');
-                return;
-            }
-
-            for (const file of files) {
-                const reader = new FileReader();
-                reader.onload = async (event) => {
-                    const base64 = event.target.result;
-                    // Send file as message (encrypted)
+                for (const file of files) {
                     const text = `📁 ${file.name} (${(file.size/1024).toFixed(1)}KB)`;
-                    await chat.sendMessage(text, false);
-                };
-                reader.readAsDataURL(file);
+                    await chat.sendMessage(text);
+                }
+                fileInput.value = '';
+            });
+
+            // ---- LEAVE ----
+            leaveBtn.addEventListener('click', () => {
+                if (confirm('Leave the workspace?')) {
+                    chat.leave();
+                    chatScreen.classList.remove('active');
+                    setupScreen.classList.add('active');
+                    messageInput.disabled = true;
+                    sendBtn.disabled = true;
+                    fileBtn.disabled = true;
+                    showSystemMessage('You left the workspace');
+                }
+            });
+
+            // ---- UI HELPERS ----
+            function displayMessage(sender, message, isOwn, isPrivate = false) {
+                const msgElement = document.createElement('div');
+                msgElement.className = `message ${isOwn ? 'own' : 'other'} ${isPrivate ? 'private' : ''}`;
+                const privateBadge = isPrivate ? ' 🔒' : '';
+                msgElement.innerHTML = `
+                    <strong>${sender}${privateBadge}</strong>
+                    <span>${message}</span>
+                    <small>${new Date().toLocaleTimeString()}</small>
+                `;
+                messagesDiv.appendChild(msgElement);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                // Auto-scroll
+                if (messagesDiv.children.length > 100) {
+                    messagesDiv.removeChild(messagesDiv.children[0]);
+                }
             }
 
-            fileInput.value = '';
+            function showSystemMessage(text) {
+                const msgElement = document.createElement('div');
+                msgElement.className = 'system-message';
+                msgElement.textContent = text;
+                messagesDiv.appendChild(msgElement);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+
+            function updatePeerList(peers) {
+                // Keep "You" at the top
+                let html = `
+                    <div class="peer-item current" style="border-left:2px solid #00d4ff;margin-bottom:6px;">
+                        <span>👤 You (${chat.username})</span>
+                        <span class="status-dot online"></span>
+                    </div>
+                `;
+
+                peers.forEach(peer => {
+                    html += `
+                        <div class="peer-item ${peer.connected ? 'online' : 'offline'}" 
+                             onclick="window.startPrivate('${peer.peerId}', '${peer.username}')"
+                             style="cursor:pointer;">
+                            <span>${peer.username}</span>
+                            <span class="status-dot ${peer.connected ? 'online' : 'offline'}"></span>
+                        </div>
+                    `;
+                });
+
+                peerList.innerHTML = html;
+
+                // Update title with peer count
+                const count = peers.filter(p => p.connected).length;
+                chatTitle.textContent = `💬 General (${count} online)`;
+            }
+
+            // ---- GLOBAL ----
+            window.startPrivate = function(peerId, username) {
+                if (confirm(`Start private chat with ${username}?`)) {
+                    privateTarget = peerId;
+                    isPrivateMode = true;
+                    privateToggle.classList.add('active');
+                    privateToggle.textContent = `🔒 ${username}`;
+                    showSystemMessage(`🔒 Private chat with ${username}`);
+                }
+            };
+
+            // ---- LOAD HISTORY ----
+            function loadHistory() {
+                const history = chat.getHistory();
+                history.forEach(msg => {
+                    displayMessage(msg.sender, msg.message, msg.isOwn);
+                });
+            }
+
+            // Show history when chat loads
+            const observer = new MutationObserver(() => {
+                if (chatScreen.classList.contains('active')) {
+                    loadHistory();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(chatScreen, { attributes: true, attributeFilter: ['class'] });
+
+            console.log('🔒 Secure P2P Chat loaded!');
+            console.log(`📡 Signaling: ${signalingUrl}`);
         });
-
-        // ---- UPDATE FUNCTIONS ----
-        function updateRoomList() {
-            const rooms = chat.getRooms();
-            roomItemsDiv.innerHTML = rooms.map(room => `
-                <div class="room-item" data-room="${room.id}" onclick="switchRoom('${room.id}')">
-                    <span>💬 ${room.name}</span>
-                    <span class="badge">${room.peers.length || 0}</span>
-                </div>
-            `).join('');
-
-            // Add contacts from peers
-            updatePeerList();
-        }
-
-        function updatePeerList() {
-            const peers = chat.getPeers();
-            contactItemsDiv.innerHTML = peers.map(peer => `
-                <div class="contact-item" onclick="startPrivateChat('${peer.peerId}', '${peer.username}')">
-                    <span>
-                        <span class="status online"></span>
-                        ${peer.username}
-                    </span>
-                    <button class="btn-small" onclick="event.stopPropagation(); startPrivateChat('${peer.peerId}', '${peer.username}')">💬</button>
-                </div>
-            `).join('');
-
-            if (peers.length === 0) {
-                contactItemsDiv.innerHTML = '<div class="system-message" style="padding:8px;">No contacts online</div>';
-            }
-        }
-
-        function displayMessage(sender, message, isOwn, isPrivate = false, targetPeer = null) {
-            const msgElement = document.createElement('div');
-            msgElement.className = `message ${isOwn ? 'own' : 'other'} ${isPrivate ? 'private' : ''}`;
-            
-            const privateBadge = isPrivate ? '<span class="private-badge">🔒 Private</span>' : '';
-            msgElement.innerHTML = `
-                <strong>${sender} ${privateBadge}</strong>
-                <span>${message}</span>
-                <small>${new Date().toLocaleTimeString()}</small>
-            `;
-            messagesDiv.appendChild(msgElement);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-
-        function showSystemMessage(text) {
-            const msgElement = document.createElement('div');
-            msgElement.className = 'system-message';
-            msgElement.textContent = text;
-            messagesDiv.appendChild(msgElement);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-
-        function updateStatus(connected) {
-            if (connected) {
-                connectionStatus.textContent = '🟢 Connected';
-                connectionStatus.style.color = '#00ff88';
-            } else {
-                connectionStatus.textContent = '🔴 Disconnected';
-                connectionStatus.style.color = '#ff4444';
-            }
-        }
-
-        // ---- GLOBAL FUNCTIONS FOR HTML ----
-        window.switchRoom = function(roomId) {
-            chat.switchRoom(roomId);
-            currentRoomId = roomId;
-            const room = chat.rooms.get(roomId);
-            if (room) {
-                currentChatTitle.innerHTML = `${room.name} <small>${room.peers.length || 0} members</small>`;
-            }
-            // Update active state
-            document.querySelectorAll('.room-item').forEach(el => {
-                el.classList.toggle('active', el.dataset.room === roomId);
-            });
-        };
-
-        window.startPrivateChat = function(peerId, username) {
-            chat.startPrivateChat(peerId, username);
-            currentChatTitle.innerHTML = `🔒 ${username} <small>Private chat</small>`;
-            // Update active state
-            document.querySelectorAll('.contact-item').forEach(el => {
-                el.classList.toggle('active', el.dataset.peer === peerId);
-            });
-            // Disable private toggle for private chat
-            privateToggle.style.opacity = '0.5';
-            privateToggle.style.pointerEvents = 'none';
-        };
-
-        // ---- SIDEBAR TABS ----
-        document.querySelectorAll('.sidebar-tabs button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.sidebar-tabs button').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const tab = btn.dataset.tab;
-                document.getElementById('rooms-list').style.display = tab === 'rooms' ? 'block' : 'none';
-                document.getElementById('contacts-list').style.display = tab === 'contacts' ? 'block' : 'none';
-            });
-        });
-
-        console.log('🔒 Secure P2P Chat loaded with Group & Private Chat support!');
-        console.log(`📡 Signaling server: ${signalingUrl}`);
-    });
-</script>
+    </script>
 
 </body>
 </html>
