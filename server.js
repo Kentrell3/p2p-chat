@@ -1,4 +1,4 @@
-// server.js - With Group Chat Support
+// server.js - Complete Fixed Version
 const WebSocket = require('ws');
 const http = require('http');
 const fs = require('fs');
@@ -8,8 +8,8 @@ const PORT = process.env.PORT || 8080;
 // ===== STORAGE =====
 const publicMessages = {};
 const privateMessages = {};
-const groupMessages = {}; // groupId -> [messages]
-const groupMembers = {}; // groupId -> [usernames]
+const groupMessages = {};
+const groupMembers = {};
 const deletedMessages = {};
 const clients = {};
 
@@ -37,7 +37,7 @@ wss.on('connection', (ws) => {
             console.log(`📨 ${msg.type} from ${currentUsername || 'unknown'}`);
 
             switch (msg.type) {
-                case 'register':
+                case 'register': {
                     const roomId = msg.roomId;
                     const username = msg.username;
                     
@@ -90,12 +90,9 @@ wss.on('connection', (ws) => {
                     uniquePrivate.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
                     ws.send(JSON.stringify({ type: 'private-history', messages: uniquePrivate.slice(-50) }));
                     
-                    // ===== SEND GROUP HISTORY =====
-                    const userGroups = [];
+                    // Send group history
                     for (const [groupId, members] of Object.entries(groupMembers)) {
                         if (members.includes(username)) {
-                            userGroups.push(groupId);
-                            // Send group messages
                             const groupMsgs = (groupMessages[groupId] || [])
                                 .filter(m => !userDeleted.has(m.id))
                                 .slice(-50);
@@ -115,16 +112,15 @@ wss.on('connection', (ws) => {
                     
                     console.log(`✅ ${username} joined room ${roomId}`);
                     break;
+                }
 
-                // ===== CREATE GROUP =====
-                case 'create-group':
+                case 'create-group': {
                     if (!currentUsername || !currentRoomId) return;
                     
                     const groupId = 'group_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
                     const groupName = msg.groupName || 'New Group';
                     const members = msg.members || [];
                     
-                    // Add creator to members
                     if (!members.includes(currentUsername)) {
                         members.push(currentUsername);
                     }
@@ -133,9 +129,7 @@ wss.on('connection', (ws) => {
                     groupMessages[groupId] = [];
                     
                     console.log(`👥 Group created: ${groupName} (${groupId}) by ${currentUsername}`);
-                    console.log(`👥 Members: ${members.join(', ')}`);
                     
-                    // Notify all members
                     for (const member of members) {
                         if (clients[currentRoomId][member]) {
                             clients[currentRoomId][member].send(JSON.stringify({
@@ -148,14 +142,13 @@ wss.on('connection', (ws) => {
                         }
                     }
                     break;
+                }
 
-                // ===== GROUP MESSAGE =====
-                case 'group-message':
+                case 'group-message': {
                     if (!currentUsername || !currentRoomId) return;
                     
                     const { groupId: gId, message } = msg;
                     
-                    // Check if user is in group
                     if (!groupMembers[gId] || !groupMembers[gId].includes(currentUsername)) {
                         ws.send(JSON.stringify({
                             type: 'error',
@@ -175,7 +168,6 @@ wss.on('connection', (ws) => {
                     if (!groupMessages[gId]) groupMessages[gId] = [];
                     groupMessages[gId].push(groupMsgData);
                     
-                    // Send to all group members
                     for (const member of groupMembers[gId]) {
                         if (clients[currentRoomId][member]) {
                             clients[currentRoomId][member].send(JSON.stringify({
@@ -186,12 +178,12 @@ wss.on('connection', (ws) => {
                     }
                     console.log(`💬 Group message in ${gId} from ${currentUsername}`);
                     break;
+                }
 
-                // ===== GROUP FILE =====
-                case 'group-file':
+                case 'group-file': {
                     if (!currentUsername || !currentRoomId) return;
                     
-                    const { groupId: gfId, fileName, fileSize, fileType, fileData } = msg;
+                    const { groupId: gfId, fileName, fileSize, fileType, fileData: gfData, id: gfMsgId } = msg;
                     
                     if (!groupMembers[gfId] || !groupMembers[gfId].includes(currentUsername)) {
                         ws.send(JSON.stringify({
@@ -201,65 +193,55 @@ wss.on('connection', (ws) => {
                         return;
                     }
                     
-                    const groupFileData = {
-                        id: msg.id || Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
+                    const groupFileMsg = {
+                        id: gfMsgId || Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
                         sender: currentUsername,
                         fileName: fileName,
                         fileSize: fileSize,
                         fileType: fileType,
-                        fileData: fileData,
+                        fileData: gfData,
                         timestamp: Date.now(),
                         groupId: gfId,
                         isFile: true
                     };
                     
                     if (!groupMessages[gfId]) groupMessages[gfId] = [];
-                    groupMessages[gfId].push(groupFileData);
+                    groupMessages[gfId].push(groupFileMsg);
                     
                     for (const member of groupMembers[gfId]) {
                         if (clients[currentRoomId][member]) {
                             clients[currentRoomId][member].send(JSON.stringify({
                                 type: 'group-file',
-                                message: groupFileData
+                                message: groupFileMsg
                             }));
                         }
                     }
                     console.log(`📎 Group file in ${gfId} from ${currentUsername}`);
                     break;
+                }
 
-                // ===== ADD TO GROUP =====
-                case 'add-to-group':
+                case 'add-to-group': {
                     if (!currentUsername || !currentRoomId) return;
                     
                     const { groupId: agId, newMember } = msg;
                     
                     if (!groupMembers[agId]) {
-                        ws.send(JSON.stringify({
-                            type: 'error',
-                            message: 'Group not found'
-                        }));
+                        ws.send(JSON.stringify({ type: 'error', message: 'Group not found' }));
                         return;
                     }
                     
                     if (!groupMembers[agId].includes(currentUsername)) {
-                        ws.send(JSON.stringify({
-                            type: 'error',
-                            message: 'You are not a member of this group'
-                        }));
+                        ws.send(JSON.stringify({ type: 'error', message: 'You are not a member of this group' }));
                         return;
                     }
                     
                     if (groupMembers[agId].includes(newMember)) {
-                        ws.send(JSON.stringify({
-                            type: 'error',
-                            message: `${newMember} is already in the group`
-                        }));
+                        ws.send(JSON.stringify({ type: 'error', message: `${newMember} is already in the group` }));
                         return;
                     }
                     
                     groupMembers[agId].push(newMember);
                     
-                    // Notify all members
                     for (const member of groupMembers[agId]) {
                         if (clients[currentRoomId][member]) {
                             clients[currentRoomId][member].send(JSON.stringify({
@@ -273,18 +255,15 @@ wss.on('connection', (ws) => {
                     }
                     console.log(`➕ ${newMember} added to group ${agId} by ${currentUsername}`);
                     break;
+                }
 
-                // ===== DELETE GROUP MESSAGE =====
-                case 'delete-group-message':
+                case 'delete-group-message': {
                     if (!currentUsername || !currentRoomId) return;
                     
                     const { groupId: dgId, messageId: dMsgId } = msg;
                     
                     if (!groupMembers[dgId] || !groupMembers[dgId].includes(currentUsername)) {
-                        ws.send(JSON.stringify({
-                            type: 'error',
-                            message: 'You are not a member of this group'
-                        }));
+                        ws.send(JSON.stringify({ type: 'error', message: 'You are not a member of this group' }));
                         return;
                     }
                     
@@ -293,7 +272,6 @@ wss.on('connection', (ws) => {
                     }
                     deletedMessages[currentRoomId][currentUsername].add(dMsgId);
                     
-                    // Notify all group members
                     for (const member of groupMembers[dgId]) {
                         if (clients[currentRoomId][member]) {
                             if (!deletedMessages[currentRoomId][member]) {
@@ -308,18 +286,15 @@ wss.on('connection', (ws) => {
                     }
                     console.log(`🗑️ Group message ${dMsgId} deleted by ${currentUsername}`);
                     break;
+                }
 
-                // ===== LEAVE GROUP =====
-                case 'leave-group':
+                case 'leave-group': {
                     if (!currentUsername || !currentRoomId) return;
                     
                     const { groupId: lgId } = msg;
                     
                     if (!groupMembers[lgId]) {
-                        ws.send(JSON.stringify({
-                            type: 'error',
-                            message: 'Group not found'
-                        }));
+                        ws.send(JSON.stringify({ type: 'error', message: 'Group not found' }));
                         return;
                     }
                     
@@ -328,7 +303,6 @@ wss.on('connection', (ws) => {
                         groupMembers[lgId].splice(index, 1);
                     }
                     
-                    // Notify remaining members
                     for (const member of groupMembers[lgId]) {
                         if (clients[currentRoomId][member]) {
                             clients[currentRoomId][member].send(JSON.stringify({
@@ -341,11 +315,12 @@ wss.on('connection', (ws) => {
                     }
                     console.log(`🚪 ${currentUsername} left group ${lgId}`);
                     break;
+                }
 
-                case 'message':
+                case 'message': {
                     if (!currentUsername || !currentRoomId) return;
                     
-                    const messageData = {
+                    const msgData = {
                         id: msg.id || Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
                         sender: currentUsername,
                         message: msg.message,
@@ -354,43 +329,44 @@ wss.on('connection', (ws) => {
                         targetUser: msg.targetUser || null
                     };
                     
-                    if (messageData.isPrivate && messageData.targetUser) {
-                        console.log(`🔒 Private from ${messageData.sender} to ${messageData.targetUser}`);
+                    if (msgData.isPrivate && msgData.targetUser) {
+                        console.log(`🔒 Private from ${msgData.sender} to ${msgData.targetUser}`);
                         
-                        const privateKey = currentRoomId + '_' + messageData.sender + '_' + messageData.targetUser;
+                        const privateKey = currentRoomId + '_' + msgData.sender + '_' + msgData.targetUser;
                         if (!privateMessages[privateKey]) privateMessages[privateKey] = [];
-                        privateMessages[privateKey].push(messageData);
+                        privateMessages[privateKey].push(msgData);
                         
-                        const reverseKey = currentRoomId + '_' + messageData.targetUser + '_' + messageData.sender;
+                        const reverseKey = currentRoomId + '_' + msgData.targetUser + '_' + msgData.sender;
                         if (!privateMessages[reverseKey]) privateMessages[reverseKey] = [];
-                        privateMessages[reverseKey].push(messageData);
+                        privateMessages[reverseKey].push(msgData);
                         
-                        if (clients[currentRoomId][messageData.targetUser]) {
-                            clients[currentRoomId][messageData.targetUser].send(JSON.stringify({
+                        if (clients[currentRoomId][msgData.targetUser]) {
+                            clients[currentRoomId][msgData.targetUser].send(JSON.stringify({
                                 type: 'private-message',
-                                message: messageData
+                                message: msgData
                             }));
                         }
                         if (clients[currentRoomId][currentUsername]) {
                             clients[currentRoomId][currentUsername].send(JSON.stringify({
                                 type: 'private-message',
-                                message: messageData
+                                message: msgData
                             }));
                         }
                     } else {
-                        console.log(`💬 Public from ${messageData.sender}`);
-                        publicMessages[currentRoomId].push(messageData);
+                        console.log(`💬 Public from ${msgData.sender}`);
+                        publicMessages[currentRoomId].push(msgData);
                         broadcast(currentRoomId, {
                             type: 'message',
-                            message: messageData
+                            message: msgData
                         });
                     }
                     break;
+                }
 
-                case 'file':
+                case 'file': {
                     if (!currentUsername || !currentRoomId) return;
                     
-                    const fileData = {
+                    const fileMsg = {
                         id: msg.id || Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
                         sender: currentUsername,
                         fileName: msg.fileName,
@@ -403,39 +379,40 @@ wss.on('connection', (ws) => {
                         isFile: true
                     };
                     
-                    if (fileData.isPrivate && fileData.targetUser) {
-                        console.log(`🔒 Private file from ${fileData.sender} to ${fileData.targetUser}`);
+                    if (fileMsg.isPrivate && fileMsg.targetUser) {
+                        console.log(`🔒 Private file from ${fileMsg.sender} to ${fileMsg.targetUser}`);
                         
-                        const privateKey = currentRoomId + '_' + fileData.sender + '_' + fileData.targetUser;
+                        const privateKey = currentRoomId + '_' + fileMsg.sender + '_' + fileMsg.targetUser;
                         if (!privateMessages[privateKey]) privateMessages[privateKey] = [];
-                        privateMessages[privateKey].push(fileData);
+                        privateMessages[privateKey].push(fileMsg);
                         
-                        const reverseKey = currentRoomId + '_' + fileData.targetUser + '_' + fileData.sender;
+                        const reverseKey = currentRoomId + '_' + fileMsg.targetUser + '_' + fileMsg.sender;
                         if (!privateMessages[reverseKey]) privateMessages[reverseKey] = [];
-                        privateMessages[reverseKey].push(fileData);
+                        privateMessages[reverseKey].push(fileMsg);
                         
-                        if (clients[currentRoomId][fileData.targetUser]) {
-                            clients[currentRoomId][fileData.targetUser].send(JSON.stringify({
+                        if (clients[currentRoomId][fileMsg.targetUser]) {
+                            clients[currentRoomId][fileMsg.targetUser].send(JSON.stringify({
                                 type: 'file',
-                                message: fileData
+                                message: fileMsg
                             }));
                         }
                         if (clients[currentRoomId][currentUsername]) {
                             clients[currentRoomId][currentUsername].send(JSON.stringify({
                                 type: 'file',
-                                message: fileData
+                                message: fileMsg
                             }));
                         }
                     } else {
-                        publicMessages[currentRoomId].push(fileData);
+                        publicMessages[currentRoomId].push(fileMsg);
                         broadcast(currentRoomId, {
                             type: 'file',
-                            message: fileData
+                            message: fileMsg
                         });
                     }
                     break;
+                }
 
-                case 'delete-message':
+                case 'delete-message': {
                     if (!currentUsername || !currentRoomId) return;
                     
                     const { messageId, isPrivate, targetUser } = msg;
@@ -470,8 +447,9 @@ wss.on('connection', (ws) => {
                         }, [currentUsername]);
                     }
                     break;
+                }
 
-                case 'clear-chat':
+                case 'clear-chat': {
                     if (!currentUsername || !currentRoomId) return;
                     
                     const { chatType, targetUser: clearTarget } = msg;
@@ -486,15 +464,15 @@ wss.on('connection', (ws) => {
                         const privateKey = currentRoomId + '_' + currentUsername + '_' + clearTarget;
                         const reverseKey = currentRoomId + '_' + clearTarget + '_' + currentUsername;
                         
-                        const messagesToDelete = [];
+                        const msgsToDelete = [];
                         if (privateMessages[privateKey]) {
-                            messagesToDelete.push(...privateMessages[privateKey]);
+                            msgsToDelete.push(...privateMessages[privateKey]);
                         }
                         if (privateMessages[reverseKey]) {
-                            messagesToDelete.push(...privateMessages[reverseKey]);
+                            msgsToDelete.push(...privateMessages[reverseKey]);
                         }
                         
-                        for (const m of messagesToDelete) {
+                        for (const m of msgsToDelete) {
                             deletedMessages[currentRoomId][currentUsername].add(m.id);
                             if (clients[currentRoomId][clearTarget]) {
                                 if (!deletedMessages[currentRoomId][clearTarget]) {
@@ -516,7 +494,6 @@ wss.on('connection', (ws) => {
                             }));
                         }
                     } else if (chatType === 'group') {
-                        // Clear group messages for this user
                         const groupId = clearTarget;
                         if (groupMessages[groupId]) {
                             for (const m of groupMessages[groupId]) {
@@ -538,8 +515,9 @@ wss.on('connection', (ws) => {
                         }));
                     }
                     break;
+                }
 
-                case 'typing':
+                case 'typing': {
                     if (!currentUsername || !currentRoomId) return;
                     
                     const typingData = {
@@ -553,7 +531,6 @@ wss.on('connection', (ws) => {
                             clients[currentRoomId][msg.targetUser].send(JSON.stringify(typingData));
                         }
                     } else if (msg.groupId) {
-                        // Group typing - send to all group members
                         const gMembers = groupMembers[msg.groupId] || [];
                         for (const member of gMembers) {
                             if (member !== currentUsername && clients[currentRoomId][member]) {
@@ -567,14 +544,17 @@ wss.on('connection', (ws) => {
                         broadcast(currentRoomId, typingData, [currentUsername]);
                     }
                     break;
+                }
 
-                case 'leave':
+                case 'leave': {
                     handleDisconnect(currentUsername, currentRoomId);
                     break;
+                }
 
-                case 'ping':
+                case 'ping': {
                     ws.send(JSON.stringify({ type: 'pong' }));
                     break;
+                }
             }
         } catch (e) {
             console.error('Error:', e);
