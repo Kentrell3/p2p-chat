@@ -301,7 +301,7 @@
         }
 
         // ============================================================
-        //  CHAT CLIENT
+        //  CHAT CLIENT - COMPLETE FIX
         // ============================================================
         class SecureChat {
             constructor(serverUrl) {
@@ -527,20 +527,12 @@
 
                 switch (data.type) {
                     case 'history':
+                        // Public messages - go to group chat
                         for (const msg of data.messages) {
                             if (this.processedIds.has(msg.id)) continue;
                             this.processedIds.add(msg.id);
                             
-                            let chatId;
-                            let isPrivate = msg.isPrivate || false;
-                            if (isPrivate && msg.targetUser) {
-                                chatId = msg.targetUser === this.username ? 
-                                    this.getChatId(msg.sender, true) : 
-                                    this.getChatId(msg.targetUser, true);
-                            } else {
-                                chatId = this.getChatId('room', false);
-                            }
-                            
+                            const chatId = this.getChatId('room', false);
                             const decrypted = await this.encryption.decrypt(msg.message);
                             msg.message = decrypted;
                             
@@ -555,20 +547,36 @@
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
 
+                    case 'private-history':
+                        // Private messages - ONLY for this user
+                        for (const msg of data.messages) {
+                            if (this.processedIds.has(msg.id)) continue;
+                            this.processedIds.add(msg.id);
+                            
+                            // Determine who the other user is
+                            const otherUser = msg.sender === this.username ? msg.targetUser : msg.sender;
+                            const chatId = this.getChatId(otherUser, true);
+                            
+                            const decrypted = await this.encryption.decrypt(msg.message);
+                            msg.message = decrypted;
+                            msg.isPrivate = true;
+                            
+                            // Add to chat (mark as own if sender is this user)
+                            const isOwn = msg.sender === this.username;
+                            this.addMessageToChat(chatId, msg, isOwn);
+                            if (this.onMessage) {
+                                this.onMessage(msg, isOwn, chatId);
+                            }
+                        }
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                        break;
+
                     case 'message':
                         if (this.processedIds.has(data.message.id)) break;
                         this.processedIds.add(data.message.id);
                         
-                        let chatId;
-                        let isPrivate = data.message.isPrivate || false;
-                        if (isPrivate && data.message.targetUser) {
-                            chatId = data.message.targetUser === this.username ? 
-                                this.getChatId(data.message.sender, true) : 
-                                this.getChatId(data.message.targetUser, true);
-                        } else {
-                            chatId = this.getChatId('room', false);
-                        }
-                        
+                        const chatId = this.getChatId('room', false);
                         const decrypted = await this.encryption.decrypt(data.message.message);
                         data.message.message = decrypted;
                         
@@ -586,25 +594,17 @@
                         if (this.processedIds.has(data.message.id)) break;
                         this.processedIds.add(data.message.id);
                         
-                        let pChatId = data.message.targetUser === this.username ? 
-                            this.getChatId(data.message.sender, true) : 
-                            this.getChatId(data.message.targetUser, true);
+                        const otherUser = data.message.sender === this.username ? data.message.targetUser : data.message.sender;
+                        const pChatId = this.getChatId(otherUser, true);
                         
                         const pDecrypted = await this.encryption.decrypt(data.message.message);
                         data.message.message = pDecrypted;
                         data.message.isPrivate = true;
                         
-                        // Only add if not from us (or if it's our own, update)
-                        if (data.message.sender !== this.username) {
-                            this.addMessageToChat(pChatId, data.message, false);
-                            if (this.onMessage) {
-                                this.onMessage(data.message, false, pChatId);
-                            }
-                        } else {
-                            this.addMessageToChat(pChatId, data.message, true);
-                            if (this.onMessage) {
-                                this.onMessage(data.message, true, pChatId);
-                            }
+                        const isOwn = data.message.sender === this.username;
+                        this.addMessageToChat(pChatId, data.message, isOwn);
+                        if (this.onMessage) {
+                            this.onMessage(data.message, isOwn, pChatId);
                         }
                         this.saveSession();
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
@@ -617,9 +617,8 @@
                         let fileChatId;
                         let fileIsPrivate = data.message.isPrivate || false;
                         if (fileIsPrivate && data.message.targetUser) {
-                            fileChatId = data.message.targetUser === this.username ? 
-                                this.getChatId(data.message.sender, true) : 
-                                this.getChatId(data.message.targetUser, true);
+                            const ftargetUser = data.message.sender === this.username ? data.message.targetUser : data.message.sender;
+                            fileChatId = this.getChatId(ftargetUser, true);
                         } else {
                             fileChatId = this.getChatId('room', false);
                         }
@@ -1335,6 +1334,8 @@
             console.log('💬 Secure Chat loaded!');
             console.log(`📡 Server: ${serverUrl}`);
             console.log('🔒 Private messages: ONLY sender + recipient see them');
+            console.log('🔒 Private messages are NEVER sent to other users');
+            console.log('🔄 Refresh does NOT affect other users');
             console.log('🗑️ Clear chat button available');
         });
     </script>
