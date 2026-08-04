@@ -26,19 +26,18 @@
 
         .container {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1200px;
             background: rgba(20, 27, 43, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 16px;
             padding: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.05);
             max-height: 98vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* ===== HEADER ===== */
         header {
             text-align: center;
             margin-bottom: 16px;
@@ -50,13 +49,11 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-size: 28px;
-            margin-bottom: 2px;
         }
 
         header p {
             color: #8892b0;
             font-size: 13px;
-            -webkit-text-fill-color: #8892b0;
         }
 
         /* ===== SCREENS ===== */
@@ -122,7 +119,6 @@
             font-size: 13px;
         }
 
-        /* ===== FORM ELEMENTS ===== */
         .input-field {
             width: 100%;
             padding: 10px 14px;
@@ -144,10 +140,6 @@
         .input-field:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-        }
-
-        .input-field::placeholder {
-            color: #556;
         }
 
         .btn {
@@ -185,9 +177,24 @@
             transform: translateY(-2px);
         }
 
-        .btn-secondary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .btn-success {
+            background: rgba(0, 255, 136, 0.15);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .btn-success:hover {
+            background: rgba(0, 255, 136, 0.25);
+        }
+
+        .btn-danger {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+            border: 1px solid rgba(255, 68, 68, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 68, 68, 0.3);
         }
 
         .btn-small {
@@ -205,26 +212,6 @@
             background: rgba(45, 62, 90, 0.8);
         }
 
-        .btn-danger {
-            background: rgba(255, 68, 68, 0.2);
-            color: #ff4444;
-            border: 1px solid rgba(255, 68, 68, 0.2);
-        }
-
-        .btn-danger:hover {
-            background: rgba(255, 68, 68, 0.3);
-        }
-
-        .btn-success {
-            background: rgba(0, 255, 136, 0.15);
-            color: #00ff88;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-        }
-
-        .btn-success:hover {
-            background: rgba(0, 255, 136, 0.25);
-        }
-
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -238,59 +225,7 @@
             gap: 4px;
         }
 
-        .status-bar span {
-            white-space: nowrap;
-        }
-
         /* ===== CHAT SCREEN ===== */
-        .chat-header {
-            background: rgba(26, 35, 50, 0.8);
-            padding: 10px 14px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            flex-shrink: 0;
-        }
-
-        .chat-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-            font-size: 12px;
-            margin-bottom: 6px;
-        }
-
-        .chat-info code {
-            background: rgba(13, 20, 33, 0.5);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            color: #00d4ff;
-            word-break: break-all;
-        }
-
-        .chat-info .room-id {
-            color: #e0e0e0;
-            font-weight: bold;
-        }
-
-        .peer-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 6px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .peer-info .actions {
-            display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-
         .chat-layout {
             display: flex;
             gap: 12px;
@@ -298,79 +233,126 @@
             min-height: 0;
         }
 
-        /* ===== PEER LIST ===== */
-        .peer-list {
-            width: 160px;
-            min-width: 140px;
+        /* ===== LEFT SIDEBAR - Rooms & Contacts ===== */
+        .sidebar {
+            width: 220px;
+            min-width: 200px;
             background: rgba(13, 20, 33, 0.5);
             border-radius: 12px;
-            padding: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
             max-height: 100%;
-            overflow-y: auto;
-            flex-shrink: 0;
+            overflow: hidden;
         }
 
-        .peer-list h3 {
-            font-size: 11px;
-            text-transform: uppercase;
+        .sidebar-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 8px;
+        }
+
+        .sidebar-tabs button {
+            flex: 1;
+            padding: 6px 8px;
+            background: transparent;
+            border: none;
             color: #8892b0;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
+            font-size: 11px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-weight: 500;
         }
 
-        .peer-item {
+        .sidebar-tabs button.active {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+        }
+
+        .sidebar-tabs button:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar-content .section-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #556;
+            letter-spacing: 1px;
+            margin: 8px 0 4px 0;
+        }
+
+        .room-item, .contact-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 10px;
+            padding: 8px 10px;
             border-radius: 6px;
-            margin-bottom: 3px;
-            font-size: 12px;
-            transition: all 0.3s;
+            margin-bottom: 2px;
             cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
         }
 
-        .peer-item:hover {
-            background: rgba(0, 212, 255, 0.05);
+        .room-item:hover, .contact-item:hover {
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .peer-item.current-user {
-            background: rgba(0, 212, 255, 0.05);
-            border: 1px solid rgba(0, 212, 255, 0.1);
-            cursor: default;
+        .room-item.active, .contact-item.active {
+            background: rgba(0, 212, 255, 0.08);
+            border-left: 2px solid #00d4ff;
         }
 
-        .peer-item .badge {
+        .room-item .badge, .contact-item .badge {
             font-size: 9px;
-            background: rgba(0, 212, 255, 0.1);
-            color: #00d4ff;
             padding: 2px 6px;
             border-radius: 10px;
-        }
-
-        .peer-item .badge.offline {
-            background: rgba(255, 68, 68, 0.1);
-            color: #ff4444;
-        }
-
-        .peer-item .peer-actions {
-            display: flex;
-            gap: 3px;
-        }
-
-        .peer-item .peer-actions button {
-            font-size: 10px;
-            padding: 1px 5px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.05);
-            color: #8892b0;
-        }
-
-        .peer-item .peer-actions button:hover {
             background: rgba(0, 212, 255, 0.1);
             color: #00d4ff;
+        }
+
+        .room-item .badge.unread {
+            background: #ff4444;
+            color: white;
+        }
+
+        .contact-item .status {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .contact-item .status.online {
+            background: #00ff88;
+        }
+
+        .contact-item .status.offline {
+            background: #ff4444;
+        }
+
+        .create-room-btn {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px dashed rgba(0, 212, 255, 0.3);
+            border-radius: 6px;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .create-room-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
         }
 
         /* ===== CHAT MAIN ===== */
@@ -379,6 +361,36 @@
             display: flex;
             flex-direction: column;
             min-width: 0;
+        }
+
+        .chat-header {
+            background: rgba(26, 35, 50, 0.8);
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header .chat-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        .chat-header .chat-title small {
+            font-size: 12px;
+            font-weight: 400;
+            color: #8892b0;
+            margin-left: 8px;
+        }
+
+        .chat-header .chat-actions {
+            display: flex;
+            gap: 4px;
         }
 
         .messages-area {
@@ -420,6 +432,10 @@
             color: #e0e0e0;
         }
 
+        .message.private {
+            border-left: 3px solid #ffaa00;
+        }
+
         .message strong {
             display: block;
             font-size: 10px;
@@ -427,26 +443,20 @@
             opacity: 0.7;
         }
 
+        .message .private-badge {
+            font-size: 9px;
+            background: rgba(255, 170, 0, 0.2);
+            color: #ffaa00;
+            padding: 1px 6px;
+            border-radius: 10px;
+            margin-left: 6px;
+        }
+
         .message small {
             display: block;
             font-size: 9px;
             opacity: 0.5;
             margin-top: 3px;
-        }
-
-        .message .file-link {
-            display: inline-block;
-            margin-top: 4px;
-            padding: 4px 10px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 4px;
-            color: inherit;
-            text-decoration: none;
-            font-size: 12px;
-        }
-
-        .message .file-link:hover {
-            background: rgba(0, 0, 0, 0.3);
         }
 
         .input-area {
@@ -470,853 +480,648 @@
             font-size: 16px;
         }
 
-        /* ===== FILE PROGRESS ===== */
-        .file-progress {
-            background: rgba(13, 20, 33, 0.8);
-            border-radius: 8px;
+        .input-area .private-toggle {
             padding: 8px 12px;
-            margin-bottom: 6px;
-        }
-
-        .file-progress .file-progress-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-
-        .file-progress .file-progress-bar {
-            height: 4px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .file-progress .file-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00d4ff, #0099cc);
-            transition: width 0.3s;
-            width: 0%;
-        }
-
-        .file-download {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 212, 255, 0.05);
-            border: 1px solid rgba(0, 212, 255, 0.1);
+            background: rgba(255, 170, 0, 0.1);
+            border: 1px solid rgba(255, 170, 0, 0.2);
             border-radius: 8px;
-            padding: 6px 12px;
-            margin-bottom: 6px;
+            color: #ffaa00;
             font-size: 12px;
-        }
-
-        .file-download a {
-            color: #00d4ff;
-            text-decoration: none;
-            padding: 2px 8px;
-            border-radius: 4px;
-            background: rgba(0, 212, 255, 0.1);
-        }
-
-        .file-download a:hover {
-            background: rgba(0, 212, 255, 0.2);
-        }
-
-        /* ===== CALL UI ===== */
-        .call-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            flex-direction: column;
-        }
-
-        .call-overlay.active {
-            display: flex;
-        }
-
-        .call-overlay .call-container {
-            width: 90%;
-            max-width: 800px;
-            background: rgba(20, 27, 43, 0.95);
-            border-radius: 16px;
-            padding: 20px;
-            position: relative;
-        }
-
-        .call-overlay .call-videos {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: center;
-        }
-
-        .call-overlay .call-videos video {
-            width: 100%;
-            max-width: 400px;
-            border-radius: 12px;
-            background: #0a0e17;
-            transform: scaleX(-1);
-        }
-
-        .call-overlay .call-videos video.local-video {
-            max-width: 200px;
-            position: absolute;
-            bottom: 80px;
-            right: 20px;
-            border: 2px solid rgba(0, 212, 255, 0.3);
-        }
-
-        .call-overlay .call-controls {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 16px;
-        }
-
-        .call-overlay .call-controls button {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 50%;
-            width: 56px;
-            height: 56px;
-            font-size: 24px;
             cursor: pointer;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .call-overlay .call-controls .call-end {
-            background: #ff4444;
-            color: white;
-        }
-
-        .call-overlay .call-controls .call-end:hover {
-            background: #cc0000;
-            transform: scale(1.1);
-        }
-
-        .call-overlay .call-controls .call-mute {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        .call-overlay .call-controls .call-mute:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .call-overlay .call-status {
-            text-align: center;
-            color: #8892b0;
-            font-size: 14px;
-            margin-top: 12px;
-        }
-
-        /* ===== SCROLLBAR ===== */
-        .messages-area::-webkit-scrollbar,
-        .peer-list::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .messages-area::-webkit-scrollbar-track,
-        .peer-list::-webkit-scrollbar-track {
-            background: rgba(13, 20, 33, 0.5);
-        }
-
-        .messages-area::-webkit-scrollbar-thumb,
-        .peer-list::-webkit-scrollbar-thumb {
-            background: rgba(35, 48, 68, 0.8);
-            border-radius: 2px;
-        }
-
-        /* ===== ANIMATIONS ===== */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        .status-online {
-            color: #00ff88;
-        }
-        .status-offline {
-            color: #ff4444;
-        }
-        .status-connecting {
-            color: #ffaa00;
-            animation: pulse 1s infinite;
+        .input-area .private-toggle.active {
+            background: rgba(255, 170, 0, 0.2);
+            border-color: #ffaa00;
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .container {
                 padding: 12px;
-                border-radius: 12px;
                 max-height: 100vh;
-                padding: 10px;
-            }
-
-            header h1 {
-                font-size: 22px;
             }
 
             .chat-layout {
                 flex-direction: column;
             }
 
-            .peer-list {
+            .sidebar {
                 width: 100%;
                 min-width: unset;
-                max-height: 80px;
-                display: flex;
-                flex-direction: column;
+                max-height: 120px;
             }
 
-            .peer-list h3 {
-                margin-bottom: 4px;
-                font-size: 10px;
-            }
-
-            .peer-list-items {
+            .sidebar-content {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 4px;
             }
 
-            .peer-item {
+            .room-item, .contact-item {
                 padding: 4px 8px;
-                font-size: 11px;
-                margin-bottom: 2px;
+                font-size: 12px;
                 flex: 0 1 auto;
             }
 
-            .chat-info {
-                font-size: 11px;
-                gap: 4px;
-            }
-
-            .chat-info code {
-                font-size: 10px;
+            .chat-header .chat-title {
+                font-size: 14px;
             }
 
             .messages-area {
                 min-height: 150px;
-                padding: 8px;
             }
 
             .message {
                 max-width: 90%;
                 font-size: 13px;
-                padding: 6px 10px;
-            }
-
-            .input-area .action-buttons .btn {
-                padding: 8px 10px;
-                font-size: 14px;
-            }
-
-            .call-overlay .call-videos video {
-                max-width: 100%;
-            }
-
-            .call-overlay .call-videos video.local-video {
-                max-width: 120px;
-                bottom: 70px;
-                right: 10px;
-            }
-
-            .call-overlay .call-controls button {
-                width: 48px;
-                height: 48px;
-                font-size: 20px;
-            }
-
-            .setup-section {
-                padding: 14px;
             }
         }
 
-        @media (max-width: 480px) {
-            .container {
-                padding: 8px;
-                border-radius: 8px;
-            }
-
-            header h1 {
-                font-size: 18px;
-            }
-
-            header p {
-                font-size: 11px;
-            }
-
-            .peer-info .actions .btn-small {
-                font-size: 10px;
-                padding: 2px 6px;
-            }
-
-            .status-bar {
-                font-size: 10px;
-                padding: 4px 8px;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== HIDDEN FILE INPUT ===== */
+        /* Scrollbar */
+        .messages-area::-webkit-scrollbar,
+        .sidebar-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .messages-area::-webkit-scrollbar-track,
+        .sidebar-content::-webkit-scrollbar-track {
+            background: rgba(13, 20, 33, 0.5);
+        }
+
+        .messages-area::-webkit-scrollbar-thumb,
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(35, 48, 68, 0.8);
+            border-radius: 2px;
+        }
+
+        /* Hidden file input */
         #file-input {
             display: none;
         }
 
-        /* ===== PEER LIST ITEMS CONTAINER ===== */
-        .peer-list-items {
-            overflow-y: auto;
-            flex: 1;
+        /* Call overlay (simplified) */
+        .call-overlay {
+            display: none;
         }
 
-        /* ===== BADGE COLORS ===== */
-        .badge-online {
-            color: #00ff88;
+        .call-overlay.active {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
-        .badge-offline {
-            color: #ff4444;
+
+        /* Peer list in sidebar */
+        .peer-list-compact {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 4px 0;
+        }
+
+        .peer-list-compact .peer-chip {
+            padding: 2px 8px;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 12px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .peer-list-compact .peer-chip:hover {
+            background: rgba(0, 212, 255, 0.15);
+        }
+
+        .peer-list-compact .peer-chip .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .peer-list-compact .peer-chip .status-dot.online {
+            background: #00ff88;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- HEADER -->
-        <header>
-            <h1>🔒 Secure P2P Chat</h1>
-            <p>End-to-end encrypted · No servers · No tracking</p>
-        </header>
+<div class="container">
+    <header>
+        <h1>🔒 Secure P2P Chat</h1>
+        <p>End-to-end encrypted · Group chats · Private messaging</p>
+    </header>
 
-        <!-- ===== SETUP SCREEN ===== -->
-        <div id="setup-screen" class="screen active">
-            <div class="setup-section">
-                <h2>🚀 Create a Room</h2>
-                <p class="hint">Start a new encrypted chat room</p>
-                <input type="text" id="create-username" placeholder="Your name..." class="input-field">
-                <button id="create-room" class="btn btn-primary">Create Room</button>
-            </div>
-
-            <div class="divider">
-                <span>or</span>
-            </div>
-
-            <div class="setup-section">
-                <h2>🔗 Join a Room</h2>
-                <p class="hint">Enter the room details from your friend</p>
-                <input type="text" id="join-room-id" placeholder="Room ID (e.g., AB3C7D)" class="input-field">
-                <input type="text" id="join-encryption-key" placeholder="Encryption Key" class="input-field">
-                <input type="text" id="join-username" placeholder="Your name..." class="input-field">
-                <button id="join-room" class="btn btn-secondary">Join Room</button>
-            </div>
-
-            <div class="status-bar">
-                <span id="connection-status">⚪ Disconnected</span>
-                <span id="server-status">Server: Not connected</span>
-            </div>
+    <!-- ===== SETUP SCREEN ===== -->
+    <div id="setup-screen" class="screen active">
+        <div class="setup-section">
+            <h2>🚀 Create a Workspace</h2>
+            <p class="hint">Start your own private chat workspace</p>
+            <input type="text" id="create-username" placeholder="Your name..." class="input-field">
+            <button id="create-room" class="btn btn-primary">Create Workspace</button>
         </div>
 
-        <!-- ===== CHAT SCREEN ===== -->
-        <div id="chat-screen" class="screen">
-            <div class="chat-header">
-                <div class="chat-info">
-                    <div>
-                        <span>Room: <span class="room-id" id="room-id-display">---</span></span>
-                    </div>
-                    <div>
-                        <span>🔑 Key: <code id="key-display">---</code></span>
-                        <button id="copy-room-info" class="btn-small">📋 Copy</button>
-                    </div>
-                </div>
-                <div class="peer-info">
-                    <span id="peer-count">👥 0 online</span>
-                    <div class="actions">
-                        <button id="clear-history-btn" class="btn-small" title="Clear chat history">🗑️</button>
-                        <button id="leave-room" class="btn-danger btn-small">Leave Room</button>
-                    </div>
-                </div>
-            </div>
+        <div class="divider"><span>or</span></div>
 
-            <div class="chat-layout">
-                <!-- Peer List -->
-                <div class="peer-list">
-                    <h3>Connected Peers</h3>
-                    <div class="peer-list-items" id="peer-list-items">
-                        <div class="peer-item current-user">
-                            <span>👤 You</span>
-                            <span class="badge" id="your-name">---</span>
-                        </div>
-                    </div>
-                    <div id="file-progress" style="margin-top:8px;"></div>
-                </div>
+        <div class="setup-section">
+            <h2>🔗 Join a Workspace</h2>
+            <p class="hint">Enter the workspace details from your friend</p>
+            <input type="text" id="join-room-id" placeholder="Workspace ID" class="input-field">
+            <input type="text" id="join-encryption-key" placeholder="Encryption Key" class="input-field">
+            <input type="text" id="join-username" placeholder="Your name..." class="input-field">
+            <button id="join-room" class="btn btn-secondary">Join Workspace</button>
+        </div>
 
-                <!-- Chat Main -->
-                <div class="chat-main">
-                    <div id="messages" class="messages-area">
-                        <div class="system-message">🔒 Messages are end-to-end encrypted</div>
-                    </div>
-
-                    <div class="input-area">
-                        <input type="text" id="message-input" placeholder="Type a message..." class="input-field" disabled>
-                        <div class="action-buttons">
-                            <button id="file-send-btn" class="btn btn-secondary" title="Send file" disabled>📎</button>
-                            <button id="call-btn" class="btn btn-secondary" title="Voice call" disabled>📞</button>
-                            <button id="video-call-btn" class="btn btn-secondary" title="Video call" disabled>📹</button>
-                            <button id="send-message" class="btn btn-primary" disabled>Send</button>
-                        </div>
-                    </div>
-                    <input type="file" id="file-input" multiple>
-                </div>
-            </div>
+        <div class="status-bar">
+            <span id="connection-status">⚪ Disconnected</span>
+            <span id="server-status">Server: Not connected</span>
         </div>
     </div>
 
-    <!-- ===== CALL OVERLAY ===== -->
-    <div class="call-overlay" id="call-overlay">
-        <div class="call-container">
-            <div class="call-videos">
-                <video id="remote-video" autoplay playsinline></video>
-                <video id="local-video" autoplay playsinline muted class="local-video"></video>
+    <!-- ===== CHAT SCREEN ===== -->
+    <div id="chat-screen" class="screen">
+        <div class="chat-layout">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-tabs">
+                    <button class="active" data-tab="rooms">💬 Rooms</button>
+                    <button data-tab="contacts">👥 Contacts</button>
+                </div>
+                <div class="sidebar-content" id="sidebar-content">
+                    <!-- Rooms will be rendered here -->
+                    <div id="rooms-list">
+                        <div class="section-title">Your Rooms</div>
+                        <div id="room-items"></div>
+                        <button class="create-room-btn" id="new-room-btn">+ New Room</button>
+                    </div>
+                    <div id="contacts-list" style="display:none;">
+                        <div class="section-title">Online Contacts</div>
+                        <div id="contact-items"></div>
+                    </div>
+                </div>
             </div>
-            <div class="call-status" id="call-status">Connecting...</div>
-            <div class="call-controls">
-                <button class="call-mute" id="call-mute-btn" title="Mute">🎤</button>
-                <button class="call-end" id="call-end-btn" title="End call">📞</button>
-                <button class="call-mute" id="call-video-toggle" title="Toggle video">📹</button>
+
+            <!-- Chat Main -->
+            <div class="chat-main">
+                <div class="chat-header">
+                    <div class="chat-title" id="current-chat-title">
+                        Select a room <small>or start a new one</small>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="btn-small" id="clear-chat-btn" title="Clear chat">🗑️</button>
+                        <button class="btn-small" id="leave-room-btn" title="Leave room">🚪</button>
+                    </div>
+                </div>
+
+                <div id="messages" class="messages-area">
+                    <div class="system-message">🔒 Select a room to start chatting</div>
+                </div>
+
+                <div class="input-area">
+                    <input type="text" id="message-input" placeholder="Type a message..." class="input-field" disabled>
+                    <button class="private-toggle" id="private-toggle" title="Send private message">🔒</button>
+                    <div class="action-buttons">
+                        <button id="file-send-btn" class="btn btn-secondary" title="Send file" disabled>📎</button>
+                        <button id="call-btn" class="btn btn-secondary" title="Voice call" disabled>📞</button>
+                        <button id="send-message" class="btn btn-primary" disabled>Send</button>
+                    </div>
+                </div>
+                <input type="file" id="file-input" multiple>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // ============================================================
-        //  ENCRYPTION MODULE
-        // ============================================================
-        class ChatEncryption {
-            constructor() {
-                this.encoder = new TextEncoder();
-                this.decoder = new TextDecoder();
-            }
-
-            async generateKey() {
-                return await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
-            }
-
-            async exportKey(key) {
-                const exported = await crypto.subtle.exportKey("raw", key);
-                return btoa(String.fromCharCode(...new Uint8Array(exported)));
-            }
-
-            async importKey(base64Key) {
-                const keyData = Uint8Array.from(atob(base64Key), c => c.charCodeAt(0));
-                return await crypto.subtle.importKey("raw", keyData, { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
-            }
-
-            async encrypt(message, key) {
-                const iv = crypto.getRandomValues(new Uint8Array(12));
-                const encoded = this.encoder.encode(message);
-                const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, encoded);
-                const result = new Uint8Array(iv.length + encrypted.byteLength);
-                result.set(iv, 0);
-                result.set(new Uint8Array(encrypted), iv.length);
-                return btoa(String.fromCharCode(...result));
-            }
-
-            async decrypt(encryptedBase64, key) {
-                const encrypted = Uint8Array.from(atob(encryptedBase64), c => c.charCodeAt(0));
-                const iv = encrypted.slice(0, 12);
-                const data = encrypted.slice(12);
-                const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
-                return this.decoder.decode(decrypted);
-            }
-
-            async encryptFile(file, key) {
-                const chunkSize = 64 * 1024;
-                const chunks = [];
-                const iv = crypto.getRandomValues(new Uint8Array(12));
-                let offset = 0;
-
-                while (offset < file.size) {
-                    const chunk = file.slice(offset, offset + chunkSize);
-                    const arrayBuffer = await chunk.arrayBuffer();
-                    const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, arrayBuffer);
-                    chunks.push(new Uint8Array(encrypted));
-                    offset += chunkSize;
-                }
-
-                const totalLength = iv.length + chunks.reduce((sum, chunk) => sum + chunk.length, 0);
-                const result = new Uint8Array(totalLength);
-                result.set(iv, 0);
-                let position = iv.length;
-                for (const chunk of chunks) {
-                    result.set(chunk, position);
-                    position += chunk.length;
-                }
-                return result.buffer;
-            }
-
-            async decryptFile(encryptedData, key) {
-                const data = new Uint8Array(encryptedData);
-                const iv = data.slice(0, 12);
-                const encryptedContent = data.slice(12);
-                return await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, encryptedContent);
-            }
-
-            generateFileId() {
-                return 'file_' + crypto.randomUUID().replace(/-/g, '').substring(0, 16);
-            }
+<script>
+    // ============================================================
+    //  ENCRYPTION MODULE
+    // ============================================================
+    class ChatEncryption {
+        constructor() {
+            this.encoder = new TextEncoder();
+            this.decoder = new TextDecoder();
         }
 
-        // ============================================================
-        //  P2P CHAT CLASS
-        // ============================================================
-        class P2PChat {
-            constructor(signalingServerUrl) {
-                this.signalingServerUrl = signalingServerUrl;
-                this.ws = null;
-                this.peerId = null;
-                this.roomId = null;
-                this.username = null;
-                this.encryptionKey = null;
-                this.encryption = new ChatEncryption();
+        async generateKey() {
+            return await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+        }
 
-                this.peerConnections = new Map();
-                this.dataChannels = new Map();
-                this.fileTransfers = new Map();
-                this.fileChunks = new Map();
-                this.calls = new Map();
+        async exportKey(key) {
+            const exported = await crypto.subtle.exportKey("raw", key);
+            return btoa(String.fromCharCode(...new Uint8Array(exported)));
+        }
 
-                this.messageHistory = [];
-                this.storageKey = 'chat_history_';
-                this.maxHistory = 1000;
+        async importKey(base64Key) {
+            const keyData = Uint8Array.from(atob(base64Key), c => c.charCodeAt(0));
+            return await crypto.subtle.importKey("raw", keyData, { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
+        }
 
-                this.isConnected = false;
-                this.pendingMessages = [];
-                this.reconnectAttempts = 0;
-                this.maxReconnectAttempts = 5;
-                this.configuration = null;
+        async encrypt(message, key) {
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const encoded = this.encoder.encode(message);
+            const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, encoded);
+            const result = new Uint8Array(iv.length + encrypted.byteLength);
+            result.set(iv, 0);
+            result.set(new Uint8Array(encrypted), iv.length);
+            return btoa(String.fromCharCode(...result));
+        }
 
-                this.onMessage = null;
-                this.onFileProgress = null;
-                this.onFileComplete = null;
-                this.onPeerJoined = null;
-                this.onPeerLeft = null;
-                this.onConnected = null;
-                this.onDisconnected = null;
-                this.onCall = null;
-                this.onCallEnded = null;
-                this.onFileOffer = null;
-                this.onError = null;
+        async decrypt(encryptedBase64, key) {
+            const encrypted = Uint8Array.from(atob(encryptedBase64), c => c.charCodeAt(0));
+            const iv = encrypted.slice(0, 12);
+            const data = encrypted.slice(12);
+            const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
+            return this.decoder.decode(decrypted);
+        }
 
-                this.pendingCall = null;
-                this.localStream = null;
+        generateFileId() {
+            return 'file_' + crypto.randomUUID().replace(/-/g, '').substring(0, 16);
+        }
+    }
 
-                this.loadHistory();
-            }
+    // ============================================================
+    //  P2P CHAT CLASS (UPDATED WITH GROUP & PRIVATE CHAT)
+    // ============================================================
+    class P2PChat {
+        constructor(signalingServerUrl) {
+            this.signalingServerUrl = signalingServerUrl;
+            this.ws = null;
+            this.peerId = null;
+            this.roomId = null;
+            this.username = null;
+            this.encryptionKey = null;
+            this.encryption = new ChatEncryption();
 
-            async connect() {
-                return new Promise((resolve, reject) => {
-                    this.ws = new WebSocket(this.signalingServerUrl);
+            // Store all peer connections
+            this.peerConnections = new Map(); // peerId -> { pc, username, dataChannel, fileChannel, callChannel }
+            this.dataChannels = new Map(); // peerId -> RTCDataChannel
 
-                    this.ws.onopen = () => {
-                        this.isConnected = true;
-                        if (this.onConnected) this.onConnected();
-                        resolve();
-                    };
+            // Rooms management
+            this.rooms = new Map(); // roomId -> { name, peers: [], messages: [] }
+            this.currentRoomId = null;
+            this.currentPrivateChat = null; // peerId for private chat
 
-                    this.ws.onmessage = (event) => {
-                        try {
-                            const data = JSON.parse(event.data);
-                            this.handleSignalingMessage(data);
-                        } catch (error) {
-                            console.error('Error handling message:', error);
-                        }
-                    };
+            // File transfers
+            this.fileTransfers = new Map();
 
-                    this.ws.onclose = () => {
-                        this.isConnected = false;
-                        if (this.onDisconnected) this.onDisconnected();
-                        this.cleanup();
-                    };
+            // Message history per room
+            this.messageHistory = {};
+            this.storageKey = 'p2p_chat_history_';
 
-                    this.ws.onerror = (error) => {
-                        reject(error);
-                    };
+            // Connection state
+            this.isConnected = false;
+            this.pendingMessages = [];
 
-                    const timeout = setTimeout(() => {
-                        if (!this.isConnected) {
-                            reject(new Error('Connection timeout'));
-                        }
-                    }, 10000);
+            this.configuration = {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' },
+                    { urls: 'stun:stun3.l.google.com:19302' },
+                    { urls: 'stun:stun4.l.google.com:19302' }
+                ],
+                iceCandidatePoolSize: 10
+            };
 
-                    this.ws.onopen = () => {
-                        clearTimeout(timeout);
-                        this.isConnected = true;
-                        if (this.onConnected) this.onConnected();
-                        resolve();
-                    };
-                });
-            }
+            // Callbacks
+            this.onMessage = null;
+            this.onPeerJoined = null;
+            this.onPeerLeft = null;
+            this.onConnected = null;
+            this.onDisconnected = null;
+            this.onRoomCreated = null;
+            this.onPeerListUpdate = null;
 
-            handleSignalingMessage(data) {
-                switch (data.type) {
-                    case 'connected':
-                        console.log('Connected to signaling server');
-                        if (data.turnConfig) {
-                            this.configuration = data.turnConfig;
-                        }
-                        break;
+            this.loadHistory();
+        }
 
-                    case 'registered':
-                        this.peerId = data.peerId;
-                        if (data.existingPeers && data.existingPeers.length > 0) {
-                            data.existingPeers.forEach(peer => {
-                                this.connectToPeer(peer.peerId, peer.username);
-                            });
-                        }
-                        break;
+        async connect() {
+            return new Promise((resolve, reject) => {
+                this.ws = new WebSocket(this.signalingServerUrl);
 
-                    case 'peer-joined':
-                        this.connectToPeer(data.peerId, data.username);
-                        if (this.onPeerJoined) this.onPeerJoined(data.peerId, data.username);
-                        break;
-
-                    case 'peer-left':
-                        this.disconnectFromPeer(data.peerId);
-                        if (this.onPeerLeft) this.onPeerLeft(data.peerId);
-                        break;
-
-                    case 'offer':
-                    case 'answer':
-                    case 'candidate':
-                        this.handleSignaling(data);
-                        break;
-
-                    case 'file-offer':
-                    case 'file-answer':
-                    case 'file-candidate':
-                        this.handleFileSignaling(data);
-                        break;
-
-                    case 'call-offer':
-                    case 'call-answer':
-                    case 'call-candidate':
-                        this.handleCallSignaling(data);
-                        break;
-
-                    case 'pong':
-                        break;
-
-                    case 'error':
-                        console.error('Server error:', data.message);
-                        if (this.onError) this.onError(data.message);
-                        break;
-
-                    default:
-                        console.log('Unknown message type:', data.type);
-                }
-            }
-
-            async createRoom(username) {
-                this.username = username;
-                this.roomId = this.generateRoomId();
-                this.encryptionKey = await this.encryption.generateKey();
-                const exportedKey = await this.encryption.exportKey(this.encryptionKey);
-
-                await this.connect();
-
-                this.ws.send(JSON.stringify({
-                    type: 'register',
-                    roomId: this.roomId,
-                    peerId: this.generatePeerId(),
-                    username: username
-                }));
-
-                return { roomId: this.roomId, encryptionKey: exportedKey };
-            }
-
-            async joinRoom(roomId, encryptionKeyBase64, username) {
-                this.roomId = roomId;
-                this.username = username;
-                this.encryptionKey = await this.encryption.importKey(encryptionKeyBase64);
-
-                await this.connect();
-
-                this.ws.send(JSON.stringify({
-                    type: 'register',
-                    roomId: roomId,
-                    peerId: this.generatePeerId(),
-                    username: username
-                }));
-            }
-
-            generateRoomId() {
-                return Math.random().toString(36).substring(2, 10).toUpperCase();
-            }
-
-            generatePeerId() {
-                return 'user_' + Math.random().toString(36).substring(2, 10);
-            }
-
-            async connectToPeer(peerId, username) {
-                if (this.peerConnections.has(peerId)) return;
-
-                const pc = new RTCPeerConnection(this.configuration || {
-                    iceServers: [
-                        { urls: 'stun:stun.l.google.com:19302' },
-                        { urls: 'stun:stun1.l.google.com:19302' },
-                        { urls: 'stun:stun2.l.google.com:19302' },
-                        { urls: 'stun:stun3.l.google.com:19302' },
-                        { urls: 'stun:stun4.l.google.com:19302' }
-                    ],
-                    iceCandidatePoolSize: 10
-                });
-
-                this.peerConnections.set(peerId, { pc, username });
-
-                const dataChannel = pc.createDataChannel('chat');
-                this.setupDataChannel(dataChannel, peerId);
-                this.dataChannels.set(peerId, dataChannel);
-
-                const fileChannel = pc.createDataChannel('file');
-                this.setupFileChannel(fileChannel, peerId);
-
-                const callChannel = pc.createDataChannel('call');
-                this.setupCallChannel(callChannel, peerId);
-
-                pc.ondatachannel = (event) => {
-                    const channel = event.channel;
-                    if (channel.label === 'chat') {
-                        this.setupDataChannel(channel, peerId);
-                        this.dataChannels.set(peerId, channel);
-                    } else if (channel.label === 'file') {
-                        this.setupFileChannel(channel, peerId);
-                    } else if (channel.label === 'call') {
-                        this.setupCallChannel(channel, peerId);
-                    }
+                this.ws.onopen = () => {
+                    this.isConnected = true;
+                    if (this.onConnected) this.onConnected();
+                    resolve();
                 };
 
-                pc.onicecandidate = (event) => {
-                    if (event.candidate) {
-                        this.sendSignaling('candidate', {
-                            targetPeerId: peerId,
-                            candidate: event.candidate
-                        });
-                    }
-                };
-
-                pc.oniceconnectionstatechange = () => {
-                    if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
-                        this.disconnectFromPeer(peerId);
-                    }
-                };
-
-                // Handle remote stream for calls
-                pc.ontrack = (event) => {
-                    if (this.onCall && event.streams[0]) {
-                        this.onCall(peerId, event.streams[0], false);
-                    }
-                };
-
-                try {
-                    const offer = await pc.createOffer();
-                    await pc.setLocalDescription(offer);
-                    this.sendSignaling('offer', {
-                        targetPeerId: peerId,
-                        sdp: offer
-                    });
-                } catch (error) {
-                    console.error('Error creating offer:', error);
-                }
-            }
-
-            setupDataChannel(channel, peerId) {
-                channel.onopen = () => {
-                    while (this.pendingMessages.length > 0) {
-                        const msg = this.pendingMessages.shift();
-                        channel.send(JSON.stringify(msg));
-                    }
-                };
-
-                channel.onclose = () => {};
-
-                channel.onmessage = async (event) => {
+                this.ws.onmessage = (event) => {
                     try {
                         const data = JSON.parse(event.data);
-                        if (data.type === 'message') {
-                            await this.handleMessage(data, peerId);
-                        }
+                        this.handleSignalingMessage(data);
                     } catch (error) {
                         console.error('Error handling message:', error);
                     }
                 };
-            }
 
-            setupFileChannel(channel, peerId) {
-                channel.onopen = () => {};
-                channel.onmessage = async (event) => {
-                    try {
-                        const data = JSON.parse(event.data);
-                        await this.handleFileMessage(data, peerId);
-                    } catch (error) {
-                        console.error('Error handling file message:', error);
+                this.ws.onclose = () => {
+                    this.isConnected = false;
+                    if (this.onDisconnected) this.onDisconnected();
+                };
+
+                this.ws.onerror = (error) => {
+                    reject(error);
+                };
+
+                const timeout = setTimeout(() => {
+                    if (!this.isConnected) {
+                        reject(new Error('Connection timeout'));
                     }
-                };
-            }
+                }, 10000);
 
-            setupCallChannel(channel, peerId) {
-                channel.onopen = () => {};
-                channel.onmessage = (event) => {
-                    try {
-                        const data = JSON.parse(event.data);
-                        this.handleCallMessage(data, peerId);
-                    } catch (error) {
-                        console.error('Error handling call message:', error);
+                this.ws.onopen = () => {
+                    clearTimeout(timeout);
+                    this.isConnected = true;
+                    if (this.onConnected) this.onConnected();
+                    resolve();
+                };
+            });
+        }
+
+        handleSignalingMessage(data) {
+            switch (data.type) {
+                case 'registered':
+                    this.peerId = data.peerId;
+                    if (data.existingPeers && data.existingPeers.length > 0) {
+                        data.existingPeers.forEach(peer => {
+                            this.connectToPeer(peer.peerId, peer.username);
+                        });
                     }
-                };
+                    break;
+
+                case 'peer-joined':
+                    this.connectToPeer(data.peerId, data.username);
+                    if (this.onPeerJoined) this.onPeerJoined(data.peerId, data.username);
+                    break;
+
+                case 'peer-left':
+                    this.disconnectFromPeer(data.peerId);
+                    if (this.onPeerLeft) this.onPeerLeft(data.peerId);
+                    break;
+
+                case 'offer':
+                case 'answer':
+                case 'candidate':
+                    this.handleSignaling(data);
+                    break;
+
+                case 'private-message':
+                    this.handlePrivateMessage(data);
+                    break;
+
+                default:
+                    console.log('Unknown message type:', data.type);
             }
+        }
 
-            async sendMessage(text) {
-                if (!text.trim()) return;
+        async createRoom(username) {
+            this.username = username;
+            this.roomId = this.generateRoomId();
+            this.encryptionKey = await this.encryption.generateKey();
+            const exportedKey = await this.encryption.exportKey(this.encryptionKey);
 
-                const encrypted = await this.encryption.encrypt(text, this.encryptionKey);
-                const payload = {
-                    type: 'message',
-                    sender: this.username,
-                    senderId: this.peerId,
-                    message: encrypted,
-                    timestamp: Date.now()
-                };
+            await this.connect();
 
-                this.addToHistory({
+            this.ws.send(JSON.stringify({
+                type: 'register',
+                roomId: this.roomId,
+                peerId: this.generatePeerId(),
+                username: username
+            }));
+
+            // Create default room
+            this.createNewRoom('General');
+
+            return { roomId: this.roomId, encryptionKey: exportedKey };
+        }
+
+        async joinRoom(roomId, encryptionKeyBase64, username) {
+            this.roomId = roomId;
+            this.username = username;
+            this.encryptionKey = await this.encryption.importKey(encryptionKeyBase64);
+
+            await this.connect();
+
+            this.ws.send(JSON.stringify({
+                type: 'register',
+                roomId: roomId,
+                peerId: this.generatePeerId(),
+                username: username
+            }));
+        }
+
+        generateRoomId() {
+            return Math.random().toString(36).substring(2, 10).toUpperCase();
+        }
+
+        generatePeerId() {
+            return 'user_' + Math.random().toString(36).substring(2, 10);
+        }
+
+        // ---- ROOM MANAGEMENT ----
+        createNewRoom(name) {
+            const roomId = 'room_' + Math.random().toString(36).substring(2, 8);
+            this.rooms.set(roomId, {
+                id: roomId,
+                name: name,
+                peers: [],
+                messages: [],
+                createdBy: this.peerId,
+                createdAt: Date.now()
+            });
+            if (this.onRoomCreated) this.onRoomCreated(roomId, name);
+            this.switchRoom(roomId);
+            return roomId;
+        }
+
+        switchRoom(roomId) {
+            this.currentRoomId = roomId;
+            this.currentPrivateChat = null;
+            // Load messages for this room
+            const history = this.getHistory(roomId);
+            if (this.onMessage) {
+                // Clear and reload messages
+                this.onMessage('__clear__');
+                history.forEach(msg => {
+                    this.onMessage(msg.sender, msg.message, msg.isOwn, msg.isPrivate, msg.targetPeer);
+                });
+            }
+            if (this.onPeerListUpdate) this.onPeerListUpdate(this.getRoomPeers(roomId));
+        }
+
+        startPrivateChat(peerId, username) {
+            this.currentPrivateChat = peerId;
+            this.currentRoomId = null;
+            // Load private chat history
+            const history = this.getHistory('private_' + peerId);
+            if (this.onMessage) {
+                this.onMessage('__clear__');
+                history.forEach(msg => {
+                    this.onMessage(msg.sender, msg.message, msg.isOwn, true, msg.targetPeer);
+                });
+            }
+            if (this.onPeerListUpdate) this.onPeerListUpdate([{ peerId, username }]);
+            return { peerId, username };
+        }
+
+        getRoomPeers(roomId) {
+            const peers = [];
+            for (const [peerId, info] of this.peerConnections) {
+                peers.push({ peerId, username: info.username });
+            }
+            return peers;
+        }
+
+        // ---- CONNECT TO PEER ----
+        async connectToPeer(peerId, username) {
+            if (this.peerConnections.has(peerId)) return;
+
+            const pc = new RTCPeerConnection(this.configuration);
+            this.peerConnections.set(peerId, { pc, username });
+
+            // Main data channel
+            const dataChannel = pc.createDataChannel('chat');
+            this.setupDataChannel(dataChannel, peerId);
+            this.dataChannels.set(peerId, dataChannel);
+
+            pc.ondatachannel = (event) => {
+                const channel = event.channel;
+                if (channel.label === 'chat') {
+                    this.setupDataChannel(channel, peerId);
+                    this.dataChannels.set(peerId, channel);
+                }
+            };
+
+            pc.onicecandidate = (event) => {
+                if (event.candidate) {
+                    this.sendSignaling('candidate', {
+                        targetPeerId: peerId,
+                        candidate: event.candidate
+                    });
+                }
+            };
+
+            pc.oniceconnectionstatechange = () => {
+                if (pc.iceConnectionState === 'failed' || pc.iceConnectionState === 'disconnected') {
+                    this.disconnectFromPeer(peerId);
+                }
+            };
+
+            try {
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                this.sendSignaling('offer', {
+                    targetPeerId: peerId,
+                    sdp: offer
+                });
+            } catch (error) {
+                console.error('Error creating offer:', error);
+            }
+        }
+
+        setupDataChannel(channel, peerId) {
+            channel.onopen = () => {
+                console.log(`✅ Data channel opened with ${peerId}`);
+                // Send pending messages
+                while (this.pendingMessages.length > 0) {
+                    const msg = this.pendingMessages.shift();
+                    channel.send(JSON.stringify(msg));
+                }
+                if (this.onPeerListUpdate) {
+                    this.onPeerListUpdate(this.getRoomPeers(this.currentRoomId));
+                }
+            };
+
+            channel.onclose = () => {
+                console.log(`Data channel closed with ${peerId}`);
+            };
+
+            channel.onmessage = async (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'message') {
+                        await this.handleMessage(data, peerId);
+                    } else if (data.type === 'private-message') {
+                        await this.handlePrivateMessage(data, peerId);
+                    } else if (data.type === 'room-message') {
+                        await this.handleRoomMessage(data, peerId);
+                    }
+                } catch (error) {
+                    console.error('Error handling message:', error);
+                }
+            };
+        }
+
+        // ---- SEND MESSAGES ----
+        async sendMessage(text, isPrivate = false, targetPeerId = null) {
+            if (!text.trim()) return;
+
+            const encrypted = await this.encryption.encrypt(text, this.encryptionKey);
+            
+            let payload = {
+                type: 'message',
+                sender: this.username,
+                senderId: this.peerId,
+                message: encrypted,
+                timestamp: Date.now(),
+                isPrivate: isPrivate
+            };
+
+            if (isPrivate && targetPeerId) {
+                payload.type = 'private-message';
+                payload.targetPeerId = targetPeerId;
+                // Store in private chat history
+                this.addToHistory('private_' + targetPeerId, {
                     sender: this.username,
                     message: text,
                     timestamp: payload.timestamp,
-                    isOwn: true
+                    isOwn: true,
+                    isPrivate: true,
+                    targetPeer: targetPeerId
                 });
+            } else {
+                // Store in room history
+                const roomId = this.currentRoomId || 'default';
+                this.addToHistory(roomId, {
+                    sender: this.username,
+                    message: text,
+                    timestamp: payload.timestamp,
+                    isOwn: true,
+                    isPrivate: false
+                });
+            }
 
+            // Send to all connected peers or specific peer
+            if (isPrivate && targetPeerId) {
+                const channel = this.dataChannels.get(targetPeerId);
+                if (channel && channel.readyState === 'open') {
+                    channel.send(JSON.stringify(payload));
+                } else {
+                    this.pendingMessages.push(payload);
+                }
+                if (this.onMessage) {
+                    this.onMessage(this.username, text, true, true, targetPeerId);
+                }
+            } else {
                 let sent = false;
                 for (const [peerId, channel] of this.dataChannels) {
                     if (channel.readyState === 'open') {
@@ -1328,1142 +1133,658 @@
                         }
                     }
                 }
-
                 if (!sent) {
                     this.pendingMessages.push(payload);
                 }
-
                 if (this.onMessage) {
-                    this.onMessage(this.username, text, true);
+                    this.onMessage(this.username, text, true, false);
                 }
-            }
-
-            async handleMessage(data, fromPeerId) {
-                if (data.type === 'message') {
-                    try {
-                        const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
-                        this.addToHistory({
-                            sender: data.sender,
-                            message: decrypted,
-                            timestamp: data.timestamp,
-                            isOwn: false
-                        });
-                        if (this.onMessage) {
-                            this.onMessage(data.sender, decrypted, false);
-                        }
-                    } catch (error) {
-                        console.error('Error decrypting message:', error);
-                    }
-                }
-            }
-
-            // ----- FILE TRANSFER -----
-            async sendFile(file, targetPeerId) {
-                const fileId = this.encryption.generateFileId();
-                const chunkSize = 64 * 1024;
-                const totalChunks = Math.ceil(file.size / chunkSize);
-
-                const encryptedData = await this.encryption.encryptFile(file, this.encryptionKey);
-
-                const offer = {
-                    type: 'file-offer',
-                    fileId: fileId,
-                    fileName: file.name,
-                    fileSize: file.size,
-                    fileType: file.type,
-                    totalChunks: totalChunks,
-                    chunkSize: chunkSize,
-                    targetPeerId: targetPeerId
-                };
-
-                this.sendSignaling('file-offer', offer);
-
-                this.fileTransfers.set(fileId, {
-                    data: encryptedData,
-                    fileName: file.name,
-                    fileSize: file.size,
-                    fileType: file.type,
-                    totalChunks: totalChunks,
-                    chunkSize: chunkSize,
-                    sentChunks: 0,
-                    targetPeerId: targetPeerId
-                });
-
-                if (this.onFileProgress) {
-                    this.onFileProgress(fileId, file.name, 0, totalChunks);
-                }
-            }
-
-            async handleFileMessage(data, fromPeerId) {
-                switch (data.type) {
-                    case 'file-accept':
-                        await this.sendFileChunks(data.fileId, fromPeerId);
-                        break;
-
-                    case 'file-chunk':
-                        await this.receiveFileChunk(data, fromPeerId);
-                        break;
-
-                    case 'file-complete':
-                        const transfer = this.fileTransfers.get(data.fileId);
-                        if (transfer) {
-                            const decrypted = await this.encryption.decryptFile(transfer.data, this.encryptionKey);
-                            const blob = new Blob([decrypted], { type: transfer.fileType });
-                            const url = URL.createObjectURL(blob);
-                            if (this.onFileComplete) {
-                                this.onFileComplete(data.fileId, transfer.fileName, url);
-                            }
-                            this.fileTransfers.delete(data.fileId);
-                        }
-                        break;
-
-                    case 'file-reject':
-                        this.fileTransfers.delete(data.fileId);
-                        break;
-                }
-            }
-
-            async sendFileChunks(fileId, targetPeerId) {
-                const transfer = this.fileTransfers.get(fileId);
-                if (!transfer) return;
-
-                const channel = this.dataChannels.get(targetPeerId);
-                if (!channel || channel.readyState !== 'open') return;
-
-                const data = new Uint8Array(transfer.data);
-                const totalChunks = transfer.totalChunks;
-                const chunkSize = transfer.chunkSize;
-
-                for (let i = 0; i < totalChunks; i++) {
-                    const start = i * chunkSize;
-                    const end = Math.min(start + chunkSize, data.length);
-                    const chunk = data.slice(start, end);
-
-                    const chunkData = {
-                        type: 'file-chunk',
-                        fileId: fileId,
-                        chunkIndex: i,
-                        totalChunks: totalChunks,
-                        data: btoa(String.fromCharCode(...chunk))
-                    };
-
-                    channel.send(JSON.stringify(chunkData));
-                    transfer.sentChunks = i + 1;
-
-                    if (this.onFileProgress) {
-                        this.onFileProgress(fileId, transfer.fileName, i + 1, totalChunks);
-                    }
-                }
-            }
-
-            async receiveFileChunk(data, fromPeerId) {
-                if (!this.fileTransfers.has(data.fileId)) {
-                    this.fileTransfers.set(data.fileId, {
-                        chunks: [],
-                        totalChunks: data.totalChunks,
-                        fileName: data.fileName || 'file',
-                        fileType: data.fileType || 'application/octet-stream'
-                    });
-                }
-
-                const transfer = this.fileTransfers.get(data.fileId);
-                const chunkData = Uint8Array.from(atob(data.data), c => c.charCodeAt(0));
-                transfer.chunks[data.chunkIndex] = chunkData;
-
-                const receivedChunks = transfer.chunks.filter(c => c !== undefined).length;
-
-                if (this.onFileProgress) {
-                    this.onFileProgress(data.fileId, transfer.fileName, receivedChunks, data.totalChunks);
-                }
-
-                if (receivedChunks === data.totalChunks) {
-                    const totalLength = transfer.chunks.reduce((sum, chunk) => sum + chunk.length, 0);
-                    const combined = new Uint8Array(totalLength);
-                    let offset = 0;
-                    for (const chunk of transfer.chunks) {
-                        combined.set(chunk, offset);
-                        offset += chunk.length;
-                    }
-
-                    transfer.data = combined.buffer;
-
-                    const channel = this.dataChannels.get(fromPeerId);
-                    if (channel && channel.readyState === 'open') {
-                        channel.send(JSON.stringify({
-                            type: 'file-complete',
-                            fileId: data.fileId
-                        }));
-                    }
-
-                    const decrypted = await this.encryption.decryptFile(combined.buffer, this.encryptionKey);
-                    const blob = new Blob([decrypted], { type: transfer.fileType });
-                    const url = URL.createObjectURL(blob);
-
-                    if (this.onFileComplete) {
-                        this.onFileComplete(data.fileId, transfer.fileName, url);
-                    }
-                }
-            }
-
-            // ----- CALLS -----
-            async startCall(targetPeerId, mediaType = 'video') {
-                if (!this.peerConnections.has(targetPeerId)) return;
-
-                const { pc } = this.peerConnections.get(targetPeerId);
-
-                try {
-                    const constraints = mediaType === 'video' ? { audio: true, video: true } : { audio: true,
-                        video: false };
-                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                    this.localStream = stream;
-
-                    stream.getTracks().forEach(track => {
-                        pc.addTrack(track, stream);
-                    });
-
-                    const offer = await pc.createOffer();
-                    await pc.setLocalDescription(offer);
-
-                    this.sendSignaling('call-offer', {
-                        targetPeerId: targetPeerId,
-                        sdp: offer,
-                        mediaType: mediaType
-                    });
-
-                    this.calls.set(targetPeerId, {
-                        stream: stream,
-                        isInitiator: true,
-                        mediaType: mediaType,
-                        active: true
-                    });
-
-                    if (this.onCall) {
-                        this.onCall(targetPeerId, stream, true);
-                    }
-
-                } catch (error) {
-                    console.error('Error starting call:', error);
-                }
-            }
-
-            async answerCall(targetPeerId) {
-                if (!this.peerConnections.has(targetPeerId)) return;
-
-                const { pc } = this.peerConnections.get(targetPeerId);
-
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({
-                        audio: true,
-                        video: true
-                    });
-                    this.localStream = stream;
-
-                    stream.getTracks().forEach(track => {
-                        pc.addTrack(track, stream);
-                    });
-
-                    const answer = await pc.createAnswer();
-                    await pc.setLocalDescription(answer);
-
-                    this.sendSignaling('call-answer', {
-                        targetPeerId: targetPeerId,
-                        sdp: answer
-                    });
-
-                    this.calls.set(targetPeerId, {
-                        stream: stream,
-                        isInitiator: false,
-                        mediaType: 'video',
-                        active: true
-                    });
-
-                    if (this.onCall) {
-                        this.onCall(targetPeerId, stream, false);
-                    }
-
-                } catch (error) {
-                    console.error('Error answering call:', error);
-                }
-            }
-
-            async handleCallSignaling(data) {
-                const peerId = data.from;
-
-                switch (data.type) {
-                    case 'call-offer':
-                        this.pendingCall = {
-                            peerId: peerId,
-                            sdp: data.sdp,
-                            mediaType: data.mediaType
-                        };
-                        if (this.onCall) {
-                            this.onCall(peerId, null, false, data.mediaType);
-                        }
-                        break;
-
-                    case 'call-answer':
-                        if (this.peerConnections.has(peerId)) {
-                            const { pc } = this.peerConnections.get(peerId);
-                            await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
-                        }
-                        break;
-
-                    case 'call-candidate':
-                        if (this.peerConnections.has(peerId)) {
-                            const { pc } = this.peerConnections.get(peerId);
-                            await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-                        }
-                        break;
-                }
-            }
-
-            handleCallMessage(data, fromPeerId) {
-                if (data.type === 'call-ended') {
-                    if (this.calls.has(fromPeerId)) {
-                        const call = this.calls.get(fromPeerId);
-                        call.stream.getTracks().forEach(track => track.stop());
-                        this.calls.delete(fromPeerId);
-                        if (this.onCallEnded) {
-                            this.onCallEnded(fromPeerId);
-                        }
-                    }
-                }
-            }
-
-            endCall(targetPeerId) {
-                if (this.calls.has(targetPeerId)) {
-                    const call = this.calls.get(targetPeerId);
-                    call.stream.getTracks().forEach(track => track.stop());
-                    this.calls.delete(targetPeerId);
-
-                    const channel = this.dataChannels.get(targetPeerId);
-                    if (channel && channel.readyState === 'open') {
-                        channel.send(JSON.stringify({ type: 'call-ended' }));
-                    }
-
-                    if (this.onCallEnded) {
-                        this.onCallEnded(targetPeerId);
-                    }
-                }
-                if (this.localStream) {
-                    this.localStream.getTracks().forEach(track => track.stop());
-                    this.localStream = null;
-                }
-            }
-
-            // ----- HANDLING SIGNALING -----
-            handleSignaling(data) {
-                const peerId = data.from;
-
-                switch (data.type) {
-                    case 'offer':
-                        this.handleOffer(data);
-                        break;
-
-                    case 'answer':
-                        this.handleAnswer(data);
-                        break;
-
-                    case 'candidate':
-                        this.handleIceCandidate(data);
-                        break;
-                }
-            }
-
-            async handleOffer(data) {
-                const peerId = data.from;
-
-                if (!this.peerConnections.has(peerId)) {
-                    const pc = new RTCPeerConnection(this.configuration || {
-                        iceServers: [
-                            { urls: 'stun:stun.l.google.com:19302' },
-                            { urls: 'stun:stun1.l.google.com:19302' },
-                            { urls: 'stun:stun2.l.google.com:19302' },
-                            { urls: 'stun:stun3.l.google.com:19302' },
-                            { urls: 'stun:stun4.l.google.com:19302' }
-                        ],
-                        iceCandidatePoolSize: 10
-                    });
-
-                    this.peerConnections.set(peerId, { pc, username: data.username });
-
-                    pc.ondatachannel = (event) => {
-                        const channel = event.channel;
-                        if (channel.label === 'chat') {
-                            this.setupDataChannel(channel, peerId);
-                            this.dataChannels.set(peerId, channel);
-                        } else if (channel.label === 'file') {
-                            this.setupFileChannel(channel, peerId);
-                        } else if (channel.label === 'call') {
-                            this.setupCallChannel(channel, peerId);
-                        }
-                    };
-
-                    pc.onicecandidate = (event) => {
-                        if (event.candidate) {
-                            this.sendSignaling('candidate', {
-                                targetPeerId: peerId,
-                                candidate: event.candidate
-                            });
-                        }
-                    };
-
-                    pc.ontrack = (event) => {
-                        if (this.onCall && event.streams[0]) {
-                            this.onCall(peerId, event.streams[0], false);
-                        }
-                    };
-                }
-
-                const { pc } = this.peerConnections.get(peerId);
-
-                try {
-                    await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
-                    const answer = await pc.createAnswer();
-                    await pc.setLocalDescription(answer);
-
-                    this.sendSignaling('answer', {
-                        targetPeerId: peerId,
-                        sdp: answer
-                    });
-                } catch (error) {
-                    console.error('Error handling offer:', error);
-                }
-            }
-
-            async handleAnswer(data) {
-                const peerId = data.from;
-                if (this.peerConnections.has(peerId)) {
-                    const { pc } = this.peerConnections.get(peerId);
-                    try {
-                        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
-                    } catch (error) {
-                        console.error('Error handling answer:', error);
-                    }
-                }
-            }
-
-            async handleIceCandidate(data) {
-                const peerId = data.from;
-                if (this.peerConnections.has(peerId)) {
-                    const { pc } = this.peerConnections.get(peerId);
-                    try {
-                        await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-                    } catch (error) {
-                        console.error('Error adding ICE candidate:', error);
-                    }
-                }
-            }
-
-            handleFileSignaling(data) {
-                switch (data.type) {
-                    case 'file-offer':
-                        if (this.onFileOffer) {
-                            this.onFileOffer(data.from, data.fileId, data.fileName, data.fileSize);
-                        }
-                        break;
-                }
-            }
-
-            sendSignaling(type, data) {
-                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-                    this.ws.send(JSON.stringify({
-                        type: type,
-                        ...data,
-                        from: this.peerId
-                    }));
-                }
-            }
-
-            disconnectFromPeer(peerId) {
-                if (this.peerConnections.has(peerId)) {
-                    const { pc } = this.peerConnections.get(peerId);
-                    pc.close();
-                    this.peerConnections.delete(peerId);
-                }
-                if (this.dataChannels.has(peerId)) {
-                    this.dataChannels.delete(peerId);
-                }
-                for (const [fileId, transfer] of this.fileTransfers) {
-                    if (transfer.targetPeerId === peerId) {
-                        this.fileTransfers.delete(fileId);
-                    }
-                }
-                if (this.calls.has(peerId)) {
-                    const call = this.calls.get(peerId);
-                    call.stream.getTracks().forEach(track => track.stop());
-                    this.calls.delete(peerId);
-                }
-            }
-
-            cleanup() {
-                for (const [peerId] of this.peerConnections) {
-                    this.disconnectFromPeer(peerId);
-                }
-                if (this.ws) {
-                    this.ws.close();
-                    this.ws = null;
-                }
-                this.peerConnections.clear();
-                this.dataChannels.clear();
-                this.pendingMessages = [];
-                this.peerId = null;
-                this.isConnected = false;
-            }
-
-            leaveRoom() {
-                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-                    this.ws.send(JSON.stringify({ type: 'peer-disconnect' }));
-                }
-                this.cleanup();
-                this.roomId = null;
-                this.messageHistory = [];
-            }
-
-            getPeers() {
-                const peers = [];
-                for (const [peerId, { username }] of this.peerConnections) {
-                    peers.push({ peerId, username });
-                }
-                return peers;
-            }
-
-            // ----- HISTORY -----
-            addToHistory(message) {
-                this.messageHistory.push(message);
-                if (this.messageHistory.length > this.maxHistory) {
-                    this.messageHistory.shift();
-                }
-                this.saveHistory();
-            }
-
-            saveHistory() {
-                try {
-                    const key = this.storageKey + (this.roomId || 'default');
-                    localStorage.setItem(key, JSON.stringify(this.messageHistory));
-                } catch (error) {
-                    console.error('Error saving history:', error);
-                }
-            }
-
-            loadHistory() {
-                try {
-                    const key = this.storageKey + (this.roomId || 'default');
-                    const data = localStorage.getItem(key);
-                    if (data) {
-                        this.messageHistory = JSON.parse(data);
-                    }
-                } catch (error) {
-                    console.error('Error loading history:', error);
-                }
-            }
-
-            getHistory() {
-                return this.messageHistory;
-            }
-
-            clearHistory() {
-                this.messageHistory = [];
-                const key = this.storageKey + (this.roomId || 'default');
-                localStorage.removeItem(key);
-            }
-
-            async attemptReconnect() {
-                if (this.reconnectAttempts < this.maxReconnectAttempts && this.roomId && this.encryptionKey) {
-                    this.reconnectAttempts++;
-                    try {
-                        await this.connect();
-                        await this.joinRoom(this.roomId, await this.encryption.exportKey(this.encryptionKey), this
-                            .username);
-                        this.reconnectAttempts = 0;
-                        return true;
-                    } catch (error) {
-                        console.error('Reconnection failed:', error);
-                        return false;
-                    }
-                }
-                return false;
             }
         }
 
-        // ============================================================
-        //  UI CONTROLLER
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', () => {
-            // Default username
-            const defaultUsername = 'User_' + Math.random().toString(36).substring(2, 6);
-            document.getElementById('create-username').value = defaultUsername;
-
-            // Replace with your Render URL
-            const signalingUrl = 'wss://chasedavision.onrender.com';
-
-            const chat = new P2PChat(signalingUrl);
-            let currentUsername = '';
-
-            // DOM refs
-            const setupScreen = document.getElementById('setup-screen');
-            const chatScreen = document.getElementById('chat-screen');
-            const connectionStatus = document.getElementById('connection-status');
-            const serverStatus = document.getElementById('server-status');
-
-            const createRoomBtn = document.getElementById('create-room');
-            const joinRoomBtn = document.getElementById('join-room');
-            const sendMessageBtn = document.getElementById('send-message');
-            const leaveRoomBtn = document.getElementById('leave-room');
-            const messageInput = document.getElementById('message-input');
-            const copyRoomInfoBtn = document.getElementById('copy-room-info');
-            const fileInput = document.getElementById('file-input');
-            const fileSendBtn = document.getElementById('file-send-btn');
-            const callBtn = document.getElementById('call-btn');
-            const videoCallBtn = document.getElementById('video-call-btn');
-            const clearHistoryBtn = document.getElementById('clear-history-btn');
-
-            const messagesDiv = document.getElementById('messages');
-            const peerListItems = document.getElementById('peer-list-items');
-            const roomIdDisplay = document.getElementById('room-id-display');
-            const keyDisplay = document.getElementById('key-display');
-            const peerCountSpan = document.getElementById('peer-count');
-            const yourNameSpan = document.getElementById('your-name');
-            const fileProgressDiv = document.getElementById('file-progress');
-
-            // Call elements
-            const callOverlay = document.getElementById('call-overlay');
-            const localVideo = document.getElementById('local-video');
-            const remoteVideo = document.getElementById('remote-video');
-            const callStatus = document.getElementById('call-status');
-            const callEndBtn = document.getElementById('call-end-btn');
-            const callMuteBtn = document.getElementById('call-mute-btn');
-            const callVideoToggle = document.getElementById('call-video-toggle');
-
-            let currentCallPeer = null;
-            let isMuted = false;
-            let isVideoEnabled = true;
-
-            // ---- CHAT CALLBACKS ----
-            chat.onConnected = () => {
-                updateStatus(true);
-                serverStatus.textContent = '✅ Connected to server';
-                serverStatus.style.color = '#00ff88';
-            };
-
-            chat.onDisconnected = () => {
-                updateStatus(false);
-                serverStatus.textContent = '❌ Disconnected from server';
-                serverStatus.style.color = '#ff4444';
-                showSystemMessage('Disconnected from server. Reconnecting...');
-                chat.attemptReconnect();
-            };
-
-            chat.onMessage = (sender, message, isOwn) => {
-                displayMessage(sender, message, isOwn);
-            };
-
-            chat.onPeerJoined = (peerId, username) => {
-                updatePeerList();
-                showSystemMessage(`👋 ${username} joined the room`);
-                updatePeerCount();
-            };
-
-            chat.onPeerLeft = (peerId) => {
-                updatePeerList();
-                const peerItem = document.querySelector(`[data-peer-id="${peerId}"]`);
-                if (peerItem) {
-                    const username = peerItem.querySelector('.badge')?.textContent || 'Someone';
-                    showSystemMessage(`👋 ${username} left the room`);
-                }
-                updatePeerCount();
-            };
-
-            chat.onFileProgress = (fileId, fileName, current, total) => {
-                updateFileProgress(fileId, fileName, current, total);
-            };
-
-            chat.onFileComplete = (fileId, fileName, url) => {
-                showFileDownload(fileId, fileName, url);
-            };
-
-            chat.onCall = (peerId, stream, isInitiator, mediaType) => {
-                handleCall(peerId, stream, isInitiator, mediaType);
-            };
-
-            chat.onCallEnded = (peerId) => {
-                handleCallEnded(peerId);
-            };
-
-            chat.onFileOffer = (fromPeerId, fileId, fileName, fileSize) => {
-                handleFileOffer(fromPeerId, fileId, fileName, fileSize);
-            };
-
-            chat.onError = (message) => {
-                showSystemMessage('❌ Error: ' + message);
-            };
-
-            // ---- CREATE ROOM ----
-            createRoomBtn.addEventListener('click', async () => {
-                const username = document.getElementById('create-username').value.trim();
-                if (!username) {
-                    alert('Please enter a username');
-                    return;
-                }
-
-                createRoomBtn.disabled = true;
-                createRoomBtn.textContent = 'Creating...';
-
-                try {
-                    currentUsername = username;
-                    const roomInfo = await chat.createRoom(username);
-
-                    roomIdDisplay.textContent = roomInfo.roomId;
-                    keyDisplay.textContent = roomInfo.encryptionKey;
-                    yourNameSpan.textContent = username;
-
-                    setupScreen.classList.remove('active');
-                    chatScreen.classList.add('active');
-
-                    messageInput.disabled = false;
-                    sendMessageBtn.disabled = false;
-                    fileSendBtn.disabled = false;
-                    callBtn.disabled = false;
-                    videoCallBtn.disabled = false;
-
-                    showSystemMessage('🚀 Room created! Share the Room ID and Encryption Key with your friends.');
-                    updatePeerList();
-                    updatePeerCount();
-                    showHistory();
-
-                } catch (error) {
-                    console.error('Error creating room:', error);
-                    alert('Failed to create room: ' + error.message);
-                } finally {
-                    createRoomBtn.disabled = false;
-                    createRoomBtn.textContent = 'Create Room';
-                }
-            });
-
-            // ---- JOIN ROOM ----
-            joinRoomBtn.addEventListener('click', async () => {
-                const roomId = document.getElementById('join-room-id').value.trim().toUpperCase();
-                const key = document.getElementById('join-encryption-key').value.trim();
-                const username = document.getElementById('join-username').value.trim();
-
-                if (!roomId || !key || !username) {
-                    alert('Please fill in all fields');
-                    return;
-                }
-
-                joinRoomBtn.disabled = true;
-                joinRoomBtn.textContent = 'Joining...';
-
-                try {
-                    currentUsername = username;
-                    await chat.joinRoom(roomId, key, username);
-
-                    roomIdDisplay.textContent = roomId;
-                    keyDisplay.textContent = key;
-                    yourNameSpan.textContent = username;
-
-                    setupScreen.classList.remove('active');
-                    chatScreen.classList.add('active');
-
-                    messageInput.disabled = false;
-                    sendMessageBtn.disabled = false;
-                    fileSendBtn.disabled = false;
-                    callBtn.disabled = false;
-                    videoCallBtn.disabled = false;
-
-                    showSystemMessage('🔗 Joined the room! Start chatting with your friends.');
-                    updatePeerList();
-                    updatePeerCount();
-                    showHistory();
-
-                } catch (error) {
-                    console.error('Error joining room:', error);
-                    alert('Failed to join room: ' + error.message);
-                } finally {
-                    joinRoomBtn.disabled = false;
-                    joinRoomBtn.textContent = 'Join Room';
-                }
-            });
-
-            // ---- SEND MESSAGE ----
-            sendMessageBtn.addEventListener('click', async () => {
-                const text = messageInput.value.trim();
-                if (!text) return;
-                try {
-                    await chat.sendMessage(text);
-                    messageInput.value = '';
-                } catch (error) {
-                    console.error('Error sending message:', error);
-                    alert('Failed to send message: ' + error.message);
-                }
-            });
-
-            messageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    sendMessageBtn.click();
-                }
-            });
-
-            // ---- FILE SEND ----
-            fileSendBtn.addEventListener('click', () => {
-                fileInput.click();
-            });
-
-            fileInput.addEventListener('change', async (e) => {
-                const files = e.target.files;
-                if (!files || files.length === 0) return;
-
-                const peers = chat.getPeers();
-                if (peers.length === 0) {
-                    alert('No peers connected to send file to');
-                    return;
-                }
-
-                for (const file of files) {
-                    await chat.sendFile(file, peers[0].peerId);
-                }
-
-                fileInput.value = '';
-            });
-
-            // ---- CALLS ----
-            callBtn.addEventListener('click', async () => {
-                const peers = chat.getPeers();
-                if (peers.length === 0) {
-                    alert('No peers connected');
-                    return;
-                }
-                await chat.startCall(peers[0].peerId, 'audio');
-            });
-
-            videoCallBtn.addEventListener('click', async () => {
-                const peers = chat.getPeers();
-                if (peers.length === 0) {
-                    alert('No peers connected');
-                    return;
-                }
-                await chat.startCall(peers[0].peerId, 'video');
-            });
-
-            callEndBtn.addEventListener('click', () => {
-                if (currentCallPeer) {
-                    chat.endCall(currentCallPeer);
-                    hideCallUI();
-                }
-            });
-
-            callMuteBtn.addEventListener('click', () => {
-                isMuted = !isMuted;
-                if (localVideo.srcObject) {
-                    localVideo.srcObject.getAudioTracks().forEach(track => {
-                        track.enabled = !isMuted;
+        async handleMessage(data, fromPeerId) {
+            try {
+                const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
+                if (data.isPrivate) {
+                    // Private message
+                    this.addToHistory('private_' + fromPeerId, {
+                        sender: data.sender,
+                        message: decrypted,
+                        timestamp: data.timestamp,
+                        isOwn: false,
+                        isPrivate: true,
+                        targetPeer: fromPeerId
                     });
-                }
-                callMuteBtn.textContent = isMuted ? '🔇' : '🎤';
-            });
-
-            callVideoToggle.addEventListener('click', () => {
-                isVideoEnabled = !isVideoEnabled;
-                if (localVideo.srcObject) {
-                    localVideo.srcObject.getVideoTracks().forEach(track => {
-                        track.enabled = isVideoEnabled;
-                    });
-                }
-                callVideoToggle.textContent = isVideoEnabled ? '📹' : '🚫';
-            });
-
-            // ---- CLEAR HISTORY ----
-            clearHistoryBtn.addEventListener('click', () => {
-                if (confirm('Clear all message history?')) {
-                    chat.clearHistory();
-                    messagesDiv.innerHTML = '';
-                    showSystemMessage('🗑️ History cleared');
-                }
-            });
-
-            // ---- LEAVE ROOM ----
-            leaveRoomBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to leave the room?')) {
-                    chat.leaveRoom();
-                    setupScreen.classList.add('active');
-                    chatScreen.classList.remove('active');
-                    messageInput.disabled = true;
-                    sendMessageBtn.disabled = true;
-                    fileSendBtn.disabled = true;
-                    callBtn.disabled = true;
-                    videoCallBtn.disabled = true;
-                    showSystemMessage('You left the room');
-                    updateStatus(false);
-                    hideCallUI();
-                }
-            });
-
-            // ---- COPY ROOM INFO ----
-            copyRoomInfoBtn.addEventListener('click', () => {
-                const roomId = roomIdDisplay.textContent;
-                const key = keyDisplay.textContent;
-                const info = `🔒 Room: ${roomId}\n🔑 Key: ${key}\n\nShare this with your friends to join!`;
-
-                navigator.clipboard.writeText(info).then(() => {
-                    copyRoomInfoBtn.textContent = '✅ Copied!';
-                    setTimeout(() => {
-                        copyRoomInfoBtn.textContent = '📋 Copy';
-                    }, 3000);
-                }).catch(() => {
-                    const textarea = document.createElement('textarea');
-                    textarea.value = info;
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textarea);
-                    copyRoomInfoBtn.textContent = '✅ Copied!';
-                    setTimeout(() => {
-                        copyRoomInfoBtn.textContent = '📋 Copy';
-                    }, 3000);
-                });
-            });
-
-            // ---- UI HELPERS ----
-            function displayMessage(sender, message, isOwn) {
-                const msgElement = document.createElement('div');
-                msgElement.className = `message ${isOwn ? 'own' : 'other'}`;
-
-                // Check if message is a file URL
-                let content = escapeHtml(message);
-                if (message.startsWith('http') && (message.includes('.png') || message.includes('.jpg') || message.includes(
-                        '.jpeg') || message.includes('.gif') || message.includes('.webp'))) {
-                    content = `<img src="${message}" style="max-width:200px;max-height:200px;border-radius:8px;margin-top:4px;">`;
-                } else if (message.startsWith('http') && (message.includes('.mp4') || message.includes('.webm') || message
-                        .includes('.ogg'))) {
-                    content =
-                        `<video src="${message}" controls style="max-width:100%;max-height:200px;border-radius:8px;margin-top:4px;"></video>`;
-                }
-
-                msgElement.innerHTML = `
-                    <strong>${escapeHtml(sender)}</strong>
-                    <span>${content}</span>
-                    <small>${new Date().toLocaleTimeString()}</small>
-                `;
-                messagesDiv.appendChild(msgElement);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }
-
-            function showSystemMessage(text) {
-                const msgElement = document.createElement('div');
-                msgElement.className = 'system-message';
-                msgElement.textContent = text;
-                messagesDiv.appendChild(msgElement);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }
-
-            function showHistory() {
-                const history = chat.getHistory();
-                history.forEach(msg => {
-                    displayMessage(msg.sender, msg.message, msg.isOwn);
-                });
-            }
-
-            function updatePeerList() {
-                const peers = chat.getPeers();
-                const currentUserItem = peerListItems.querySelector('.current-user');
-                peerListItems.innerHTML = '';
-                peerListItems.appendChild(currentUserItem);
-
-                peers.forEach(peer => {
-                    const item = document.createElement('div');
-                    item.className = 'peer-item';
-                    item.dataset.peerId = peer.peerId;
-                    item.innerHTML = `
-                        <span>${escapeHtml(peer.username)}</span>
-                        <span class="badge">🟢 online</span>
-                        <div class="peer-actions">
-                            <button class="call-peer" data-peer="${peer.peerId}" title="Call">📞</button>
-                        </div>
-                    `;
-                    const callBtnPeer = item.querySelector('.call-peer');
-                    callBtnPeer.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        chat.startCall(peer.peerId, 'audio');
-                    });
-                    peerListItems.appendChild(item);
-                });
-            }
-
-            function updatePeerCount() {
-                const peers = chat.getPeers();
-                peerCountSpan.textContent = `👥 ${peers.length} online`;
-            }
-
-            function updateStatus(connected) {
-                if (connected) {
-                    connectionStatus.textContent = '🟢 Connected';
-                    connectionStatus.style.color = '#00ff88';
-                } else {
-                    connectionStatus.textContent = '🔴 Disconnected';
-                    connectionStatus.style.color = '#ff4444';
-                }
-            }
-
-            function escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-
-            // ---- FILE PROGRESS ----
-            function updateFileProgress(fileId, fileName, current, total) {
-                const progress = (current / total) * 100;
-                let progressElement = document.getElementById(`file-progress-${fileId}`);
-
-                if (!progressElement) {
-                    progressElement = document.createElement('div');
-                    progressElement.id = `file-progress-${fileId}`;
-                    progressElement.className = 'file-progress';
-                    progressElement.innerHTML = `
-                        <div class="file-progress-info">
-                            <span>📁 ${escapeHtml(fileName)}</span>
-                            <span class="file-progress-percent">0%</span>
-                        </div>
-                        <div class="file-progress-bar">
-                            <div class="file-progress-fill" style="width: 0%"></div>
-                        </div>
-                    `;
-                    fileProgressDiv.appendChild(progressElement);
-                }
-
-                const fill = progressElement.querySelector('.file-progress-fill');
-                const percent = progressElement.querySelector('.file-progress-percent');
-                fill.style.width = `${progress}%`;
-                percent.textContent = `${Math.round(progress)}%`;
-
-                if (current === total) {
-                    setTimeout(() => {
-                        progressElement.remove();
-                    }, 3000);
-                }
-            }
-
-            function showFileDownload(fileId, fileName, url) {
-                const downloadElement = document.createElement('div');
-                downloadElement.className = 'file-download';
-                downloadElement.innerHTML = `
-                    <span>📁 ${escapeHtml(fileName)}</span>
-                    <a href="${url}" download="${escapeHtml(fileName)}">Download</a>
-                `;
-                fileProgressDiv.appendChild(downloadElement);
-
-                setTimeout(() => {
-                    downloadElement.remove();
-                }, 30000);
-            }
-
-            // ---- FILE OFFER ----
-            function handleFileOffer(fromPeerId, fileId, fileName, fileSize) {
-                const sizeStr = fileSize > 1024 * 1024 ?
-                    `${(fileSize / (1024 * 1024)).toFixed(1)} MB` :
-                    `${(fileSize / 1024).toFixed(1)} KB`;
-
-                if (confirm(`📁 ${fileName} (${sizeStr}) - Accept file?`)) {
-                    const channel = chat.dataChannels.get(fromPeerId);
-                    if (channel && channel.readyState === 'open') {
-                        channel.send(JSON.stringify({
-                            type: 'file-accept',
-                            fileId: fileId
-                        }));
+                    if (this.onMessage) {
+                        this.onMessage(data.sender, decrypted, false, true, fromPeerId);
                     }
                 } else {
-                    const channel = chat.dataChannels.get(fromPeerId);
-                    if (channel && channel.readyState === 'open') {
-                        channel.send(JSON.stringify({
-                            type: 'file-reject',
-                            fileId: fileId
-                        }));
+                    // Room message
+                    const roomId = this.currentRoomId || 'default';
+                    this.addToHistory(roomId, {
+                        sender: data.sender,
+                        message: decrypted,
+                        timestamp: data.timestamp,
+                        isOwn: false,
+                        isPrivate: false
+                    });
+                    if (this.onMessage) {
+                        this.onMessage(data.sender, decrypted, false, false);
                     }
                 }
+            } catch (error) {
+                console.error('Error decrypting message:', error);
             }
+        }
 
-            // ---- CALL UI ----
-            function handleCall(peerId, stream, isInitiator, mediaType) {
-                currentCallPeer = peerId;
+        async handlePrivateMessage(data, fromPeerId) {
+            try {
+                const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
+                this.addToHistory('private_' + fromPeerId, {
+                    sender: data.sender,
+                    message: decrypted,
+                    timestamp: data.timestamp,
+                    isOwn: false,
+                    isPrivate: true,
+                    targetPeer: fromPeerId
+                });
+                if (this.onMessage) {
+                    this.onMessage(data.sender, decrypted, false, true, fromPeerId);
+                }
+            } catch (error) {
+                console.error('Error decrypting private message:', error);
+            }
+        }
 
-                if (stream) {
-                    localVideo.srcObject = stream;
-                    localVideo.style.display = 'block';
-                    callStatus.textContent = isInitiator ? '📞 Calling...' : '📞 Incoming call...';
+        async handleRoomMessage(data, fromPeerId) {
+            try {
+                const decrypted = await this.encryption.decrypt(data.message, this.encryptionKey);
+                const roomId = data.roomId || this.currentRoomId || 'default';
+                this.addToHistory(roomId, {
+                    sender: data.sender,
+                    message: decrypted,
+                    timestamp: data.timestamp,
+                    isOwn: false,
+                    isPrivate: false
+                });
+                if (this.onMessage) {
+                    this.onMessage(data.sender, decrypted, false, false);
+                }
+            } catch (error) {
+                console.error('Error decrypting room message:', error);
+            }
+        }
 
-                    // If incoming call, answer automatically
-                    if (!isInitiator && !stream) {
-                        setTimeout(() => {
-                            chat.answerCall(peerId);
-                        }, 2000);
+        // ---- HANDLING SIGNALING ----
+        handleSignaling(data) {
+            const peerId = data.from;
+
+            switch (data.type) {
+                case 'offer':
+                    this.handleOffer(data);
+                    break;
+
+                case 'answer':
+                    this.handleAnswer(data);
+                    break;
+
+                case 'candidate':
+                    this.handleIceCandidate(data);
+                    break;
+            }
+        }
+
+        async handleOffer(data) {
+            const peerId = data.from;
+
+            if (!this.peerConnections.has(peerId)) {
+                const pc = new RTCPeerConnection(this.configuration);
+                this.peerConnections.set(peerId, { pc, username: data.username });
+
+                pc.ondatachannel = (event) => {
+                    const channel = event.channel;
+                    if (channel.label === 'chat') {
+                        this.setupDataChannel(channel, peerId);
+                        this.dataChannels.set(peerId, channel);
                     }
-                }
+                };
 
-                // If it's an incoming call offer (no stream yet)
-                if (!isInitiator && !stream && mediaType) {
-                    callStatus.textContent = `📞 Incoming ${mediaType} call...`;
-                    // Auto-answer after 2 seconds
-                    setTimeout(() => {
-                        chat.answerCall(peerId);
-                    }, 2000);
-                }
-
-                callOverlay.classList.add('active');
-                callEndBtn.style.display = 'inline-block';
-            }
-
-            function handleCallEnded(peerId) {
-                if (currentCallPeer === peerId) {
-                    hideCallUI();
-                }
-            }
-
-            function hideCallUI() {
-                callOverlay.classList.remove('active');
-                if (localVideo.srcObject) {
-                    localVideo.srcObject.getTracks().forEach(track => track.stop());
-                }
-                if (remoteVideo.srcObject) {
-                    remoteVideo.srcObject.getTracks().forEach(track => track.stop());
-                }
-                localVideo.srcObject = null;
-                remoteVideo.srcObject = null;
-                localVideo.style.display = 'none';
-                remoteVideo.style.display = 'none';
-                callStatus.textContent = '';
-                currentCallPeer = null;
-                isMuted = false;
-                isVideoEnabled = true;
-                callMuteBtn.textContent = '🎤';
-                callVideoToggle.textContent = '📹';
-                callEndBtn.style.display = 'none';
-            }
-
-            // ---- AUTO-RECONNECT STATUS ----
-            setInterval(() => {
-                if (!chat.isConnected && chat.ws === null) {
-                    serverStatus.textContent = '🔄 Reconnecting...';
-                    serverStatus.style.color = '#ffaa00';
-                }
-            }, 1000);
-
-            // ---- KEYBOARD SHORTCUTS ----
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    if (callOverlay.classList.contains('active')) {
-                        if (currentCallPeer) {
-                            chat.endCall(currentCallPeer);
-                            hideCallUI();
-                        }
+                pc.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        this.sendSignaling('candidate', {
+                            targetPeerId: peerId,
+                            candidate: event.candidate
+                        });
                     }
-                }
-            });
+                };
+            }
 
-            console.log('🔒 Secure P2P Chat loaded');
-            console.log(`📡 Signaling server: ${signalingUrl}`);
-            console.log('💡 Create a room or join an existing one to start chatting!');
+            const { pc } = this.peerConnections.get(peerId);
+
+            try {
+                await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+                const answer = await pc.createAnswer();
+                await pc.setLocalDescription(answer);
+
+                this.sendSignaling('answer', {
+                    targetPeerId: peerId,
+                    sdp: answer
+                });
+            } catch (error) {
+                console.error('Error handling offer:', error);
+            }
+        }
+
+        async handleAnswer(data) {
+            const peerId = data.from;
+            if (this.peerConnections.has(peerId)) {
+                const { pc } = this.peerConnections.get(peerId);
+                try {
+                    await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+                } catch (error) {
+                    console.error('Error handling answer:', error);
+                }
+            }
+        }
+
+        async handleIceCandidate(data) {
+            const peerId = data.from;
+            if (this.peerConnections.has(peerId)) {
+                const { pc } = this.peerConnections.get(peerId);
+                try {
+                    await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+                } catch (error) {
+                    console.error('Error adding ICE candidate:', error);
+                }
+            }
+        }
+
+        sendSignaling(type, data) {
+            if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                this.ws.send(JSON.stringify({
+                    type: type,
+                    ...data,
+                    from: this.peerId
+                }));
+            }
+        }
+
+        disconnectFromPeer(peerId) {
+            if (this.peerConnections.has(peerId)) {
+                const { pc } = this.peerConnections.get(peerId);
+                pc.close();
+                this.peerConnections.delete(peerId);
+            }
+            if (this.dataChannels.has(peerId)) {
+                this.dataChannels.delete(peerId);
+            }
+            if (this.onPeerListUpdate) {
+                this.onPeerListUpdate(this.getRoomPeers(this.currentRoomId));
+            }
+        }
+
+        // ---- HISTORY ----
+        addToHistory(key, message) {
+            if (!this.messageHistory[key]) {
+                this.messageHistory[key] = [];
+            }
+            this.messageHistory[key].push(message);
+            if (this.messageHistory[key].length > 1000) {
+                this.messageHistory[key].shift();
+            }
+            this.saveHistory();
+        }
+
+        getHistory(key) {
+            return this.messageHistory[key] || [];
+        }
+
+        saveHistory() {
+            try {
+                localStorage.setItem(this.storageKey + this.roomId, JSON.stringify(this.messageHistory));
+            } catch (error) {
+                console.error('Error saving history:', error);
+            }
+        }
+
+        loadHistory() {
+            try {
+                const data = localStorage.getItem(this.storageKey + this.roomId);
+                if (data) {
+                    this.messageHistory = JSON.parse(data);
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        clearHistory(key) {
+            this.messageHistory[key] = [];
+            this.saveHistory();
+        }
+
+        // ---- UTILITY ----
+        getPeers() {
+            const peers = [];
+            for (const [peerId, { username }] of this.peerConnections) {
+                peers.push({ peerId, username });
+            }
+            return peers;
+        }
+
+        getRooms() {
+            return Array.from(this.rooms.values());
+        }
+
+        leaveRoom() {
+            if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                this.ws.send(JSON.stringify({ type: 'peer-disconnect' }));
+            }
+            this.cleanup();
+            this.roomId = null;
+        }
+
+        cleanup() {
+            for (const [peerId] of this.peerConnections) {
+                this.disconnectFromPeer(peerId);
+            }
+            if (this.ws) {
+                this.ws.close();
+                this.ws = null;
+            }
+            this.peerConnections.clear();
+            this.dataChannels.clear();
+            this.pendingMessages = [];
+            this.peerId = null;
+            this.isConnected = false;
+        }
+    }
+
+    // ============================================================
+    //  UI CONTROLLER
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', () => {
+        const defaultUsername = 'User_' + Math.random().toString(36).substring(2, 6);
+        document.getElementById('create-username').value = defaultUsername;
+
+        const signalingUrl = 'wss://chasedavision.onrender.com';
+        const chat = new P2PChat(signalingUrl);
+        let currentUsername = '';
+        let isPrivateMode = false;
+        let privateTargetPeer = null;
+
+        // DOM refs
+        const setupScreen = document.getElementById('setup-screen');
+        const chatScreen = document.getElementById('chat-screen');
+        const connectionStatus = document.getElementById('connection-status');
+        const serverStatus = document.getElementById('server-status');
+
+        const createRoomBtn = document.getElementById('create-room');
+        const joinRoomBtn = document.getElementById('join-room');
+        const sendMessageBtn = document.getElementById('send-message');
+        const messageInput = document.getElementById('message-input');
+        const copyRoomInfoBtn = document.getElementById('copy-room-info');
+        const fileInput = document.getElementById('file-input');
+        const fileSendBtn = document.getElementById('file-send-btn');
+        const callBtn = document.getElementById('call-btn');
+        const privateToggle = document.getElementById('private-toggle');
+        const clearChatBtn = document.getElementById('clear-chat-btn');
+        const leaveRoomBtn = document.getElementById('leave-room-btn');
+        const newRoomBtn = document.getElementById('new-room-btn');
+
+        const messagesDiv = document.getElementById('messages');
+        const roomItemsDiv = document.getElementById('room-items');
+        const contactItemsDiv = document.getElementById('contact-items');
+        const currentChatTitle = document.getElementById('current-chat-title');
+
+        let currentRoomId = null;
+
+        // ---- CHAT CALLBACKS ----
+        chat.onConnected = () => {
+            updateStatus(true);
+            serverStatus.textContent = '✅ Connected to server';
+            serverStatus.style.color = '#00ff88';
+        };
+
+        chat.onDisconnected = () => {
+            updateStatus(false);
+            serverStatus.textContent = '❌ Disconnected';
+            serverStatus.style.color = '#ff4444';
+        };
+
+        chat.onMessage = (sender, message, isOwn, isPrivate = false, targetPeer = null) => {
+            if (sender === '__clear__') {
+                messagesDiv.innerHTML = '';
+                return;
+            }
+            displayMessage(sender, message, isOwn, isPrivate, targetPeer);
+        };
+
+        chat.onPeerJoined = (peerId, username) => {
+            showSystemMessage(`👋 ${username} joined`);
+            updatePeerList();
+            updateRoomList();
+        };
+
+        chat.onPeerLeft = (peerId) => {
+            showSystemMessage(`👋 Peer left`);
+            updatePeerList();
+            updateRoomList();
+        };
+
+        chat.onRoomCreated = (roomId, name) => {
+            updateRoomList();
+        };
+
+        chat.onPeerListUpdate = (peers) => {
+            updatePeerList();
+        };
+
+        // ---- CREATE ROOM ----
+        createRoomBtn.addEventListener('click', async () => {
+            const username = document.getElementById('create-username').value.trim();
+            if (!username) {
+                alert('Please enter a username');
+                return;
+            }
+
+            createRoomBtn.disabled = true;
+            createRoomBtn.textContent = 'Creating...';
+
+            try {
+                currentUsername = username;
+                const roomInfo = await chat.createRoom(username);
+
+                setupScreen.classList.remove('active');
+                chatScreen.classList.add('active');
+
+                messageInput.disabled = false;
+                sendMessageBtn.disabled = false;
+                fileSendBtn.disabled = false;
+                callBtn.disabled = false;
+
+                showSystemMessage('🚀 Workspace created! Share the ID and Key with friends.');
+                updateRoomList();
+                updatePeerList();
+
+            } catch (error) {
+                console.error('Error creating room:', error);
+                alert('Failed to create room: ' + error.message);
+            } finally {
+                createRoomBtn.disabled = false;
+                createRoomBtn.textContent = 'Create Workspace';
+            }
         });
-    </script>
+
+        // ---- JOIN ROOM ----
+        joinRoomBtn.addEventListener('click', async () => {
+            const roomId = document.getElementById('join-room-id').value.trim().toUpperCase();
+            const key = document.getElementById('join-encryption-key').value.trim();
+            const username = document.getElementById('join-username').value.trim();
+
+            if (!roomId || !key || !username) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            joinRoomBtn.disabled = true;
+            joinRoomBtn.textContent = 'Joining...';
+
+            try {
+                currentUsername = username;
+                await chat.joinRoom(roomId, key, username);
+
+                setupScreen.classList.remove('active');
+                chatScreen.classList.add('active');
+
+                messageInput.disabled = false;
+                sendMessageBtn.disabled = false;
+                fileSendBtn.disabled = false;
+                callBtn.disabled = false;
+
+                showSystemMessage('🔗 Joined the workspace!');
+                updateRoomList();
+                updatePeerList();
+
+            } catch (error) {
+                console.error('Error joining room:', error);
+                alert('Failed to join room: ' + error.message);
+            } finally {
+                joinRoomBtn.disabled = false;
+                joinRoomBtn.textContent = 'Join Workspace';
+            }
+        });
+
+        // ---- SEND MESSAGE ----
+        sendMessageBtn.addEventListener('click', async () => {
+            const text = messageInput.value.trim();
+            if (!text) return;
+
+            try {
+                if (isPrivateMode && privateTargetPeer) {
+                    await chat.sendMessage(text, true, privateTargetPeer);
+                } else {
+                    await chat.sendMessage(text, false);
+                }
+                messageInput.value = '';
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Failed to send message: ' + error.message);
+            }
+        });
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessageBtn.click();
+            }
+        });
+
+        // ---- PRIVATE TOGGLE ----
+        privateToggle.addEventListener('click', () => {
+            isPrivateMode = !isPrivateMode;
+            privateToggle.classList.toggle('active');
+            if (isPrivateMode) {
+                const peers = chat.getPeers();
+                if (peers.length === 0) {
+                    alert('No peers online to send private messages to');
+                    isPrivateMode = false;
+                    privateToggle.classList.remove('active');
+                    return;
+                }
+                // Show peer selector
+                const peerNames = peers.map(p => p.username).join(', ');
+                const target = prompt(`Send private message to which peer?\nAvailable: ${peerNames}`, peers[0].username);
+                if (target) {
+                    const found = peers.find(p => p.username === target);
+                    if (found) {
+                        privateTargetPeer = found.peerId;
+                        privateToggle.textContent = `🔒 ${target}`;
+                        showSystemMessage(`🔒 Private chat with ${target}`);
+                    } else {
+                        alert('Peer not found');
+                        isPrivateMode = false;
+                        privateToggle.classList.remove('active');
+                        privateToggle.textContent = '🔒';
+                    }
+                } else {
+                    isPrivateMode = false;
+                    privateToggle.classList.remove('active');
+                }
+            } else {
+                privateTargetPeer = null;
+                privateToggle.textContent = '🔒';
+                showSystemMessage('Switched to public chat');
+            }
+        });
+
+        // ---- NEW ROOM ----
+        newRoomBtn.addEventListener('click', () => {
+            const name = prompt('Enter room name:', 'New Room');
+            if (name && name.trim()) {
+                chat.createNewRoom(name.trim());
+                updateRoomList();
+                showSystemMessage(`📁 Room "${name}" created`);
+            }
+        });
+
+        // ---- CLEAR CHAT ----
+        clearChatBtn.addEventListener('click', () => {
+            if (confirm('Clear all messages?')) {
+                messagesDiv.innerHTML = '';
+                const key = chat.currentRoomId || 'default';
+                chat.clearHistory(key);
+                showSystemMessage('🗑️ Chat cleared');
+            }
+        });
+
+        // ---- LEAVE ROOM ----
+        leaveRoomBtn.addEventListener('click', () => {
+            if (confirm('Leave the workspace?')) {
+                chat.leaveRoom();
+                setupScreen.classList.add('active');
+                chatScreen.classList.remove('active');
+                messageInput.disabled = true;
+                sendMessageBtn.disabled = true;
+                fileSendBtn.disabled = true;
+                callBtn.disabled = true;
+                showSystemMessage('You left the workspace');
+                updateStatus(false);
+            }
+        });
+
+        // ---- FILE SEND ----
+        fileSendBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', async (e) => {
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+
+            const peers = chat.getPeers();
+            if (peers.length === 0) {
+                alert('No peers connected');
+                return;
+            }
+
+            for (const file of files) {
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    const base64 = event.target.result;
+                    // Send file as message (encrypted)
+                    const text = `📁 ${file.name} (${(file.size/1024).toFixed(1)}KB)`;
+                    await chat.sendMessage(text, false);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            fileInput.value = '';
+        });
+
+        // ---- UPDATE FUNCTIONS ----
+        function updateRoomList() {
+            const rooms = chat.getRooms();
+            roomItemsDiv.innerHTML = rooms.map(room => `
+                <div class="room-item" data-room="${room.id}" onclick="switchRoom('${room.id}')">
+                    <span>💬 ${room.name}</span>
+                    <span class="badge">${room.peers.length || 0}</span>
+                </div>
+            `).join('');
+
+            // Add contacts from peers
+            updatePeerList();
+        }
+
+        function updatePeerList() {
+            const peers = chat.getPeers();
+            contactItemsDiv.innerHTML = peers.map(peer => `
+                <div class="contact-item" onclick="startPrivateChat('${peer.peerId}', '${peer.username}')">
+                    <span>
+                        <span class="status online"></span>
+                        ${peer.username}
+                    </span>
+                    <button class="btn-small" onclick="event.stopPropagation(); startPrivateChat('${peer.peerId}', '${peer.username}')">💬</button>
+                </div>
+            `).join('');
+
+            if (peers.length === 0) {
+                contactItemsDiv.innerHTML = '<div class="system-message" style="padding:8px;">No contacts online</div>';
+            }
+        }
+
+        function displayMessage(sender, message, isOwn, isPrivate = false, targetPeer = null) {
+            const msgElement = document.createElement('div');
+            msgElement.className = `message ${isOwn ? 'own' : 'other'} ${isPrivate ? 'private' : ''}`;
+            
+            const privateBadge = isPrivate ? '<span class="private-badge">🔒 Private</span>' : '';
+            msgElement.innerHTML = `
+                <strong>${sender} ${privateBadge}</strong>
+                <span>${message}</span>
+                <small>${new Date().toLocaleTimeString()}</small>
+            `;
+            messagesDiv.appendChild(msgElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showSystemMessage(text) {
+            const msgElement = document.createElement('div');
+            msgElement.className = 'system-message';
+            msgElement.textContent = text;
+            messagesDiv.appendChild(msgElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function updateStatus(connected) {
+            if (connected) {
+                connectionStatus.textContent = '🟢 Connected';
+                connectionStatus.style.color = '#00ff88';
+            } else {
+                connectionStatus.textContent = '🔴 Disconnected';
+                connectionStatus.style.color = '#ff4444';
+            }
+        }
+
+        // ---- GLOBAL FUNCTIONS FOR HTML ----
+        window.switchRoom = function(roomId) {
+            chat.switchRoom(roomId);
+            currentRoomId = roomId;
+            const room = chat.rooms.get(roomId);
+            if (room) {
+                currentChatTitle.innerHTML = `${room.name} <small>${room.peers.length || 0} members</small>`;
+            }
+            // Update active state
+            document.querySelectorAll('.room-item').forEach(el => {
+                el.classList.toggle('active', el.dataset.room === roomId);
+            });
+        };
+
+        window.startPrivateChat = function(peerId, username) {
+            chat.startPrivateChat(peerId, username);
+            currentChatTitle.innerHTML = `🔒 ${username} <small>Private chat</small>`;
+            // Update active state
+            document.querySelectorAll('.contact-item').forEach(el => {
+                el.classList.toggle('active', el.dataset.peer === peerId);
+            });
+            // Disable private toggle for private chat
+            privateToggle.style.opacity = '0.5';
+            privateToggle.style.pointerEvents = 'none';
+        };
+
+        // ---- SIDEBAR TABS ----
+        document.querySelectorAll('.sidebar-tabs button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.sidebar-tabs button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const tab = btn.dataset.tab;
+                document.getElementById('rooms-list').style.display = tab === 'rooms' ? 'block' : 'none';
+                document.getElementById('contacts-list').style.display = tab === 'contacts' ? 'block' : 'none';
+            });
+        });
+
+        console.log('🔒 Secure P2P Chat loaded with Group & Private Chat support!');
+        console.log(`📡 Signaling server: ${signalingUrl}`);
+    });
+</script>
 
 </body>
 </html>
