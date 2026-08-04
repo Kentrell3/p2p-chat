@@ -120,6 +120,7 @@
         .no-contacts .icon{font-size:40px;margin-bottom:12px}
         .clear-btn{background:rgba(255,170,0,0.1);color:#ffaa00;border:1px solid rgba(255,170,0,0.2)}
         .clear-btn:hover{background:rgba(255,170,0,0.2)}
+        .reconnect-banner{background:rgba(255,170,0,0.1);border:1px solid rgba(255,170,0,0.2);border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:12px;color:#ffaa00;display:none}
         @media(max-width:768px){.container{padding:12px;max-height:100vh}.chat-layout{flex-direction:column}.sidebar{width:100%;min-width:unset;max-height:180px}.chat-list{display:flex;flex-wrap:wrap;gap:4px;padding:4px 8px}.chat-list-item{padding:6px 10px;flex:0 1 auto;border-left:none;border-bottom:2px solid transparent}.chat-list-item.active{border-left:none;border-bottom-color:#00d4ff}.chat-list-item .avatar{width:28px;height:28px;font-size:12px;margin-right:8px}.chat-list-item .chat-info .name{font-size:12px}.chat-list-item .chat-info .last-msg{font-size:10px}.message{max-width:90%;font-size:13px}.chat-header .chat-title{font-size:14px}}
     </style>
 </head>
@@ -185,6 +186,10 @@
                             <span class="connection-status disconnected" id="conn-status">⚪</span>
                             <button class="btn-small btn-danger" id="leave-btn">🚪 Leave</button>
                         </div>
+                    </div>
+
+                    <div id="reconnect-banner" class="reconnect-banner">
+                        🔄 Reconnecting...
                     </div>
 
                     <div id="messages" class="messages-area">
@@ -301,7 +306,7 @@
         }
 
         // ============================================================
-        //  CHAT CLIENT - COMPLETE FIX
+        //  CHAT CLIENT - WITH AUTO-RECONNECT
         // ============================================================
         class SecureChat {
             constructor(serverUrl) {
@@ -319,7 +324,10 @@
                 this.onChatUpdate = null;
                 this.onConnectionChange = null;
                 this.onTyping = null;
+                this.onReconnecting = null;
                 this.storageKey = 'secure_chat_session_';
+                this.reconnectAttempts = 0;
+                this.maxReconnectAttempts = 10;
                 this.loadSession();
             }
 
@@ -487,6 +495,8 @@
 
                     this.ws.onopen = () => {
                         this.isConnected = true;
+                        this.reconnectAttempts = 0;
+                        if (this.onReconnecting) this.onReconnecting(false);
                         if (this.onConnectionChange) this.onConnectionChange(true);
                         resolve();
                     };
@@ -503,11 +513,7 @@
                     this.ws.onclose = () => {
                         this.isConnected = false;
                         if (this.onConnectionChange) this.onConnectionChange(false);
-                        setTimeout(() => {
-                            if (this.roomId && this.username) {
-                                this.connect().catch(() => {});
-                            }
-                        }, 3000);
+                        this.autoReconnect();
                     };
 
                     this.ws.onerror = () => {
@@ -522,12 +528,63 @@
                 });
             }
 
+            autoReconnect() {
+                if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+                    console.log('❌ Max reconnect attempts reached');
+                    return;
+                }
+
+                this.reconnectAttempts++;
+                if (this.onReconnecting) this.onReconnecting(true);
+
+                console.log(`🔄 Reconnect attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
+
+                setTimeout(async () => {
+                    if (this.roomId && this.username) {
+                        try {
+                            // Reconnect using stored session
+                            const session = this.loadSession();
+                            if (session && session.encryptionKey) {
+                                // We need the encryption key - check if we have it
+                                const key = await this.encryption.exportKey();
+                                await this.connect();
+                                this.ws.send(JSON.stringify({
+                                    type: 'register',
+                                    roomId: this.roomId,
+                                    username: this.username,
+                                    encryptionKey: key
+                                }));
+                                console.log('✅ Reconnected successfully');
+                                if (this.onReconnecting) this.onReconnecting(false);
+                            } else {
+                                // Need to re-enter key
+                                const key = prompt(`Reconnecting as ${this.username}. Enter encryption key:`);
+                                if (key) {
+                                    await this.encryption.importKey(key);
+                                    await this.connect();
+                                    this.ws.send(JSON.stringify({
+                                        type: 'register',
+                                        roomId: this.roomId,
+                                        username: this.username,
+                                        encryptionKey: key
+                                    }));
+                                    console.log('✅ Reconnected successfully');
+                                    if (this.onReconnecting) this.onReconnecting(false);
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Reconnect failed:', e);
+                            this.autoReconnect();
+                        }
+                    }
+                }, 2000 * Math.min(this.reconnectAttempts, 5));
+            }
+
             async handleMessage(data) {
                 console.log(`📨 Received: ${data.type}`);
 
                 switch (data.type) {
                     case 'history':
-                        // Public messages - go to group chat
                         for (const msg of data.messages) {
                             if (this.processedIds.has(msg.id)) continue;
                             this.processedIds.add(msg.id);
@@ -548,12 +605,10 @@
                         break;
 
                     case 'private-history':
-                        // Private messages - ONLY for this user
                         for (const msg of data.messages) {
                             if (this.processedIds.has(msg.id)) continue;
                             this.processedIds.add(msg.id);
                             
-                            // Determine who the other user is
                             const otherUser = msg.sender === this.username ? msg.targetUser : msg.sender;
                             const chatId = this.getChatId(otherUser, true);
                             
@@ -561,7 +616,6 @@
                             msg.message = decrypted;
                             msg.isPrivate = true;
                             
-                            // Add to chat (mark as own if sender is this user)
                             const isOwn = msg.sender === this.username;
                             this.addMessageToChat(chatId, msg, isOwn);
                             if (this.onMessage) {
@@ -838,10 +892,21 @@
             const closeModal = document.getElementById('close-modal');
             const contactSearch = document.getElementById('contact-search');
             const contactList = document.getElementById('contact-list');
+            const reconnectBanner = document.getElementById('reconnect-banner');
 
             let currentChatId = null;
             let allChats = [];
             let allContacts = [];
+
+            // ---- RECONNECT BANNER ----
+            chat.onReconnecting = (isReconnecting) => {
+                if (isReconnecting) {
+                    reconnectBanner.style.display = 'block';
+                    reconnectBanner.textContent = '🔄 Reconnecting...';
+                } else {
+                    reconnectBanner.style.display = 'none';
+                }
+            };
 
             // ---- RESTORE SESSION ----
             async function restoreSession() {
@@ -1333,10 +1398,8 @@
 
             console.log('💬 Secure Chat loaded!');
             console.log(`📡 Server: ${serverUrl}`);
-            console.log('🔒 Private messages: ONLY sender + recipient see them');
-            console.log('🔒 Private messages are NEVER sent to other users');
-            console.log('🔄 Refresh does NOT affect other users');
-            console.log('🗑️ Clear chat button available');
+            console.log('🔒 Users tracked by username (not connection ID)');
+            console.log('🔄 Auto-reconnect enabled - refresh won\'t break chats');
         });
     </script>
 
