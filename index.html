@@ -22,7 +22,7 @@
         }
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             background: rgba(20, 27, 43, 0.95);
             border-radius: 16px;
             padding: 20px;
@@ -185,6 +185,130 @@
             flex-wrap: wrap;
             gap: 4px;
         }
+        
+        /* === CHAT LAYOUT === */
+        .chat-layout {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        /* === SIDEBAR - Like WhatsApp contacts === */
+        .sidebar {
+            width: 260px;
+            min-width: 220px;
+            background: rgba(13, 20, 33, 0.5);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .sidebar-header {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+        }
+        .sidebar-header h3 {
+            font-size: 13px;
+            color: #8892b0;
+            font-weight: 400;
+        }
+        .sidebar-header .online-count {
+            color: #00ff88;
+            font-size: 12px;
+        }
+        .sidebar-search {
+            padding: 8px 12px;
+            flex-shrink: 0;
+        }
+        .sidebar-search input {
+            width: 100%;
+            padding: 6px 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 12px;
+        }
+        .sidebar-search input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+        .chat-list-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        .chat-list-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .chat-list-item.active {
+            background: rgba(0, 212, 255, 0.08);
+            border-left-color: #00d4ff;
+        }
+        .chat-list-item .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(0, 212, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .chat-list-item .chat-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .chat-list-item .chat-info .name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .chat-list-item .chat-info .last-msg {
+            font-size: 12px;
+            color: #8892b0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .chat-list-item .chat-info .last-msg .private-badge {
+            font-size: 9px;
+            color: #ffaa00;
+            margin-right: 4px;
+        }
+        .chat-list-item .chat-meta {
+            font-size: 10px;
+            color: #556;
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .chat-list-item .chat-meta .unread {
+            background: #00d4ff;
+            color: #0a0e17;
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 600;
+        }
+        
+        /* === CHAT MAIN === */
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
         .chat-header {
             background: rgba(26, 35, 50, 0.8);
             padding: 10px 14px;
@@ -202,17 +326,41 @@
             font-size: 16px;
             font-weight: 600;
         }
+        .chat-header .chat-title .subtitle {
+            font-size: 12px;
+            color: #8892b0;
+            font-weight: 400;
+            margin-left: 8px;
+        }
         .chat-header .chat-actions {
             display: flex;
             gap: 6px;
             align-items: center;
             flex-wrap: wrap;
         }
-        .chat-header .online-count {
+        .connection-status {
             font-size: 12px;
-            color: #00ff88;
-            font-weight: 400;
+            padding: 4px 12px;
+            border-radius: 12px;
         }
+        .connection-status.connected {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+        }
+        .connection-status.disconnected {
+            background: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
+        }
+        .connection-status.connecting {
+            background: rgba(255, 170, 0, 0.1);
+            color: #ffaa00;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        
         .messages-area {
             flex: 1;
             overflow-y: auto;
@@ -247,9 +395,6 @@
             background: rgba(26, 35, 50, 0.8);
             color: #e0e0e0;
         }
-        .message.private {
-            border-left: 3px solid #ffaa00;
-        }
         .message .sender-name {
             display: block;
             font-size: 10px;
@@ -261,14 +406,6 @@
             font-size: 9px;
             opacity: 0.5;
             margin-top: 3px;
-        }
-        .message .private-badge {
-            font-size: 9px;
-            background: rgba(255, 170, 0, 0.2);
-            color: #ffaa00;
-            padding: 1px 6px;
-            border-radius: 10px;
-            margin-left: 4px;
         }
         .message .file-attachment {
             display: inline-block;
@@ -318,21 +455,6 @@
             padding: 8px 12px;
             font-size: 16px;
         }
-        .input-area .private-toggle {
-            padding: 8px 12px;
-            background: rgba(255, 170, 0, 0.1);
-            border: 1px solid rgba(255, 170, 0, 0.2);
-            border-radius: 8px;
-            color: #ffaa00;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-        .input-area .private-toggle.active {
-            background: rgba(255, 170, 0, 0.2);
-            border-color: #ffaa00;
-        }
         .typing-indicator {
             color: #8892b0;
             font-size: 11px;
@@ -340,83 +462,25 @@
             font-style: italic;
             min-height: 20px;
         }
-        .user-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            padding: 4px 0;
-        }
-        .user-chip {
-            padding: 2px 10px;
-            background: rgba(0, 212, 255, 0.05);
-            border-radius: 12px;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .user-chip .online-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #00ff88;
-            display: inline-block;
-        }
-        .file-progress {
-            background: rgba(13, 20, 33, 0.8);
-            border-radius: 8px;
-            padding: 8px 12px;
-            margin-bottom: 6px;
-            font-size: 12px;
-        }
-        .file-progress .progress-bar {
-            height: 4px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-        .file-progress .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00d4ff, #0099cc);
-            transition: width 0.3s;
-            width: 0%;
+        #file-input {
+            display: none;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .messages-area::-webkit-scrollbar {
+        .messages-area::-webkit-scrollbar,
+        .chat-list::-webkit-scrollbar {
             width: 4px;
         }
-        .messages-area::-webkit-scrollbar-track {
+        .messages-area::-webkit-scrollbar-track,
+        .chat-list::-webkit-scrollbar-track {
             background: rgba(13, 20, 33, 0.5);
         }
-        .messages-area::-webkit-scrollbar-thumb {
+        .messages-area::-webkit-scrollbar-thumb,
+        .chat-list::-webkit-scrollbar-thumb {
             background: rgba(35, 48, 68, 0.8);
             border-radius: 2px;
-        }
-        .connection-status {
-            font-size: 12px;
-            padding: 4px 12px;
-            border-radius: 12px;
-        }
-        .connection-status.connected {
-            background: rgba(0, 255, 136, 0.1);
-            color: #00ff88;
-        }
-        .connection-status.disconnected {
-            background: rgba(255, 68, 68, 0.1);
-            color: #ff4444;
-        }
-        .connection-status.connecting {
-            background: rgba(255, 170, 0, 0.1);
-            color: #ffaa00;
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
         }
         .room-info {
             font-size: 11px;
@@ -434,13 +498,61 @@
             color: #00d4ff;
             word-break: break-all;
         }
-        #file-input {
-            display: none;
+        .no-chats {
+            text-align: center;
+            color: #556;
+            padding: 30px 10px;
+            font-size: 13px;
+        }
+        .no-chats .icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+        .no-chats .hint {
+            color: #8892b0;
+            font-size: 12px;
+            margin-top: 8px;
         }
         @media (max-width: 768px) {
             .container {
                 padding: 12px;
                 max-height: 100vh;
+            }
+            .chat-layout {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                min-width: unset;
+                max-height: 150px;
+            }
+            .chat-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 4px 8px;
+            }
+            .chat-list-item {
+                padding: 6px 10px;
+                flex: 0 1 auto;
+                border-left: none;
+                border-bottom: 2px solid transparent;
+            }
+            .chat-list-item.active {
+                border-left: none;
+                border-bottom-color: #00d4ff;
+            }
+            .chat-list-item .avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+                margin-right: 8px;
+            }
+            .chat-list-item .chat-info .name {
+                font-size: 12px;
+            }
+            .chat-list-item .chat-info .last-msg {
+                font-size: 10px;
             }
             .message {
                 max-width: 90%;
@@ -448,10 +560,6 @@
             }
             .chat-header .chat-title {
                 font-size: 14px;
-            }
-            .input-area .private-toggle {
-                font-size: 10px;
-                padding: 6px 8px;
             }
         }
     </style>
@@ -461,7 +569,7 @@
     <div class="container">
         <header>
             <h1>💬 Secure Chat</h1>
-            <p>End-to-end encrypted · File sharing · Private messages</p>
+            <p>End-to-end encrypted · File sharing · Private chats</p>
         </header>
 
         <!-- SETUP SCREEN -->
@@ -488,32 +596,52 @@
 
         <!-- CHAT SCREEN -->
         <div id="chat-screen" class="screen">
-            <div class="chat-header">
-                <div>
-                    <div class="chat-title" id="chat-title">💬 Room</div>
-                    <div class="user-list" id="user-list"></div>
+            <div class="chat-layout">
+                <!-- Sidebar - Chat List -->
+                <div class="sidebar">
+                    <div class="sidebar-header">
+                        <h3>💬 Chats <span class="online-count" id="online-count">(0 online)</span></h3>
+                    </div>
+                    <div class="sidebar-search">
+                        <input type="text" id="search-chats" placeholder="Search chats..." />
+                    </div>
+                    <div class="chat-list" id="chat-list">
+                        <div class="no-chats">
+                            <div class="icon">💬</div>
+                            <div>No chats yet</div>
+                            <div class="hint">Start a private chat or wait for messages</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="chat-actions">
-                    <span class="connection-status disconnected" id="conn-status">⚪</span>
-                    <button class="btn-small btn-danger" id="leave-btn">🚪 Leave</button>
+
+                <!-- Chat Main -->
+                <div class="chat-main">
+                    <div class="chat-header">
+                        <div>
+                            <div class="chat-title" id="chat-title">Select a chat</div>
+                        </div>
+                        <div class="chat-actions">
+                            <span class="connection-status disconnected" id="conn-status">⚪</span>
+                            <button class="btn-small btn-danger" id="leave-btn">🚪 Leave Room</button>
+                        </div>
+                    </div>
+
+                    <div id="messages" class="messages-area">
+                        <div class="system-message">🔒 Select a chat to start messaging</div>
+                    </div>
+
+                    <div class="typing-indicator" id="typing-indicator"></div>
+
+                    <div class="input-area">
+                        <input type="text" id="message-input" placeholder="Type a message..." class="input-field" disabled>
+                        <div class="action-buttons">
+                            <button id="file-btn" class="btn btn-secondary" disabled title="Send file">📎</button>
+                            <button id="send-btn" class="btn btn-primary" disabled>Send</button>
+                        </div>
+                    </div>
+                    <input type="file" id="file-input" multiple>
                 </div>
             </div>
-
-            <div id="messages" class="messages-area">
-                <div class="system-message">🔒 Waiting for messages...</div>
-            </div>
-
-            <div class="typing-indicator" id="typing-indicator"></div>
-
-            <div class="input-area">
-                <input type="text" id="message-input" placeholder="Type a message..." class="input-field" disabled>
-                <button class="private-toggle" id="private-toggle">🔒</button>
-                <div class="action-buttons">
-                    <button id="file-btn" class="btn btn-secondary" disabled title="Send file">📎</button>
-                    <button id="send-btn" class="btn btn-primary" disabled>Send</button>
-                </div>
-            </div>
-            <input type="file" id="file-input" multiple>
         </div>
     </div>
 
@@ -602,7 +730,7 @@
         }
 
         // ============================================================
-        //  CHAT CLIENT - FIXED DUPLICATE ISSUE
+        //  CHAT CLIENT - WITH SESSION PERSISTENCE & MULTIPLE CHATS
         // ============================================================
         class SecureChat {
             constructor(serverUrl) {
@@ -612,15 +740,143 @@
                 this.roomId = null;
                 this.encryption = new ChatEncryption();
                 this.isConnected = false;
-                this.messageHistory = [];
-                this.processedIds = new Set(); // Track processed message IDs
+                this.processedIds = new Set();
+                
+                // Chat management
+                this.chats = {}; // chatId -> { messages: [], unread: 0, lastMessage: null }
+                this.currentChatId = null;
+                this.roomUsers = [];
+                
+                // Callbacks
                 this.onMessage = null;
-                this.onUserUpdate = null;
+                this.onChatUpdate = null;
                 this.onConnectionChange = null;
                 this.onTyping = null;
                 this.typingTimeout = null;
+                
+                // Session persistence
+                this.storageKey = 'secure_chat_session_';
+                this.loadSession();
             }
 
+            // ---- SESSION PERSISTENCE ----
+            saveSession() {
+                try {
+                    const session = {
+                        username: this.username,
+                        roomId: this.roomId,
+                        encryptionKey: this.encryption.key ? 'saved' : null,
+                        chats: this.chats,
+                        currentChatId: this.currentChatId
+                    };
+                    localStorage.setItem(this.storageKey + 'data', JSON.stringify(session));
+                } catch (e) {}
+            }
+
+            loadSession() {
+                try {
+                    const data = localStorage.getItem(this.storageKey + 'data');
+                    if (data) {
+                        const session = JSON.parse(data);
+                        this.username = session.username;
+                        this.roomId = session.roomId;
+                        this.currentChatId = session.currentChatId;
+                        if (session.chats) {
+                            this.chats = session.chats;
+                        }
+                        return session;
+                    }
+                } catch (e) {}
+                return null;
+            }
+
+            clearSession() {
+                localStorage.removeItem(this.storageKey + 'data');
+            }
+
+            // ---- CHAT MANAGEMENT ----
+            getChatId(username, isPrivate = false) {
+                if (isPrivate) {
+                    return 'private_' + username;
+                }
+                return 'room_' + this.roomId;
+            }
+
+            getChatList() {
+                const list = [];
+                for (const [id, chat] of Object.entries(this.chats)) {
+                    let name = id;
+                    let isPrivate = false;
+                    let targetUser = null;
+                    
+                    if (id.startsWith('private_')) {
+                        targetUser = id.replace('private_', '');
+                        name = targetUser;
+                        isPrivate = true;
+                    } else {
+                        name = 'Group Chat';
+                    }
+                    
+                    // Only show chats that have messages or are active
+                    if (chat.messages && chat.messages.length > 0) {
+                        list.push({
+                            id: id,
+                            name: name,
+                            isPrivate: isPrivate,
+                            targetUser: targetUser,
+                            lastMessage: chat.lastMessage || '',
+                            lastTime: chat.lastTime || 0,
+                            unread: chat.unread || 0,
+                            messages: chat.messages || []
+                        });
+                    }
+                }
+                
+                // Sort by last message time
+                list.sort((a, b) => (b.lastTime || 0) - (a.lastTime || 0));
+                return list;
+            }
+
+            getChatMessages(chatId) {
+                if (this.chats[chatId]) {
+                    return this.chats[chatId].messages || [];
+                }
+                return [];
+            }
+
+            addMessageToChat(chatId, message, isOwn = false) {
+                if (!this.chats[chatId]) {
+                    this.chats[chatId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0 };
+                }
+                
+                const chat = this.chats[chatId];
+                // Check for duplicate
+                if (message.id && chat.messages.some(m => m.id === message.id)) {
+                    return;
+                }
+                
+                chat.messages.push(message);
+                chat.lastMessage = message.message || (message.fileName ? `📎 ${message.fileName}` : '');
+                chat.lastTime = message.timestamp || Date.now();
+                
+                // If not own and not current chat, increment unread
+                if (!isOwn && chatId !== this.currentChatId) {
+                    chat.unread = (chat.unread || 0) + 1;
+                }
+                
+                this.saveSession();
+                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+            }
+
+            markChatRead(chatId) {
+                if (this.chats[chatId]) {
+                    this.chats[chatId].unread = 0;
+                    this.saveSession();
+                    if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                }
+            }
+
+            // ---- CONNECTION ----
             async createRoom(username) {
                 this.username = username;
                 this.roomId = this.generateRoomId();
@@ -633,6 +889,7 @@
                     username: username,
                     encryptionKey: key
                 }));
+                this.saveSession();
                 return { roomId: this.roomId, encryptionKey: key };
             }
 
@@ -647,6 +904,20 @@
                     username: username,
                     encryptionKey: encryptionKey
                 }));
+                this.saveSession();
+            }
+
+            async reconnect() {
+                const session = this.loadSession();
+                if (session && session.roomId && session.username) {
+                    // We need the encryption key - prompt user
+                    const key = prompt(`Reconnect as ${session.username}? Enter encryption key:`);
+                    if (key) {
+                        await this.joinRoom(session.roomId, session.username, key);
+                        return true;
+                    }
+                }
+                return false;
             }
 
             generateRoomId() {
@@ -702,72 +973,95 @@
                 switch (data.type) {
                     case 'history':
                         for (const msg of data.messages) {
-                            // Skip if already processed
                             if (this.processedIds.has(msg.id)) continue;
                             this.processedIds.add(msg.id);
                             
-                            // Skip if it's our own message (already shown optimistically)
-                            if (msg.sender === this.username) continue;
+                            // Determine chat ID
+                            let chatId;
+                            let isPrivate = msg.isPrivate || false;
+                            if (isPrivate && msg.targetUser) {
+                                chatId = msg.targetUser === this.username ? 
+                                    this.getChatId(msg.sender, true) : 
+                                    this.getChatId(msg.targetUser, true);
+                            } else {
+                                chatId = this.getChatId('room', false);
+                            }
                             
                             const decrypted = await this.encryption.decrypt(msg.message);
                             msg.message = decrypted;
-                            if (this.onMessage) {
-                                this.onMessage(msg, false);
+                            
+                            // Don't add our own messages from history (already shown)
+                            if (msg.sender !== this.username) {
+                                this.addMessageToChat(chatId, msg, false);
+                                if (this.onMessage) {
+                                    this.onMessage(msg, false, chatId);
+                                }
                             }
                         }
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
 
                     case 'message':
-                        // Skip if already processed
                         if (this.processedIds.has(data.message.id)) break;
                         this.processedIds.add(data.message.id);
                         
-                        // Skip if it's our own message (already shown optimistically)
-                        if (data.message.sender === this.username) break;
+                        let chatId;
+                        let isPrivate = data.message.isPrivate || false;
+                        if (isPrivate && data.message.targetUser) {
+                            chatId = data.message.targetUser === this.username ? 
+                                this.getChatId(data.message.sender, true) : 
+                                this.getChatId(data.message.targetUser, true);
+                        } else {
+                            chatId = this.getChatId('room', false);
+                        }
                         
                         const decrypted = await this.encryption.decrypt(data.message.message);
                         data.message.message = decrypted;
-                        if (this.onMessage) {
-                            this.onMessage(data.message, false);
-                        }
-                        break;
-
-                    case 'private-message':
-                        if (this.processedIds.has(data.message.id)) break;
-                        this.processedIds.add(data.message.id);
                         
-                        if (data.message.sender === this.username) break;
-                        
-                        const pDecrypted = await this.encryption.decrypt(data.message.message);
-                        data.message.message = pDecrypted;
-                        data.message.isPrivate = true;
-                        if (this.onMessage) {
-                            this.onMessage(data.message, false);
+                        if (data.message.sender !== this.username) {
+                            this.addMessageToChat(chatId, data.message, false);
+                            if (this.onMessage) {
+                                this.onMessage(data.message, false, chatId);
+                            }
                         }
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
 
                     case 'file':
                         if (this.processedIds.has(data.message.id)) break;
                         this.processedIds.add(data.message.id);
                         
-                        if (data.message.sender === this.username) break;
+                        let fileChatId;
+                        let fileIsPrivate = data.message.isPrivate || false;
+                        if (fileIsPrivate && data.message.targetUser) {
+                            fileChatId = data.message.targetUser === this.username ? 
+                                this.getChatId(data.message.sender, true) : 
+                                this.getChatId(data.message.targetUser, true);
+                        } else {
+                            fileChatId = this.getChatId('room', false);
+                        }
                         
                         data.message.isFile = true;
-                        if (this.onMessage) {
-                            this.onMessage(data.message, false);
+                        if (data.message.sender !== this.username) {
+                            this.addMessageToChat(fileChatId, data.message, false);
+                            if (this.onMessage) {
+                                this.onMessage(data.message, false, fileChatId);
+                            }
                         }
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
 
                     case 'user-joined':
-                        if (this.onUserUpdate) {
-                            this.onUserUpdate(data.users);
-                        }
+                        this.roomUsers = data.users || [];
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
 
                     case 'user-left':
-                        if (this.onUserUpdate) {
-                            this.onUserUpdate(data.users);
-                        }
+                        this.roomUsers = data.users || [];
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
 
                     case 'typing':
@@ -784,6 +1078,7 @@
                 }
             }
 
+            // ---- SEND MESSAGES ----
             async sendMessage(text, isPrivate = false, targetUser = null) {
                 if (!text.trim()) return;
 
@@ -798,7 +1093,8 @@
                     id: id
                 }));
 
-                // Show message optimistically (only for the sender)
+                const chatId = isPrivate ? this.getChatId(targetUser, true) : this.getChatId('room', false);
+                
                 const msg = {
                     id: id,
                     sender: this.username,
@@ -807,10 +1103,15 @@
                     isPrivate: isPrivate,
                     targetUser: targetUser
                 };
+                
                 this.processedIds.add(id);
+                this.addMessageToChat(chatId, msg, true);
+                
                 if (this.onMessage) {
-                    this.onMessage(msg, true);
+                    this.onMessage(msg, true, chatId);
                 }
+                this.saveSession();
+                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
             }
 
             async sendFile(file, isPrivate = false, targetUser = null) {
@@ -819,10 +1120,7 @@
                 const fileSize = file.size;
                 const fileType = file.type || 'application/octet-stream';
 
-                // Read and encrypt file
                 const encryptedData = await this.encryption.encryptFile(file);
-                
-                // Convert to base64 for transmission
                 const uint8Array = new Uint8Array(encryptedData);
                 let binary = '';
                 for (let i = 0; i < uint8Array.length; i++) {
@@ -830,7 +1128,6 @@
                 }
                 const base64Data = btoa(binary);
 
-                // Send file metadata + data
                 this.ws.send(JSON.stringify({
                     type: 'file',
                     id: id,
@@ -842,7 +1139,8 @@
                     targetUser: targetUser
                 }));
 
-                // Show file message optimistically (only for the sender)
+                const chatId = isPrivate ? this.getChatId(targetUser, true) : this.getChatId('room', false);
+                
                 const msg = {
                     id: id,
                     sender: this.username,
@@ -855,10 +1153,15 @@
                     targetUser: targetUser,
                     isFile: true
                 };
+                
                 this.processedIds.add(id);
+                this.addMessageToChat(chatId, msg, true);
+                
                 if (this.onMessage) {
-                    this.onMessage(msg, true);
+                    this.onMessage(msg, true, chatId);
                 }
+                this.saveSession();
+                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
             }
 
             async downloadFile(fileData) {
@@ -892,6 +1195,10 @@
                 }));
             }
 
+            getUsers() {
+                return this.roomUsers || [];
+            }
+
             leave() {
                 if (this.ws) {
                     try {
@@ -899,10 +1206,13 @@
                         this.ws.close();
                     } catch (e) {}
                 }
+                this.clearSession();
                 this.isConnected = false;
                 this.username = null;
                 this.roomId = null;
                 this.processedIds.clear();
+                this.chats = {};
+                this.currentChatId = null;
             }
         }
 
@@ -926,30 +1236,61 @@
             const leaveBtn = document.getElementById('leave-btn');
             const fileBtn = document.getElementById('file-btn');
             const fileInput = document.getElementById('file-input');
-            const privateToggle = document.getElementById('private-toggle');
             const connStatus = document.getElementById('conn-status');
-            const userList = document.getElementById('user-list');
-            const typingIndicator = document.getElementById('typing-indicator');
+            const chatList = document.getElementById('chat-list');
+            const searchInput = document.getElementById('search-chats');
+            const onlineCount = document.getElementById('online-count');
 
-            let isPrivateMode = false;
-            let privateTarget = null;
-            let users = [];
+            let currentChatId = null;
+            let allChats = [];
+
+            // ---- RESTORE SESSION ----
+            async function restoreSession() {
+                const session = chat.loadSession();
+                if (session && session.roomId && session.username) {
+                    // Check if we have the encryption key
+                    const key = prompt(`Welcome back ${session.username}!\nEnter encryption key to reconnect:`);
+                    if (key) {
+                        try {
+                            await chat.joinRoom(session.roomId, session.username, key);
+                            setupScreen.classList.remove('active');
+                            chatScreen.classList.add('active');
+                            messageInput.disabled = false;
+                            sendBtn.disabled = false;
+                            fileBtn.disabled = false;
+                            showSystemMessage('🔗 Reconnected to room!');
+                            renderChatList();
+                            // If there was a current chat, select it
+                            if (session.currentChatId) {
+                                selectChat(session.currentChatId);
+                            }
+                            return true;
+                        } catch (e) {
+                            console.error('Reconnect failed:', e);
+                            alert('Failed to reconnect. Please join again.');
+                        }
+                    }
+                }
+                return false;
+            }
+
+            // Try to restore session
+            restoreSession();
 
             // ---- CHAT CALLBACKS ----
-            chat.onMessage = (msg, isOwn) => {
-                // Check if this is a file message
-                if (msg.isFile || msg.fileData) {
-                    displayFileMessage(msg, isOwn);
-                } else {
+            chat.onMessage = (msg, isOwn, chatId) => {
+                if (chatId === currentChatId) {
                     displayMessage(msg, isOwn);
+                    chat.markChatRead(chatId);
                 }
+                renderChatList();
             };
 
-            chat.onUserUpdate = (userList) => {
-                users = userList || [];
-                updateUserList(users);
-                const count = users.filter(u => u !== chat.username).length;
-                document.getElementById('chat-title').textContent = `💬 Room (${count} online)`;
+            chat.onChatUpdate = (chats) => {
+                allChats = chats;
+                renderChatList();
+                const userCount = chat.getUsers().filter(u => u !== chat.username).length;
+                onlineCount.textContent = `(${userCount} online)`;
             };
 
             chat.onConnectionChange = (connected) => {
@@ -971,6 +1312,7 @@
             };
 
             chat.onTyping = (username, isTyping) => {
+                const typingIndicator = document.getElementById('typing-indicator');
                 if (isTyping && username !== chat.username) {
                     typingIndicator.textContent = `${username} is typing...`;
                 } else {
@@ -999,6 +1341,7 @@
                         showSystemMessage('📋 Room info copied! Share with friends.');
                     });
                     showSystemMessage(`🚀 Room created! ID: ${roomInfo.roomId}`);
+                    renderChatList();
 
                 } catch (error) {
                     alert('Failed: ' + error.message);
@@ -1032,6 +1375,7 @@
                     sendBtn.disabled = false;
                     fileBtn.disabled = false;
                     showSystemMessage('🔗 Joined the room!');
+                    renderChatList();
 
                 } catch (error) {
                     alert('Failed: ' + error.message);
@@ -1040,6 +1384,152 @@
                     joinBtn.textContent = 'Join Room';
                 }
             });
+
+            // ---- SELECT CHAT ----
+            function selectChat(chatId) {
+                currentChatId = chatId;
+                chat.currentChatId = chatId;
+                
+                // Mark as read
+                chat.markChatRead(chatId);
+                
+                // Update header
+                const chatData = allChats.find(c => c.id === chatId);
+                if (chatData) {
+                    const title = chatData.isPrivate ? `🔒 ${chatData.name}` : `💬 ${chatData.name}`;
+                    document.getElementById('chat-title').textContent = title;
+                }
+                
+                // Load messages
+                const messages = chat.getChatMessages(chatId);
+                messagesDiv.innerHTML = '';
+                if (messages.length === 0) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'system-message';
+                    emptyMsg.textContent = '💬 No messages yet. Start chatting!';
+                    messagesDiv.appendChild(emptyMsg);
+                } else {
+                    messages.forEach(msg => {
+                        const isOwn = msg.sender === chat.username;
+                        displayMessage(msg, isOwn);
+                    });
+                }
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                
+                // Enable input
+                messageInput.disabled = false;
+                sendBtn.disabled = false;
+                fileBtn.disabled = false;
+                
+                renderChatList();
+                chat.saveSession();
+            }
+
+            // ---- RENDER CHAT LIST ----
+            function renderChatList() {
+                const chats = chat.getChatList();
+                const searchTerm = searchInput.value.toLowerCase();
+                
+                let filtered = chats;
+                if (searchTerm) {
+                    filtered = chats.filter(c => c.name.toLowerCase().includes(searchTerm));
+                }
+                
+                if (filtered.length === 0) {
+                    chatList.innerHTML = `
+                        <div class="no-chats">
+                            <div class="icon">💬</div>
+                            <div>${chats.length === 0 ? 'No chats yet' : 'No results found'}</div>
+                            <div class="hint">${chats.length === 0 ? 'Start a private chat or wait for messages' : 'Try a different search'}</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                chatList.innerHTML = filtered.map(chatItem => {
+                    const isActive = chatItem.id === currentChatId;
+                    const unread = chatItem.unread || 0;
+                    const lastMsg = chatItem.lastMessage || 'No messages';
+                    const time = chatItem.lastTime ? new Date(chatItem.lastTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+                    
+                    return `
+                        <div class="chat-list-item ${isActive ? 'active' : ''}" onclick="window.selectChat('${chatItem.id}')">
+                            <div class="avatar">${chatItem.isPrivate ? '👤' : '👥'}</div>
+                            <div class="chat-info">
+                                <div class="name">${chatItem.name}</div>
+                                <div class="last-msg">
+                                    ${chatItem.isPrivate ? '<span class="private-badge">🔒</span>' : ''}
+                                    ${lastMsg}
+                                </div>
+                            </div>
+                            <div class="chat-meta">
+                                <div>${time}</div>
+                                ${unread > 0 ? `<div class="unread">${unread}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // ---- DISPLAY MESSAGE ----
+            function displayMessage(msg, isOwn) {
+                // Remove system message if present
+                if (messagesDiv.children.length === 1 &&
+                    messagesDiv.children[0].classList.contains('system-message') &&
+                    messagesDiv.children[0].textContent.includes('Select a chat')) {
+                    messagesDiv.innerHTML = '';
+                }
+                if (messagesDiv.children.length === 1 &&
+                    messagesDiv.children[0].classList.contains('system-message') &&
+                    messagesDiv.children[0].textContent.includes('No messages yet')) {
+                    messagesDiv.innerHTML = '';
+                }
+
+                const msgElement = document.createElement('div');
+                msgElement.className = `message ${isOwn ? 'own' : 'other'}`;
+                
+                let content = '';
+                if (msg.isFile || msg.fileData) {
+                    const fileSize = msg.fileSize ? 
+                        (msg.fileSize > 1024 * 1024 ? 
+                            (msg.fileSize / (1024 * 1024)).toFixed(1) + ' MB' : 
+                            (msg.fileSize / 1024).toFixed(1) + ' KB') 
+                        : 'Unknown size';
+                    let fileIcon = '📁';
+                    if (msg.fileType) {
+                        if (msg.fileType.startsWith('image/')) fileIcon = '🖼️';
+                        else if (msg.fileType.startsWith('video/')) fileIcon = '🎬';
+                        else if (msg.fileType.startsWith('audio/')) fileIcon = '🎵';
+                        else if (msg.fileType.includes('pdf')) fileIcon = '📄';
+                        else if (msg.fileType.includes('zip')) fileIcon = '📦';
+                    }
+                    const fileId = msg.id || Date.now().toString(36);
+                    if (msg.fileData) {
+                        window._fileData = window._fileData || {};
+                        window._fileData[fileId] = msg;
+                    }
+                    content = `
+                        <span class="file-attachment" onclick="window.downloadFile('${fileId}')">
+                            <span class="file-icon">${fileIcon}</span>
+                            <span class="file-name">${msg.fileName || 'file'}</span>
+                            <span class="file-size">(${fileSize})</span>
+                        </span>
+                    `;
+                } else {
+                    content = msg.message || '';
+                }
+                
+                const isPrivate = msg.isPrivate || false;
+                const privateTag = isPrivate ? ' 🔒' : '';
+                
+                msgElement.innerHTML = `
+                    <span class="sender-name">${msg.sender}${privateTag}</span>
+                    <span>${content}</span>
+                    <span class="timestamp">${new Date(msg.timestamp || Date.now()).toLocaleTimeString()}</span>
+                `;
+                messagesDiv.appendChild(msgElement);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
 
             // ---- SEND ----
             sendBtn.addEventListener('click', sendMessage);
@@ -1058,14 +1548,12 @@
 
             async function sendMessage() {
                 const text = messageInput.value.trim();
-                if (!text) return;
+                if (!text || !currentChatId) return;
 
                 try {
-                    if (isPrivateMode && privateTarget) {
-                        await chat.sendMessage(text, true, privateTarget);
-                    } else {
-                        await chat.sendMessage(text);
-                    }
+                    const isPrivate = currentChatId.startsWith('private_');
+                    const targetUser = isPrivate ? currentChatId.replace('private_', '') : null;
+                    await chat.sendMessage(text, isPrivate, targetUser);
                     messageInput.value = '';
                 } catch (error) {
                     console.error('Send error:', error);
@@ -1076,16 +1564,15 @@
             fileBtn.addEventListener('click', () => fileInput.click());
             fileInput.addEventListener('change', async (e) => {
                 const files = e.target.files;
-                if (!files || files.length === 0) return;
+                if (!files || files.length === 0 || !currentChatId) return;
+
+                const isPrivate = currentChatId.startsWith('private_');
+                const targetUser = isPrivate ? currentChatId.replace('private_', '') : null;
 
                 for (const file of files) {
                     try {
-                        if (isPrivateMode && privateTarget) {
-                            await chat.sendFile(file, true, privateTarget);
-                        } else {
-                            await chat.sendFile(file);
-                        }
-                        showSystemMessage(`📎 Sent: ${file.name} (${(file.size/1024).toFixed(1)} KB)`);
+                        await chat.sendFile(file, isPrivate, targetUser);
+                        showSystemMessage(`📎 Sent: ${file.name}`);
                     } catch (error) {
                         console.error('File send error:', error);
                         showSystemMessage('❌ Failed to send file: ' + error.message);
@@ -1094,37 +1581,12 @@
                 fileInput.value = '';
             });
 
-            // ---- PRIVATE TOGGLE ----
-            privateToggle.addEventListener('click', () => {
-                const onlineUsers = users.filter(u => u !== chat.username);
-                if (onlineUsers.length === 0) {
-                    alert('No other users online');
-                    return;
-                }
-
-                if (!isPrivateMode) {
-                    const target = prompt('Send private to:\n' + onlineUsers.join(', '));
-                    if (target && onlineUsers.includes(target)) {
-                        privateTarget = target;
-                        isPrivateMode = true;
-                        privateToggle.classList.add('active');
-                        privateToggle.textContent = `🔒 ${target}`;
-                        showSystemMessage(`🔒 Private chat with ${target}`);
-                    } else if (target) {
-                        alert('User not online');
-                    }
-                } else {
-                    isPrivateMode = false;
-                    privateTarget = null;
-                    privateToggle.classList.remove('active');
-                    privateToggle.textContent = '🔒';
-                    showSystemMessage('🔓 Switched to public chat');
-                }
-            });
+            // ---- SEARCH ----
+            searchInput.addEventListener('input', renderChatList);
 
             // ---- LEAVE ----
             leaveBtn.addEventListener('click', () => {
-                if (confirm('Leave the room?')) {
+                if (confirm('Leave the room? Your chats will be saved.')) {
                     chat.leave();
                     chatScreen.classList.remove('active');
                     setupScreen.classList.add('active');
@@ -1132,105 +1594,28 @@
                     sendBtn.disabled = true;
                     fileBtn.disabled = true;
                     messagesDiv.innerHTML = '';
+                    chatList.innerHTML = `
+                        <div class="no-chats">
+                            <div class="icon">💬</div>
+                            <div>No chats yet</div>
+                            <div class="hint">Start a private chat or wait for messages</div>
+                        </div>
+                    `;
                     showSystemMessage('You left the room');
                 }
             });
 
-            // ---- UI HELPERS ----
-            function displayMessage(msg, isOwn) {
-                // Remove system message if present
-                if (messagesDiv.children.length === 1 &&
-                    messagesDiv.children[0].classList.contains('system-message') &&
-                    messagesDiv.children[0].textContent.includes('Waiting')) {
-                    messagesDiv.innerHTML = '';
-                }
-
-                const msgElement = document.createElement('div');
-                const isPrivate = msg.isPrivate || false;
-                msgElement.className = `message ${isOwn ? 'own' : 'other'} ${isPrivate ? 'private' : ''}`;
-                
-                const privateBadge = isPrivate ? '<span class="private-badge">🔒 Private</span>' : '';
-                const targetInfo = msg.targetUser && msg.targetUser !== msg.sender ? ` → ${msg.targetUser}` : '';
-                
-                msgElement.innerHTML = `
-                    <span class="sender-name">${msg.sender}${targetInfo} ${privateBadge}</span>
-                    <span>${msg.message}</span>
-                    <span class="timestamp">${new Date(msg.timestamp || Date.now()).toLocaleTimeString()}</span>
-                `;
-                messagesDiv.appendChild(msgElement);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-                // Limit messages
-                while (messagesDiv.children.length > 200) {
-                    messagesDiv.removeChild(messagesDiv.children[0]);
-                }
-            }
-
-            function displayFileMessage(msg, isOwn) {
-                if (messagesDiv.children.length === 1 &&
-                    messagesDiv.children[0].classList.contains('system-message') &&
-                    messagesDiv.children[0].textContent.includes('Waiting')) {
-                    messagesDiv.innerHTML = '';
-                }
-
-                const isPrivate = msg.isPrivate || false;
-                const fileSize = msg.fileSize ? 
-                    (msg.fileSize > 1024 * 1024 ? 
-                        (msg.fileSize / (1024 * 1024)).toFixed(1) + ' MB' : 
-                        (msg.fileSize / 1024).toFixed(1) + ' KB') 
-                    : 'Unknown size';
-                
-                // Determine file icon based on type
-                let fileIcon = '📁';
-                if (msg.fileType) {
-                    if (msg.fileType.startsWith('image/')) fileIcon = '🖼️';
-                    else if (msg.fileType.startsWith('video/')) fileIcon = '🎬';
-                    else if (msg.fileType.startsWith('audio/')) fileIcon = '🎵';
-                    else if (msg.fileType.includes('pdf')) fileIcon = '📄';
-                    else if (msg.fileType.includes('zip') || msg.fileType.includes('rar')) fileIcon = '📦';
-                }
-
-                const msgElement = document.createElement('div');
-                msgElement.className = `message ${isOwn ? 'own' : 'other'} ${isPrivate ? 'private' : ''}`;
-                
-                const privateBadge = isPrivate ? '<span class="private-badge">🔒 Private</span>' : '';
-                const targetInfo = msg.targetUser && msg.targetUser !== msg.sender ? ` → ${msg.targetUser}` : '';
-                
-                // Store file data reference
-                const fileId = msg.id || Date.now().toString(36);
-                if (msg.fileData) {
-                    window._fileData = window._fileData || {};
-                    window._fileData[fileId] = msg;
-                }
-                
-                msgElement.innerHTML = `
-                    <span class="sender-name">${msg.sender}${targetInfo} ${privateBadge}</span>
-                    <div>
-                        <span class="file-attachment" onclick="window.downloadFile('${fileId}')">
-                            <span class="file-icon">${fileIcon}</span>
-                            <span class="file-name">${msg.fileName || 'file'}</span>
-                            <span class="file-size">(${fileSize})</span>
-                        </span>
-                    </div>
-                    <span class="timestamp">${new Date(msg.timestamp || Date.now()).toLocaleTimeString()}</span>
-                `;
-                messagesDiv.appendChild(msgElement);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-                while (messagesDiv.children.length > 200) {
-                    messagesDiv.removeChild(messagesDiv.children[0]);
-                }
-            }
-
-            // Global download function
+            // ---- GLOBAL FUNCTIONS ----
+            window.selectChat = selectChat;
             window.downloadFile = function(id) {
                 if (window._fileData && window._fileData[id]) {
                     chat.downloadFile(window._fileData[id]);
                 } else {
-                    alert('File data not available. It may have been cleared from memory.');
+                    alert('File data not available.');
                 }
             };
 
+            // ---- SYSTEM MESSAGE ----
             function showSystemMessage(text) {
                 const msgElement = document.createElement('div');
                 msgElement.className = 'system-message';
@@ -1239,21 +1624,12 @@
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
             }
 
-            function updateUserList(users) {
-                const currentUser = chat.username;
-                let html = users.map(u => `
-                    <span class="user-chip">
-                        <span class="online-dot"></span>
-                        ${u} ${u === currentUser ? '(You)' : ''}
-                    </span>
-                `).join('');
-                userList.innerHTML = html || '<span style="color:#556;font-size:11px;">No users online</span>';
-            }
-
             console.log('💬 Secure Chat loaded!');
             console.log(`📡 Server: ${serverUrl}`);
             console.log('🔒 Messages are end-to-end encrypted');
-            console.log('📎 File sharing enabled - click 📎 to send files');
+            console.log('📎 File sharing enabled');
+            console.log('💾 Session persistence enabled - stays logged in after refresh');
+            console.log('💬 Private chats open in separate conversations');
         });
     </script>
 
