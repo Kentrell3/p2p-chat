@@ -284,9 +284,11 @@
                 this.key = null;
                 this.encoder = new TextEncoder();
                 this.decoder = new TextDecoder();
+                this.keyString = null; // Store the base64 string
             }
             async generateKey() {
                 this.key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+                this.keyString = await this.exportKey();
                 return this.key;
             }
             async exportKey() {
@@ -294,9 +296,13 @@
                 return btoa(String.fromCharCode(...new Uint8Array(exported)));
             }
             async importKey(base64Key) {
+                this.keyString = base64Key;
                 const keyData = Uint8Array.from(atob(base64Key), c => c.charCodeAt(0));
                 this.key = await crypto.subtle.importKey("raw", keyData, { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
                 return this.key;
+            }
+            getKeyString() {
+                return this.keyString;
             }
             async encrypt(message) {
                 if (!this.key || typeof message !== 'string') return message;
@@ -351,7 +357,7 @@
         }
 
         // ============================================================
-        //  CHAT CLIENT
+        //  CHAT CLIENT - WITH KEY PERSISTENCE
         // ============================================================
         class SecureChat {
             constructor(serverUrl) {
@@ -386,7 +392,7 @@
                     const session = {
                         username: this.username,
                         roomId: this.roomId,
-                        encryptionKey: this.encryption.key ? 'saved' : null,
+                        encryptionKey: this.encryption.getKeyString() || null, // Save the actual key!
                         chats: this.chats,
                         groups: this.groups,
                         currentChatId: this.currentChatId,
@@ -417,10 +423,19 @@
                         if (session.processedIds) {
                             this.processedIds = new Set(session.processedIds);
                         }
+                        // Load the encryption key if available
+                        if (session.encryptionKey) {
+                            this.encryption.importKey(session.encryptionKey);
+                        }
                         return session;
                     }
                 } catch (e) { console.error('Load error:', e); }
                 return null;
+            }
+
+            hasValidSession() {
+                const session = this.loadSession();
+                return session && session.roomId && session.username && session.encryptionKey;
             }
 
             clearSession() {
@@ -594,6 +609,22 @@
                 this.saveSession();
             }
 
+            async autoJoin() {
+                const session = this.loadSession();
+                if (session && session.roomId && session.username && session.encryptionKey) {
+                    await this.encryption.importKey(session.encryptionKey);
+                    await this.connect();
+                    this.ws.send(JSON.stringify({
+                        type: 'register',
+                        roomId: session.roomId,
+                        username: session.username,
+                        encryptionKey: session.encryptionKey
+                    }));
+                    return true;
+                }
+                return false;
+            }
+
             generateRoomId() {
                 return Math.random().toString(36).substring(2, 10).toUpperCase();
             }
@@ -662,39 +693,20 @@
                     if (this.roomId && this.username) {
                         try {
                             const session = this.loadSession();
-                            if (session && session.encryptionKey && session.encryptionKey === 'saved') {
-                                const key = await this.encryption.exportKey();
+                            if (session && session.encryptionKey) {
+                                await this.encryption.importKey(session.encryptionKey);
                                 await this.connect();
                                 this.ws.send(JSON.stringify({
                                     type: 'register',
                                     roomId: this.roomId,
                                     username: this.username,
-                                    encryptionKey: key
+                                    encryptionKey: session.encryptionKey
                                 }));
                                 console.log('✅ Reconnected successfully');
                                 if (this.onReconnecting) this.onReconnecting(false);
-                            } else if (session && session.roomId) {
-                                // Need key - prompt user
-                                const key = prompt(`Reconnecting to room ${session.roomId} as ${session.username}. Enter encryption key:`);
-                                if (key) {
-                                    await this.encryption.importKey(key);
-                                    await this.connect();
-                                    this.ws.send(JSON.stringify({
-                                        type: 'register',
-                                        roomId: this.roomId,
-                                        username: this.username,
-                                        encryptionKey: key
-                                    }));
-                                    console.log('✅ Reconnected successfully');
-                                    if (this.onReconnecting) this.onReconnecting(false);
-                                } else {
-                                    console.log('❌ Reconnect cancelled - no key provided');
-                                    if (this.onReconnecting) this.onReconnecting(false);
-                                }
                             }
                         } catch (e) {
                             console.error('Reconnect failed:', e);
-                            // Don't auto-retry, let user retry manually
                             if (this.onReconnecting) this.onReconnecting(false);
                         }
                     }
@@ -1387,39 +1399,62 @@
                 }
             };
 
-            // ---- RESTORE SESSION ----
+            // ============================================================
+            //  AUTO-RESTORE SESSION - NO PROMPT IF KEY EXISTS
+            // ============================================================
             async function restoreSession() {
                 const session = chat.loadSession();
-                if (session && session.roomId && session.username) {
-                    // Check if we have the key saved
-                    if (session.encryptionKey === 'saved') {
-                        try {
-                            // Try to reconnect with saved key
-                            const key = await chat.encryption.exportKey();
-                            await chat.joinRoom(session.roomId, session.username, key);
-                            setupScreen.classList.remove('active');
-                            chatScreen.classList.add('active');
-                            messageInput.disabled = false;
-                            sendBtn.disabled = false;
-                            fileBtn.disabled = false;
-                            showSystemMessage('🔗 Reconnected to room!');
-                            renderChatList();
-                            updateContacts();
-                            if (session.currentChatId) {
-                                selectChat(session.currentChatId);
-                            }
-                            return true;
-                        } catch (e) {
-                            console.error('Auto-reconnect failed:', e);
-                            // Fall through to manual reconnection
+                
+                // Check if we have a valid saved session with key
+                if (session && session.roomId && session.username && session.encryptionKey) {
+                    try {
+                        console.log('🔄 Auto-restoring session...');
+                        // Import the saved key
+                        await chat.encryption.importKey(session.encryptionKey);
+                        
+                        // Connect and register
+                        await chat.connect();
+                        chat.ws.send(JSON.stringify({
+                            type: 'register',
+                            roomId: session.roomId,
+                            username: session.username,
+                            encryptionKey: session.encryptionKey
+                        }));
+                        
+                        setupScreen.classList.remove('active');
+                        chatScreen.classList.add('active');
+                        messageInput.disabled = false;
+                        sendBtn.disabled = false;
+                        fileBtn.disabled = false;
+                        
+                        showSystemMessage('🔗 Auto-reconnected to room!');
+                        renderChatList();
+                        updateContacts();
+                        
+                        if (session.currentChatId) {
+                            selectChat(session.currentChatId);
                         }
+                        return true;
+                    } catch (e) {
+                        console.error('Auto-restore failed:', e);
+                        // Fall through to manual restore
                     }
-                    
-                    // Manual reconnection - ask for key
+                }
+                
+                // No valid session or auto-restore failed - check if we have partial session
+                if (session && session.roomId && session.username) {
+                    // We have room ID and username but no key - ask for key
                     const key = prompt(`Welcome back ${session.username}!\nRoom: ${session.roomId}\nEnter encryption key to reconnect:`);
                     if (key) {
                         try {
-                            await chat.joinRoom(session.roomId, session.username, key);
+                            await chat.encryption.importKey(key);
+                            await chat.connect();
+                            chat.ws.send(JSON.stringify({
+                                type: 'register',
+                                roomId: session.roomId,
+                                username: session.username,
+                                encryptionKey: key
+                            }));
                             setupScreen.classList.remove('active');
                             chatScreen.classList.add('active');
                             messageInput.disabled = false;
@@ -1446,10 +1481,10 @@
                 return false;
             }
 
-            // Try to restore session, but don't block UI
+            // Try to restore session on load (no user interaction needed if key exists)
             setTimeout(() => {
                 restoreSession();
-            }, 500);
+            }, 300);
 
             // ---- CHAT CALLBACKS ----
             chat.onMessage = (msg, isOwn, chatId) => {
@@ -2125,6 +2160,7 @@
 
             console.log('💬 Secure Chat loaded!');
             console.log(`📡 Server: ${serverUrl}`);
+            console.log('🔑 Encryption key is saved locally - no need to re-enter on refresh');
             console.log('👥 Group chats supported! Click 👥 to create a group');
             console.log('🔒 Private messages: ONLY sender + recipient see them');
             console.log('🗑️ Delete individual messages (hover and click × or right-click)');
