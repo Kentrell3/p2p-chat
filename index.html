@@ -363,7 +363,7 @@
                         deletedIds: Array.from(this.deletedIds)
                     };
                     localStorage.setItem(this.storageKey + 'data', JSON.stringify(session));
-                } catch (e) {}
+                } catch (e) { console.error('Save error:', e); }
             }
 
             loadSession() {
@@ -382,7 +382,7 @@
                         }
                         return session;
                     }
-                } catch (e) {}
+                } catch (e) { console.error('Load error:', e); }
                 return null;
             }
 
@@ -463,21 +463,6 @@
 
             markChatRead(chatId) {
                 if (this.chats[chatId]) {
-                    this.chats[chatId].unread = 0;
-                    this.saveSession();
-                    if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                }
-            }
-
-            clearChatMessages(chatId) {
-                if (this.chats[chatId]) {
-                    // Mark all messages as deleted
-                    for (const msg of this.chats[chatId].messages) {
-                        this.deletedIds.add(msg.id);
-                    }
-                    this.chats[chatId].messages = [];
-                    this.chats[chatId].lastMessage = null;
-                    this.chats[chatId].lastTime = 0;
                     this.chats[chatId].unread = 0;
                     this.saveSession();
                     if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
@@ -608,7 +593,6 @@
                 }, 2000 * Math.min(this.reconnectAttempts, 5));
             }
 
-            // ===== DELETE MESSAGE =====
             deleteMessage(messageId, isPrivate = false, targetUser = null) {
                 this.deletedIds.add(messageId);
                 this.ws.send(JSON.stringify({
@@ -641,7 +625,6 @@
                 }
             }
 
-            // ===== CLEAR CHAT =====
             clearChat(chatId) {
                 const isPrivate = chatId.startsWith('private_');
                 const targetUser = isPrivate ? chatId.replace('private_', '') : null;
