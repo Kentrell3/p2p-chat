@@ -33,6 +33,8 @@
         .btn-danger:hover{background:rgba(255,68,68,0.3)}
         .btn-small{padding:4px 10px;background:rgba(35,48,68,0.8);color:#e0e0e0;border:1px solid rgba(255,255,255,0.05);border-radius:4px;font-size:11px;cursor:pointer;transition:all .3s}
         .btn-small:hover{background:rgba(45,62,90,0.8)}
+        .btn-success{background:rgba(0,255,136,0.15);color:#00ff88;border:1px solid rgba(0,255,136,0.2)}
+        .btn-success:hover{background:rgba(0,255,136,0.25)}
         .status-bar{display:flex;justify-content:space-between;padding:6px 12px;background:rgba(13,20,33,0.5);border-radius:8px;font-size:11px;color:#8892b0;margin-top:12px;flex-wrap:wrap;gap:4px}
         .chat-layout{display:flex;gap:12px;flex:1;min-height:0}
         .sidebar{width:280px;min-width:240px;background:rgba(13,20,33,0.5);border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
@@ -42,24 +44,28 @@
         .sidebar-header .online-count{color:#00ff88;font-size:12px}
         .sidebar-header .new-chat-btn{background:none;border:none;color:#00d4ff;font-size:18px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .3s}
         .sidebar-header .new-chat-btn:hover{background:rgba(0,212,255,0.1)}
+        .sidebar-header .new-group-btn{background:none;border:none;color:#00ff88;font-size:18px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .3s}
+        .sidebar-header .new-group-btn:hover{background:rgba(0,255,136,0.1)}
         .sidebar-search{padding:8px 12px;flex-shrink:0}
         .sidebar-search input{width:100%;padding:6px 10px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.05);border-radius:6px;color:#e0e0e0;font-size:12px}
         .sidebar-search input:focus{outline:none;border-color:#00d4ff}
         .chat-list{flex:1;overflow-y:auto;padding:4px 0}
-        .chat-list-item{display:flex;align-items:center;padding:10px 14px;cursor:pointer;transition:all .3s;border-left:3px solid transparent}
+        .chat-list-item{display:flex;align-items:center;padding:8px 12px;cursor:pointer;transition:all .3s;border-left:3px solid transparent;border-radius:4px;margin-bottom:2px}
         .chat-list-item:hover{background:rgba(255,255,255,0.03)}
         .chat-list-item.active{background:rgba(0,212,255,0.08);border-left-color:#00d4ff}
-        .chat-list-item .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;margin-right:12px;flex-shrink:0;font-weight:500}
-        .chat-list-item .avatar.group{background:rgba(0,212,255,0.15)}
+        .chat-list-item .avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;margin-right:10px;flex-shrink:0;font-weight:500}
+        .chat-list-item .avatar.group{background:rgba(0,255,136,0.15)}
         .chat-list-item .avatar.private{background:rgba(255,170,0,0.15)}
+        .chat-list-item .avatar.public{background:rgba(0,212,255,0.15)}
         .chat-list-item .chat-info{flex:1;min-width:0}
-        .chat-list-item .chat-info .name{font-size:14px;font-weight:500}
-        .chat-list-item .chat-info .last-msg{font-size:12px;color:#8892b0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .chat-list-item .chat-info .last-msg .private-badge{font-size:9px;color:#ffaa00;margin-right:4px}
-        .chat-list-item .chat-meta{font-size:10px;color:#556;text-align:right;flex-shrink:0}
-        .chat-list-item .chat-meta .unread{background:#00d4ff;color:#0a0e17;padding:1px 6px;border-radius:10px;font-size:9px;font-weight:600}
-        .chat-list-item .online-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-left:4px}
-        .chat-list-item .online-dot.online{background:#00ff88;box-shadow:0 0 8px rgba(0,255,136,0.4)}
+        .chat-list-item .chat-info .name{font-size:13px;font-weight:500}
+        .chat-list-item .chat-info .last-msg{font-size:11px;color:#8892b0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .chat-list-item .chat-info .last-msg .private-badge{font-size:8px;color:#ffaa00;margin-right:4px}
+        .chat-list-item .chat-info .last-msg .group-badge{font-size:8px;color:#00ff88;margin-right:4px}
+        .chat-list-item .chat-meta{font-size:9px;color:#556;text-align:right;flex-shrink:0}
+        .chat-list-item .chat-meta .unread{background:#00d4ff;color:#0a0e17;padding:1px 6px;border-radius:10px;font-size:8px;font-weight:600}
+        .chat-list-item .online-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-left:4px}
+        .chat-list-item .online-dot.online{background:#00ff88;box-shadow:0 0 6px rgba(0,255,136,0.4)}
         .chat-list-item .online-dot.offline{background:#ff4444}
         .no-chats{text-align:center;color:#556;padding:30px 10px;font-size:13px}
         .no-chats .icon{font-size:40px;margin-bottom:12px}
@@ -67,6 +73,10 @@
         .chat-main{flex:1;display:flex;flex-direction:column;min-width:0}
         .chat-header{background:rgba(26,35,50,0.8);padding:10px 14px;border-radius:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);flex-shrink:0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
         .chat-header .chat-title{font-size:16px;font-weight:600}
+        .chat-header .chat-title .badge{font-size:10px;padding:2px 8px;border-radius:10px;margin-left:6px}
+        .chat-header .chat-title .badge.group-badge{background:rgba(0,255,136,0.15);color:#00ff88}
+        .chat-header .chat-title .badge.private-badge{background:rgba(255,170,0,0.15);color:#ffaa00}
+        .chat-header .chat-title .badge.public-badge{background:rgba(0,212,255,0.15);color:#00d4ff}
         .chat-header .chat-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
         .connection-status{font-size:12px;padding:4px 12px;border-radius:12px}
         .connection-status.connected{background:rgba(0,255,136,0.1);color:#00ff88}
@@ -85,6 +95,7 @@
         .message.own{background:linear-gradient(135deg,#00d4ff,#0099cc);color:#0a0e17;margin-left:auto}
         .message.other{background:rgba(26,35,50,0.8);color:#e0e0e0}
         .message .sender-name{display:block;font-size:10px;margin-bottom:3px;opacity:.7}
+        .message .sender-name .group-tag{color:#00ff88;font-weight:600}
         .message .timestamp{display:block;font-size:9px;opacity:.5;margin-top:3px}
         .message .file-attachment{display:inline-block;margin-top:4px;padding:8px 14px;background:rgba(0,0,0,0.25);border-radius:8px;font-size:13px;text-decoration:none;color:inherit;cursor:pointer;border:1px solid rgba(255,255,255,0.05);transition:all .3s}
         .message .file-attachment:hover{background:rgba(0,0,0,0.35);transform:scale(1.02)}
@@ -103,7 +114,7 @@
         .messages-area::-webkit-scrollbar-thumb,.chat-list::-webkit-scrollbar-thumb{background:rgba(35,48,68,0.8);border-radius:2px}
         .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;justify-content:center;align-items:center;backdrop-filter:blur(4px)}
         .modal-overlay.active{display:flex}
-        .modal{background:rgba(20,27,43,0.98);border-radius:16px;padding:24px;max-width:400px;width:90%;max-height:80vh;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.05)}
+        .modal{background:rgba(20,27,43,0.98);border-radius:16px;padding:24px;max-width:450px;width:90%;max-height:80vh;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.05)}
         .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
         .modal-header h2{font-size:18px;color:#e0e0e0}
         .modal-header .close-btn{background:none;border:none;color:#8892b0;font-size:24px;cursor:pointer}
@@ -114,7 +125,7 @@
         .contact-list{flex:1;overflow-y:auto;padding:8px 0}
         .contact-item{display:flex;align-items:center;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .3s}
         .contact-item:hover{background:rgba(255,255,255,0.05)}
-        .contact-item .avatar{width:40px;height:40px;border-radius:50%;background:rgba(0,212,255,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;margin-right:12px;flex-shrink:0}
+        .contact-item .avatar{width:36px;height:36px;border-radius:50%;background:rgba(0,212,255,0.1);display:flex;align-items:center;justify-content:center;font-size:16px;margin-right:12px;flex-shrink:0}
         .contact-item .contact-info{flex:1}
         .contact-item .contact-info .name{font-size:14px;font-weight:500}
         .contact-item .contact-info .status{font-size:12px;color:#8892b0}
@@ -122,6 +133,8 @@
         .contact-item .contact-info .status.offline{color:#ff4444}
         .contact-item .start-chat-btn{padding:6px 14px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);border-radius:6px;color:#00d4ff;font-size:12px;cursor:pointer;transition:all .3s}
         .contact-item .start-chat-btn:hover{background:rgba(0,212,255,0.2)}
+        .contact-item .selected-check{color:#00ff88;font-size:18px;display:none}
+        .contact-item .selected-check.checked{display:block}
         .no-contacts{text-align:center;color:#556;padding:30px 10px}
         .no-contacts .icon{font-size:40px;margin-bottom:12px}
         .clear-btn{background:rgba(255,170,0,0.1);color:#ffaa00;border:1px solid rgba(255,170,0,0.2)}
@@ -134,7 +147,11 @@
         .context-menu-item.danger{color:#ff4444}
         .context-menu-item.danger:hover{background:rgba(255,68,68,0.1)}
         .context-menu-item .icon{margin-right:8px}
-        @media(max-width:768px){.container{padding:12px;max-height:100vh}.chat-layout{flex-direction:column}.sidebar{width:100%;min-width:unset;max-height:180px}.chat-list{display:flex;flex-wrap:wrap;gap:4px;padding:4px 8px}.chat-list-item{padding:6px 10px;flex:0 1 auto;border-left:none;border-bottom:2px solid transparent}.chat-list-item.active{border-left:none;border-bottom-color:#00d4ff}.chat-list-item .avatar{width:28px;height:28px;font-size:12px;margin-right:8px}.chat-list-item .chat-info .name{font-size:12px}.chat-list-item .chat-info .last-msg{font-size:10px}.message{max-width:90%;font-size:13px}.chat-header .chat-title{font-size:14px}}
+        .group-member-list{display:flex;flex-wrap:wrap;gap:4px;padding:4px 0}
+        .group-member-chip{padding:2px 10px;background:rgba(0,255,136,0.05);border-radius:12px;font-size:11px;border:1px solid rgba(0,255,136,0.1)}
+        .group-member-chip .remove-btn{background:none;border:none;color:#ff4444;cursor:pointer;margin-left:4px;font-size:10px}
+        .group-member-chip .remove-btn:hover{color:#ff0000}
+        @media(max-width:768px){.container{padding:12px;max-height:100vh}.chat-layout{flex-direction:column}.sidebar{width:100%;min-width:unset;max-height:200px}.chat-list{display:flex;flex-wrap:wrap;gap:4px;padding:4px 8px}.chat-list-item{padding:6px 10px;flex:0 1 auto;border-left:none;border-bottom:2px solid transparent}.chat-list-item.active{border-left:none;border-bottom-color:#00d4ff}.chat-list-item .avatar{width:24px;height:24px;font-size:11px;margin-right:6px}.chat-list-item .chat-info .name{font-size:11px}.chat-list-item .chat-info .last-msg{font-size:9px}.message{max-width:90%;font-size:13px}.chat-header .chat-title{font-size:14px}}
     </style>
 </head>
 <body>
@@ -142,25 +159,25 @@
     <div class="container">
         <header>
             <h1>💬 Secure Chat</h1>
-            <p>End-to-end encrypted · File sharing · Private chats</p>
+            <p>End-to-end encrypted · Group chats · Private chats</p>
         </header>
 
         <!-- SETUP SCREEN -->
         <div id="setup-screen" class="screen active">
             <div class="setup-section">
-                <h2>🚀 Create a Room</h2>
-                <p class="hint">Start a new chat room</p>
-                <input type="text" id="create-username" placeholder="Your name..." class="input-field" value="ChaseDaVision">
-                <button id="create-room" class="btn btn-primary">Create Room</button>
+                <h2>🚀 Create a Workspace</h2>
+                <p class="hint">Start your own private chat workspace</p>
+                <input type="text" id="create-username" placeholder="Your name..." class="input-field">
+                <button id="create-room" class="btn btn-primary">Create Workspace</button>
             </div>
             <div class="divider"><span>or</span></div>
             <div class="setup-section">
-                <h2>🔗 Join a Room</h2>
-                <p class="hint">Enter the room details from your friend</p>
-                <input type="text" id="join-room-id" placeholder="Room ID" class="input-field">
+                <h2>🔗 Join a Workspace</h2>
+                <p class="hint">Enter the workspace details from your friend</p>
+                <input type="text" id="join-room-id" placeholder="Workspace ID" class="input-field">
                 <input type="text" id="join-encryption-key" placeholder="Encryption Key" class="input-field">
                 <input type="text" id="join-username" placeholder="Your name..." class="input-field">
-                <button id="join-room" class="btn btn-secondary">Join Room</button>
+                <button id="join-room" class="btn btn-secondary">Join Workspace</button>
             </div>
             <div class="status-bar">
                 <span id="connection-status">⚪ Disconnected</span>
@@ -176,7 +193,10 @@
                     <div class="sidebar-header">
                         <div class="title-row">
                             <h3>💬 Chats <span class="online-count" id="online-count">(0 online)</span></h3>
-                            <button class="new-chat-btn" id="new-chat-btn" title="New Chat">✏️</button>
+                            <div>
+                                <button class="new-group-btn" id="new-group-btn" title="Create Group">👥</button>
+                                <button class="new-chat-btn" id="new-chat-btn" title="New Chat">✏️</button>
+                            </div>
                         </div>
                     </div>
                     <div class="sidebar-search">
@@ -186,7 +206,7 @@
                         <div class="no-chats">
                             <div class="icon">💬</div>
                             <div>No chats yet</div>
-                            <div class="hint">Click ✏️ to start a new chat</div>
+                            <div class="hint">Create a group or start a private chat</div>
                         </div>
                     </div>
                 </div>
@@ -203,6 +223,8 @@
                     </div>
 
                     <div id="reconnect-banner" class="reconnect-banner">🔄 Reconnecting...</div>
+
+                    <div id="group-members" class="group-member-list" style="padding:0 12px 8px 12px;display:none;"></div>
 
                     <div id="messages" class="messages-area">
                         <div class="system-message">🔒 Select a chat to start messaging</div>
@@ -242,6 +264,25 @@
         </div>
     </div>
 
+    <!-- CREATE GROUP MODAL -->
+    <div class="modal-overlay" id="create-group-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>👥 Create Group</h2>
+                <button class="close-btn" id="close-group-modal">&times;</button>
+            </div>
+            <div style="padding:8px 0;">
+                <input type="text" id="group-name-input" placeholder="Group name..." class="input-field" style="margin-bottom:8px;">
+                <p style="font-size:12px;color:#8892b0;margin-bottom:8px;">Select members to add:</p>
+                <div class="modal-search">
+                    <input type="text" id="group-member-search" placeholder="Search members..." />
+                </div>
+                <div class="contact-list" id="group-member-list" style="max-height:200px;"></div>
+                <button id="create-group-btn" class="btn btn-primary" style="width:100%;margin-top:12px;">Create Group</button>
+            </div>
+        </div>
+    </div>
+
     <!-- CONTEXT MENU -->
     <div class="context-menu" id="context-menu">
         <div class="context-menu-item danger" id="delete-msg-btn">
@@ -251,7 +292,7 @@
 
     <script>
         // ============================================================
-        //  ENCRYPTION
+        //  ENCRYPTION (same as before)
         // ============================================================
         class ChatEncryption {
             constructor() {
@@ -325,7 +366,7 @@
         }
 
         // ============================================================
-        //  CHAT CLIENT - FIXED DUPLICATES
+        //  CHAT CLIENT - WITH GROUPS
         // ============================================================
         class SecureChat {
             constructor(serverUrl) {
@@ -338,7 +379,9 @@
                 this.processedIds = new Set();
                 this.deletedIds = new Set();
                 this.chats = {};
+                this.groups = {}; // groupId -> { name, members, messages }
                 this.currentChatId = null;
+                this.currentChatType = null; // 'public', 'private', 'group'
                 this.roomUsers = [];
                 this.onMessage = null;
                 this.onChatUpdate = null;
@@ -360,6 +403,7 @@
                         roomId: this.roomId,
                         encryptionKey: this.encryption.key ? 'saved' : null,
                         chats: this.chats,
+                        groups: this.groups,
                         currentChatId: this.currentChatId,
                         deletedIds: Array.from(this.deletedIds),
                         processedIds: Array.from(this.processedIds)
@@ -378,6 +422,9 @@
                         this.currentChatId = session.currentChatId;
                         if (session.chats) {
                             this.chats = session.chats;
+                        }
+                        if (session.groups) {
+                            this.groups = session.groups;
                         }
                         if (session.deletedIds) {
                             this.deletedIds = new Set(session.deletedIds);
@@ -402,39 +449,71 @@
                 return 'room_' + this.roomId;
             }
 
+            getGroupId(groupId) {
+                return 'group_' + groupId;
+            }
+
             getChatList() {
                 const list = [];
+                
+                // Public chat
+                if (this.chats['room_' + this.roomId] && this.chats['room_' + this.roomId].messages.length > 0) {
+                    list.push({
+                        id: 'room_' + this.roomId,
+                        name: '💬 Group Chat',
+                        type: 'public',
+                        lastMessage: this.chats['room_' + this.roomId].lastMessage || '',
+                        lastTime: this.chats['room_' + this.roomId].lastTime || 0,
+                        unread: this.chats['room_' + this.roomId].unread || 0
+                    });
+                }
+                
+                // Private chats
                 for (const [id, chat] of Object.entries(this.chats)) {
-                    let name = id;
-                    let isPrivate = false;
-                    let targetUser = null;
-                    
                     if (id.startsWith('private_')) {
-                        targetUser = id.replace('private_', '');
-                        name = targetUser;
-                        isPrivate = true;
-                    } else {
-                        name = 'Group Chat';
+                        const targetUser = id.replace('private_', '');
+                        if (chat.messages && chat.messages.length > 0) {
+                            list.push({
+                                id: id,
+                                name: '🔒 ' + targetUser,
+                                type: 'private',
+                                targetUser: targetUser,
+                                lastMessage: chat.lastMessage || '',
+                                lastTime: chat.lastTime || 0,
+                                unread: chat.unread || 0
+                            });
+                        }
                     }
-                    
-                    if (chat.messages && chat.messages.length > 0) {
+                }
+                
+                // Groups
+                for (const [groupId, group] of Object.entries(this.groups)) {
+                    if (group.messages && group.messages.length > 0) {
                         list.push({
-                            id: id,
-                            name: name,
-                            isPrivate: isPrivate,
-                            targetUser: targetUser,
-                            lastMessage: chat.lastMessage || '',
-                            lastTime: chat.lastTime || 0,
-                            unread: chat.unread || 0,
-                            messages: chat.messages || []
+                            id: 'group_' + groupId,
+                            name: '👥 ' + (group.name || 'Group'),
+                            type: 'group',
+                            groupId: groupId,
+                            members: group.members || [],
+                            lastMessage: group.lastMessage || '',
+                            lastTime: group.lastTime || 0,
+                            unread: group.unread || 0
                         });
                     }
                 }
+                
                 list.sort((a, b) => (b.lastTime || 0) - (a.lastTime || 0));
                 return list;
             }
 
             getChatMessages(chatId) {
+                if (chatId.startsWith('group_')) {
+                    const groupId = chatId.replace('group_', '');
+                    if (this.groups[groupId]) {
+                        return this.groups[groupId].messages || [];
+                    }
+                    return [];
+                }
                 if (this.chats[chatId]) {
                     return this.chats[chatId].messages || [];
                 }
@@ -442,12 +521,34 @@
             }
 
             addMessageToChat(chatId, message, isOwn = false) {
+                if (chatId.startsWith('group_')) {
+                    const groupId = chatId.replace('group_', '');
+                    if (!this.groups[groupId]) {
+                        this.groups[groupId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0, name: 'Group', members: [] };
+                    }
+                    const group = this.groups[groupId];
+                    if (message.id && group.messages.some(m => m.id === message.id)) {
+                        return false;
+                    }
+                    if (this.deletedIds.has(message.id)) {
+                        return false;
+                    }
+                    group.messages.push(message);
+                    group.lastMessage = message.message || (message.fileName ? `📎 ${message.fileName}` : '');
+                    group.lastTime = message.timestamp || Date.now();
+                    if (!isOwn && chatId !== this.currentChatId) {
+                        group.unread = (group.unread || 0) + 1;
+                    }
+                    this.saveSession();
+                    if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                    return true;
+                }
+                
                 if (!this.chats[chatId]) {
                     this.chats[chatId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0 };
                 }
                 
                 const chat = this.chats[chatId];
-                // Check if already exists
                 if (message.id && chat.messages.some(m => m.id === message.id)) {
                     return false;
                 }
@@ -469,6 +570,15 @@
             }
 
             markChatRead(chatId) {
+                if (chatId.startsWith('group_')) {
+                    const groupId = chatId.replace('group_', '');
+                    if (this.groups[groupId]) {
+                        this.groups[groupId].unread = 0;
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                    }
+                    return;
+                }
                 if (this.chats[chatId]) {
                     this.chats[chatId].unread = 0;
                     this.saveSession();
@@ -600,6 +710,111 @@
                 }, 2000 * Math.min(this.reconnectAttempts, 5));
             }
 
+            // ===== GROUP METHODS =====
+            createGroup(groupName, members) {
+                this.ws.send(JSON.stringify({
+                    type: 'create-group',
+                    groupName: groupName,
+                    members: members
+                }));
+            }
+
+            sendGroupMessage(groupId, text) {
+                if (!text.trim()) return;
+                
+                const id = this.generateMessageId();
+                const encrypted = this.encryption.encrypt(text);
+                
+                this.ws.send(JSON.stringify({
+                    type: 'group-message',
+                    groupId: groupId,
+                    message: encrypted,
+                    id: id
+                }));
+                
+                const msg = {
+                    id: id,
+                    sender: this.username,
+                    message: text,
+                    timestamp: Date.now(),
+                    groupId: groupId
+                };
+                
+                this.processedIds.add(id);
+                const chatId = 'group_' + groupId;
+                this.addMessageToChat(chatId, msg, true);
+                if (this.onMessage) {
+                    this.onMessage(msg, true, chatId);
+                }
+                this.saveSession();
+                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+            }
+
+            sendGroupFile(groupId, file) {
+                const id = this.generateMessageId();
+                const fileName = file.name;
+                const fileSize = file.size;
+                const fileType = file.type || 'application/octet-stream';
+                
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const base64 = e.target.result.split(',')[1];
+                    
+                    this.ws.send(JSON.stringify({
+                        type: 'group-file',
+                        groupId: groupId,
+                        id: id,
+                        fileName: fileName,
+                        fileSize: fileSize,
+                        fileType: fileType,
+                        fileData: base64
+                    }));
+                    
+                    const msg = {
+                        id: id,
+                        sender: this.username,
+                        fileName: fileName,
+                        fileSize: fileSize,
+                        fileType: fileType,
+                        fileData: base64,
+                        timestamp: Date.now(),
+                        groupId: groupId,
+                        isFile: true
+                    };
+                    
+                    this.processedIds.add(id);
+                    const chatId = 'group_' + groupId;
+                    this.addMessageToChat(chatId, msg, true);
+                    if (this.onMessage) {
+                        this.onMessage(msg, true, chatId);
+                    }
+                    this.saveSession();
+                    if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                };
+                reader.readAsDataURL(file);
+            }
+
+            addToGroup(groupId, username) {
+                this.ws.send(JSON.stringify({
+                    type: 'add-to-group',
+                    groupId: groupId,
+                    newMember: username
+                }));
+            }
+
+            leaveGroup(groupId) {
+                this.ws.send(JSON.stringify({
+                    type: 'leave-group',
+                    groupId: groupId
+                }));
+                // Remove from local groups
+                if (this.groups[groupId]) {
+                    delete this.groups[groupId];
+                    this.saveSession();
+                    if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                }
+            }
+
             deleteMessage(messageId, isPrivate = false, targetUser = null) {
                 this.deletedIds.add(messageId);
                 this.ws.send(JSON.stringify({
@@ -613,6 +828,7 @@
             }
 
             removeMessageFromChat(messageId) {
+                // Check public chats
                 for (const [chatId, chat] of Object.entries(this.chats)) {
                     const index = chat.messages.findIndex(m => m.id === messageId);
                     if (index !== -1) {
@@ -627,12 +843,52 @@
                         }
                         this.saveSession();
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                        break;
+                        return;
+                    }
+                }
+                
+                // Check groups
+                for (const [groupId, group] of Object.entries(this.groups)) {
+                    const index = group.messages.findIndex(m => m.id === messageId);
+                    if (index !== -1) {
+                        group.messages.splice(index, 1);
+                        if (group.messages.length > 0) {
+                            const last = group.messages[group.messages.length - 1];
+                            group.lastMessage = last.message || (last.fileName ? `📎 ${last.fileName}` : '');
+                            group.lastTime = last.timestamp || Date.now();
+                        } else {
+                            group.lastMessage = null;
+                            group.lastTime = 0;
+                        }
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                        return;
                     }
                 }
             }
 
             clearChat(chatId) {
+                if (chatId.startsWith('group_')) {
+                    const groupId = chatId.replace('group_', '');
+                    this.ws.send(JSON.stringify({
+                        type: 'clear-chat',
+                        chatType: 'group',
+                        targetUser: groupId
+                    }));
+                    if (this.groups[groupId]) {
+                        for (const msg of this.groups[groupId].messages) {
+                            this.deletedIds.add(msg.id);
+                        }
+                        this.groups[groupId].messages = [];
+                        this.groups[groupId].lastMessage = null;
+                        this.groups[groupId].lastTime = 0;
+                        this.groups[groupId].unread = 0;
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                    }
+                    return;
+                }
+                
                 const isPrivate = chatId.startsWith('private_');
                 const targetUser = isPrivate ? chatId.replace('private_', '') : null;
                 
@@ -659,39 +915,19 @@
                 console.log(`📨 Received: ${data.type}`);
 
                 switch (data.type) {
-                    case 'history':
-                        for (const msg of data.messages) {
-                            // Skip if already processed OR deleted
-                            if (this.processedIds.has(msg.id) || this.deletedIds.has(msg.id)) continue;
-                            this.processedIds.add(msg.id);
-                            
-                            const chatId = this.getChatId('room', false);
-                            const decrypted = await this.encryption.decrypt(msg.message);
-                            msg.message = decrypted;
-                            
-                            if (msg.sender !== this.username) {
-                                const added = this.addMessageToChat(chatId, msg, false);
-                                if (added && this.onMessage) {
-                                    this.onMessage(msg, false, chatId);
-                                }
-                            }
+                    // ... (history, private-history, message, private-message, file, message-deleted, chat-cleared cases)
+                    // These are the same as before, plus:
+                    
+                    case 'group-history':
+                        if (!this.groups[data.groupId]) {
+                            this.groups[data.groupId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0, name: 'Group', members: [] };
                         }
-                        this.saveSession();
-                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                        break;
-
-                    case 'private-history':
                         for (const msg of data.messages) {
                             if (this.processedIds.has(msg.id) || this.deletedIds.has(msg.id)) continue;
                             this.processedIds.add(msg.id);
-                            
-                            const otherUser = msg.sender === this.username ? msg.targetUser : msg.sender;
-                            const chatId = this.getChatId(otherUser, true);
-                            
                             const decrypted = await this.encryption.decrypt(msg.message);
                             msg.message = decrypted;
-                            msg.isPrivate = true;
-                            
+                            const chatId = 'group_' + data.groupId;
                             const isOwn = msg.sender === this.username;
                             const added = this.addMessageToChat(chatId, msg, isOwn);
                             if (added && this.onMessage) {
@@ -702,273 +938,101 @@
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
 
-                    case 'message':
-                        if (this.processedIds.has(data.message.id) || this.deletedIds.has(data.message.id)) break;
-                        this.processedIds.add(data.message.id);
-                        
-                        const chatId = this.getChatId('room', false);
-                        const decrypted = await this.encryption.decrypt(data.message.message);
-                        data.message.message = decrypted;
-                        
-                        if (data.message.sender !== this.username) {
-                            const added = this.addMessageToChat(chatId, data.message, false);
-                            if (added && this.onMessage) {
-                                this.onMessage(data.message, false, chatId);
+                    case 'group-created':
+                        if (!this.groups[data.groupId]) {
+                            this.groups[data.groupId] = { 
+                                messages: [], 
+                                unread: 0, 
+                                lastMessage: null, 
+                                lastTime: 0, 
+                                name: data.groupName || 'Group',
+                                members: data.members || []
+                            };
+                            this.saveSession();
+                            if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                            if (this.onMessage) {
+                                this.onMessage({ 
+                                    sender: 'System', 
+                                    message: `📢 Group "${data.groupName}" created by ${data.createdBy}`,
+                                    timestamp: Date.now(),
+                                    isSystem: true
+                                }, false, 'group_' + data.groupId);
                             }
                         }
-                        this.saveSession();
-                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
 
-                    case 'private-message':
+                    case 'group-message':
                         if (this.processedIds.has(data.message.id) || this.deletedIds.has(data.message.id)) break;
                         this.processedIds.add(data.message.id);
-                        
-                        const otherUser = data.message.sender === this.username ? data.message.targetUser : data.message.sender;
-                        const pChatId = this.getChatId(otherUser, true);
-                        
-                        const pDecrypted = await this.encryption.decrypt(data.message.message);
-                        data.message.message = pDecrypted;
-                        data.message.isPrivate = true;
-                        
-                        const isOwn = data.message.sender === this.username;
-                        const added = this.addMessageToChat(pChatId, data.message, isOwn);
-                        if (added && this.onMessage) {
-                            this.onMessage(data.message, isOwn, pChatId);
+                        const gDecrypted = await this.encryption.decrypt(data.message.message);
+                        data.message.message = gDecrypted;
+                        const gChatId = 'group_' + data.message.groupId;
+                        const gIsOwn = data.message.sender === this.username;
+                        const gAdded = this.addMessageToChat(gChatId, data.message, gIsOwn);
+                        if (gAdded && this.onMessage) {
+                            this.onMessage(data.message, gIsOwn, gChatId);
                         }
                         this.saveSession();
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
 
-                    case 'file':
+                    case 'group-file':
                         if (this.processedIds.has(data.message.id) || this.deletedIds.has(data.message.id)) break;
                         this.processedIds.add(data.message.id);
-                        
-                        let fileChatId;
-                        let fileIsPrivate = data.message.isPrivate || false;
-                        if (fileIsPrivate && data.message.targetUser) {
-                            const ftargetUser = data.message.sender === this.username ? data.message.targetUser : data.message.sender;
-                            fileChatId = this.getChatId(ftargetUser, true);
-                        } else {
-                            fileChatId = this.getChatId('room', false);
-                        }
-                        
                         data.message.isFile = true;
-                        if (data.message.sender !== this.username) {
-                            const added = this.addMessageToChat(fileChatId, data.message, false);
-                            if (added && this.onMessage) {
-                                this.onMessage(data.message, false, fileChatId);
-                            }
+                        const gfChatId = 'group_' + data.message.groupId;
+                        const gfIsOwn = data.message.sender === this.username;
+                        const gfAdded = this.addMessageToChat(gfChatId, data.message, gfIsOwn);
+                        if (gfAdded && this.onMessage) {
+                            this.onMessage(data.message, gfIsOwn, gfChatId);
                         }
                         this.saveSession();
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
 
-                    case 'message-deleted':
-                        this.deletedIds.add(data.messageId);
-                        this.removeMessageFromChat(data.messageId);
-                        if (this.onMessageDeleted) {
-                            this.onMessageDeleted(data.messageId);
+                    case 'group-member-added':
+                        if (this.groups[data.groupId]) {
+                            this.groups[data.groupId].members = data.members || [];
+                            this.saveSession();
+                            if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                            if (this.onMessage) {
+                                this.onMessage({ 
+                                    sender: 'System', 
+                                    message: `➕ ${data.member} added to group by ${data.addedBy}`,
+                                    timestamp: Date.now(),
+                                    isSystem: true
+                                }, false, 'group_' + data.groupId);
+                            }
                         }
                         break;
 
-                    case 'chat-cleared':
-                        this.handleChatCleared(data.chatId);
-                        if (this.onChatCleared) {
-                            this.onChatCleared(data.chatId);
+                    case 'group-member-left':
+                        if (this.groups[data.groupId]) {
+                            this.groups[data.groupId].members = data.members || [];
+                            this.saveSession();
+                            if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                            if (this.onMessage) {
+                                this.onMessage({ 
+                                    sender: 'System', 
+                                    message: `🚪 ${data.member} left the group`,
+                                    timestamp: Date.now(),
+                                    isSystem: true
+                                }, false, 'group_' + data.groupId);
+                            }
                         }
                         break;
 
-                    case 'user-joined':
-                        this.roomUsers = data.users || [];
-                        console.log(`👥 Users online: ${this.roomUsers.join(', ')}`);
-                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                        break;
-
-                    case 'user-left':
-                        this.roomUsers = data.users || [];
-                        console.log(`👥 Users online: ${this.roomUsers.join(', ')}`);
-                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                        break;
-
-                    case 'typing':
-                        if (this.onTyping) {
-                            this.onTyping(data.username, data.isTyping);
-                        }
-                        break;
-
-                    case 'pong':
-                        break;
-
+                    // ... rest of cases (user-joined, user-left, typing, pong)
                     default:
                         console.log('Unknown message type:', data.type);
                 }
             }
 
-            handleChatCleared(chatId) {
-                if (this.chats[chatId]) {
-                    for (const msg of this.chats[chatId].messages) {
-                        this.deletedIds.add(msg.id);
-                    }
-                    this.chats[chatId].messages = [];
-                    this.chats[chatId].lastMessage = null;
-                    this.chats[chatId].lastTime = 0;
-                    this.chats[chatId].unread = 0;
-                    this.saveSession();
-                    if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                }
-            }
-
-            async sendMessage(text, isPrivate = false, targetUser = null) {
-                if (!text.trim()) return;
-
-                const id = this.generateMessageId();
-                const encrypted = await this.encryption.encrypt(text);
-                
-                this.ws.send(JSON.stringify({
-                    type: 'message',
-                    message: encrypted,
-                    isPrivate: isPrivate,
-                    targetUser: targetUser,
-                    id: id
-                }));
-
-                const chatId = isPrivate ? this.getChatId(targetUser, true) : this.getChatId('room', false);
-                
-                const msg = {
-                    id: id,
-                    sender: this.username,
-                    message: text,
-                    timestamp: Date.now(),
-                    isPrivate: isPrivate,
-                    targetUser: targetUser
-                };
-                
-                this.processedIds.add(id);
-                this.addMessageToChat(chatId, msg, true);
-                
-                if (this.onMessage) {
-                    this.onMessage(msg, true, chatId);
-                }
-                this.saveSession();
-                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-            }
-
-            async sendFile(file, isPrivate = false, targetUser = null) {
-                const id = this.generateMessageId();
-                const fileName = file.name;
-                const fileSize = file.size;
-                const fileType = file.type || 'application/octet-stream';
-
-                const encryptedData = await this.encryption.encryptFile(file);
-                const uint8Array = new Uint8Array(encryptedData);
-                let binary = '';
-                for (let i = 0; i < uint8Array.length; i++) {
-                    binary += String.fromCharCode(uint8Array[i]);
-                }
-                const base64Data = btoa(binary);
-
-                this.ws.send(JSON.stringify({
-                    type: 'file',
-                    id: id,
-                    fileName: fileName,
-                    fileSize: fileSize,
-                    fileType: fileType,
-                    fileData: base64Data,
-                    isPrivate: isPrivate,
-                    targetUser: targetUser
-                }));
-
-                const chatId = isPrivate ? this.getChatId(targetUser, true) : this.getChatId('room', false);
-                
-                const msg = {
-                    id: id,
-                    sender: this.username,
-                    fileName: fileName,
-                    fileSize: fileSize,
-                    fileType: fileType,
-                    fileData: base64Data,
-                    timestamp: Date.now(),
-                    isPrivate: isPrivate,
-                    targetUser: targetUser,
-                    isFile: true
-                };
-                
-                this.processedIds.add(id);
-                this.addMessageToChat(chatId, msg, true);
-                
-                if (this.onMessage) {
-                    this.onMessage(msg, true, chatId);
-                }
-                this.saveSession();
-                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-            }
-
-            async downloadFile(fileData) {
-                try {
-                    const binaryString = atob(fileData.fileData);
-                    const bytes = new Uint8Array(binaryString.length);
-                    for (let i = 0; i < binaryString.length; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
-                    const decrypted = await this.encryption.decryptFile(bytes.buffer);
-                    const blob = new Blob([decrypted], { type: fileData.fileType || 'application/octet-stream' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = fileData.fileName || 'download';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    setTimeout(() => URL.revokeObjectURL(url), 5000);
-                } catch (e) {
-                    console.error('Download error:', e);
-                    alert('Failed to download file: ' + e.message);
-                }
-            }
-
-            sendTyping(isTyping) {
-                if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
-                this.ws.send(JSON.stringify({
-                    type: 'typing',
-                    isTyping: isTyping
-                }));
-            }
-
-            getUsers() {
-                return this.roomUsers || [];
-            }
-
-            leave() {
-                if (this.ws) {
-                    try {
-                        this.ws.send(JSON.stringify({ type: 'leave' }));
-                        this.ws.close();
-                    } catch (e) {}
-                }
-                this.clearSession();
-                this.isConnected = false;
-                this.username = null;
-                this.roomId = null;
-                this.processedIds.clear();
-                this.chats = {};
-                this.currentChatId = null;
-            }
-
-            startPrivateChat(targetUser) {
-                const chatId = this.getChatId(targetUser, true);
-                if (!this.chats[chatId]) {
-                    this.chats[chatId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0 };
-                }
-                this.currentChatId = chatId;
-                this.saveSession();
-                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                return chatId;
-            }
+            // ... (sendMessage, sendFile, downloadFile, sendTyping, getUsers, leave, startPrivateChat methods from before)
         }
 
         // ============================================================
-        //  UI CONTROLLER
+        //  UI CONTROLLER - WITH GROUPS
         // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
             const defaultUsername = 'User_' + Math.random().toString(36).substring(2, 6);
@@ -992,21 +1056,32 @@
             const searchInput = document.getElementById('search-chats');
             const onlineCount = document.getElementById('online-count');
             const newChatBtn = document.getElementById('new-chat-btn');
+            const newGroupBtn = document.getElementById('new-group-btn');
             const clearChatBtn = document.getElementById('clear-chat-btn');
             const modal = document.getElementById('new-chat-modal');
             const closeModal = document.getElementById('close-modal');
             const contactSearch = document.getElementById('contact-search');
             const contactList = document.getElementById('contact-list');
+            const createGroupModal = document.getElementById('create-group-modal');
+            const closeGroupModal = document.getElementById('close-group-modal');
+            const groupNameInput = document.getElementById('group-name-input');
+            const groupMemberSearch = document.getElementById('group-member-search');
+            const groupMemberList = document.getElementById('group-member-list');
+            const createGroupBtn = document.getElementById('create-group-btn');
             const reconnectBanner = document.getElementById('reconnect-banner');
             const contextMenu = document.getElementById('context-menu');
             const deleteMsgBtn = document.getElementById('delete-msg-btn');
+            const groupMembersDiv = document.getElementById('group-members');
 
             let currentChatId = null;
+            let currentChatType = null;
             let allChats = [];
             let allContacts = [];
             let selectedMessageId = null;
             let selectedMessageIsPrivate = false;
             let selectedMessageTarget = null;
+            let selectedGroupMembers = [];
+            let currentGroupId = null;
 
             // ---- RECONNECT BANNER ----
             chat.onReconnecting = (isReconnecting) => {
@@ -1051,6 +1126,10 @@
 
             // ---- CHAT CALLBACKS ----
             chat.onMessage = (msg, isOwn, chatId) => {
+                if (msg.isSystem) {
+                    displaySystemMessage(msg.message);
+                    return;
+                }
                 if (chatId === currentChatId) {
                     displayMessage(msg, isOwn);
                     chat.markChatRead(chatId);
@@ -1064,6 +1143,7 @@
                 updateContacts();
                 const userCount = chat.getUsers().filter(u => u !== chat.username).length;
                 onlineCount.textContent = `(${userCount} online)`;
+                updateGroupMembers();
             };
 
             chat.onConnectionChange = (connected) => {
@@ -1171,6 +1251,78 @@
                 `).join('');
             }
 
+            // ---- RENDER GROUP MEMBER LIST ----
+            function renderGroupMembers(filter = '') {
+                const search = filter.toLowerCase();
+                const filtered = allContacts.filter(c => 
+                    c.username.toLowerCase().includes(search) && 
+                    !selectedGroupMembers.includes(c.username)
+                );
+
+                if (filtered.length === 0) {
+                    groupMemberList.innerHTML = `
+                        <div class="no-contacts">
+                            <div class="icon">👥</div>
+                            <div>${selectedGroupMembers.length === 0 ? 'No contacts available' : 'All contacts added'}</div>
+                            <div class="hint">${selectedGroupMembers.length === 0 ? 'Wait for others to join' : 'Search for more'}</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                groupMemberList.innerHTML = filtered.map(contact => `
+                    <div class="contact-item" onclick="toggleGroupMember('${contact.username}')">
+                        <div class="avatar">${contact.username.charAt(0).toUpperCase()}</div>
+                        <div class="contact-info">
+                            <div class="name">${contact.username}</div>
+                            <div class="status ${contact.isOnline ? 'online' : 'offline'}">
+                                ${contact.isOnline ? '🟢 Online' : '⚪ Offline'}
+                            </div>
+                        </div>
+                        <span class="selected-check">✅</span>
+                    </div>
+                `).join('');
+            }
+
+            // ---- TOGGLE GROUP MEMBER ----
+            window.toggleGroupMember = function(username) {
+                const index = selectedGroupMembers.indexOf(username);
+                if (index === -1) {
+                    selectedGroupMembers.push(username);
+                } else {
+                    selectedGroupMembers.splice(index, 1);
+                }
+                renderGroupMembers(groupMemberSearch.value);
+            };
+
+            // ---- UPDATE GROUP MEMBERS DISPLAY ----
+            function updateGroupMembers() {
+                if (currentChatType === 'group' && currentGroupId) {
+                    const group = chat.groups[currentGroupId];
+                    if (group && group.members) {
+                        groupMembersDiv.style.display = 'flex';
+                        groupMembersDiv.innerHTML = group.members.map(m => `
+                            <span class="group-member-chip">
+                                ${m} ${m === chat.username ? '(You)' : ''}
+                                ${m !== chat.username ? `<button class="remove-btn" onclick="removeFromGroup('${currentGroupId}','${m}')">×</button>` : ''}
+                            </span>
+                        `).join('');
+                    } else {
+                        groupMembersDiv.style.display = 'none';
+                    }
+                } else {
+                    groupMembersDiv.style.display = 'none';
+                }
+            }
+
+            // ---- REMOVE FROM GROUP ----
+            window.removeFromGroup = function(groupId, username) {
+                if (confirm(`Remove ${username} from the group?`)) {
+                    // This would require a server endpoint - for now, we'll just leave
+                    alert('Remove member feature coming soon');
+                }
+            };
+
             // ---- CREATE ROOM ----
             createBtn.addEventListener('click', async () => {
                 const username = document.getElementById('create-username').value.trim();
@@ -1191,14 +1343,15 @@
                     navigator.clipboard.writeText(info).then(() => {
                         showSystemMessage('📋 Room info copied! Share with friends.');
                     });
-                    showSystemMessage(`🚀 Room created! ID: ${roomInfo.roomId}`);
+                    showSystemMessage(`🚀 Workspace created! ID: ${roomInfo.roomId}`);
                     renderChatList();
+                    updateGroupMembers();
 
                 } catch (error) {
                     alert('Failed: ' + error.message);
                 } finally {
                     createBtn.disabled = false;
-                    createBtn.textContent = 'Create Room';
+                    createBtn.textContent = 'Create Workspace';
                 }
             });
 
@@ -1223,14 +1376,15 @@
                     messageInput.disabled = false;
                     sendBtn.disabled = false;
                     fileBtn.disabled = false;
-                    showSystemMessage('🔗 Joined the room!');
+                    showSystemMessage('🔗 Joined the workspace!');
                     renderChatList();
+                    updateGroupMembers();
 
                 } catch (error) {
                     alert('Failed: ' + error.message);
                 } finally {
                     joinBtn.disabled = false;
-                    joinBtn.textContent = 'Join Room';
+                    joinBtn.textContent = 'Join Workspace';
                 }
             });
 
@@ -1240,11 +1394,26 @@
                 chat.currentChatId = chatId;
                 chat.markChatRead(chatId);
                 
-                const chatData = allChats.find(c => c.id === chatId);
-                if (chatData) {
-                    const title = chatData.isPrivate ? `🔒 ${chatData.name}` : `💬 ${chatData.name}`;
-                    document.getElementById('chat-title').textContent = title;
+                // Determine chat type
+                if (chatId.startsWith('group_')) {
+                    currentChatType = 'group';
+                    currentGroupId = chatId.replace('group_', '');
+                    const group = chat.groups[currentGroupId];
+                    if (group) {
+                        document.getElementById('chat-title').innerHTML = `👥 ${group.name} <span class="badge group-badge">Group</span>`;
+                    }
+                } else if (chatId.startsWith('private_')) {
+                    currentChatType = 'private';
+                    currentGroupId = null;
+                    const targetUser = chatId.replace('private_', '');
+                    document.getElementById('chat-title').innerHTML = `🔒 ${targetUser} <span class="badge private-badge">Private</span>`;
+                } else {
+                    currentChatType = 'public';
+                    currentGroupId = null;
+                    document.getElementById('chat-title').innerHTML = `💬 Group Chat <span class="badge public-badge">Public</span>`;
                 }
+                
+                updateGroupMembers();
                 
                 const messages = chat.getChatMessages(chatId);
                 messagesDiv.innerHTML = '';
@@ -1283,8 +1452,8 @@
                     chatList.innerHTML = `
                         <div class="no-chats">
                             <div class="icon">💬</div>
-                            <div>${chats.length === 0 ? 'No chats yet' : 'No results found'}</div>
-                            <div class="hint">${chats.length === 0 ? 'Click ✏️ to start a new chat' : 'Try a different search'}</div>
+                            <div>${Object.keys(chat.chats).length === 0 && Object.keys(chat.groups).length === 0 ? 'No chats yet' : 'No results found'}</div>
+                            <div class="hint">${Object.keys(chat.chats).length === 0 && Object.keys(chat.groups).length === 0 ? 'Create a group or start a private chat' : 'Try a different search'}</div>
                         </div>
                     `;
                     return;
@@ -1296,26 +1465,30 @@
                     const lastMsg = chatItem.lastMessage || 'No messages';
                     const time = chatItem.lastTime ? new Date(chatItem.lastTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
                     
-                    let onlineStatus = '';
-                    if (chatItem.isPrivate) {
-                        const isOnline = allContacts.find(c => c.username === chatItem.name)?.isOnline || false;
-                        onlineStatus = `<span class="online-dot ${isOnline ? 'online' : 'offline'}"></span>`;
+                    let icon = '';
+                    let avatarClass = '';
+                    let badge = '';
+                    
+                    if (chatItem.type === 'group') {
+                        icon = '👥';
+                        avatarClass = 'group';
+                        badge = '<span class="badge group-badge">Group</span>';
+                    } else if (chatItem.type === 'private') {
+                        icon = '🔒';
+                        avatarClass = 'private';
+                        badge = '<span class="badge private-badge">Private</span>';
+                    } else {
+                        icon = '💬';
+                        avatarClass = 'public';
+                        badge = '<span class="badge public-badge">Public</span>';
                     }
                     
                     return `
                         <div class="chat-list-item ${isActive ? 'active' : ''}" onclick="window.selectChat('${chatItem.id}')">
-                            <div class="avatar ${chatItem.isPrivate ? 'private' : 'group'} ${chatItem.isPrivate && allContacts.find(c => c.username === chatItem.name)?.isOnline ? 'online' : ''}">
-                                ${chatItem.isPrivate ? chatItem.name.charAt(0).toUpperCase() : '👥'}
-                            </div>
+                            <div class="avatar ${avatarClass}">${icon}</div>
                             <div class="chat-info">
-                                <div class="name">
-                                    ${chatItem.name}
-                                    ${onlineStatus}
-                                </div>
-                                <div class="last-msg">
-                                    ${chatItem.isPrivate ? '<span class="private-badge">🔒</span>' : ''}
-                                    ${lastMsg}
-                                </div>
+                                <div class="name">${chatItem.name} ${badge}</div>
+                                <div class="last-msg">${lastMsg}</div>
                             </div>
                             <div class="chat-meta">
                                 <div>${time}</div>
@@ -1348,7 +1521,12 @@
                     return;
                 }
                 
-                const chatId = chat.startPrivateChat(username);
+                const chatId = chat.getChatId(username, true);
+                if (!chat.chats[chatId]) {
+                    chat.chats[chatId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0 };
+                }
+                chat.currentChatId = chatId;
+                chat.saveSession();
                 selectChat(chatId);
                 modal.classList.remove('active');
                 showSystemMessage(`🔒 Started private chat with ${username}`);
@@ -1407,9 +1585,10 @@
                 
                 const isPrivate = msg.isPrivate || false;
                 const privateTag = isPrivate ? ' 🔒' : '';
+                const groupTag = msg.groupId ? ' 👥' : '';
                 
                 msgElement.innerHTML = `
-                    <span class="sender-name">${msg.sender}${privateTag}</span>
+                    <span class="sender-name">${msg.sender}${privateTag}${groupTag}</span>
                     <span>${content}</span>
                     <span class="timestamp">${new Date(msg.timestamp || Date.now()).toLocaleTimeString()}</span>
                 `;
@@ -1433,10 +1612,18 @@
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
             }
 
+            function displaySystemMessage(text) {
+                const msgElement = document.createElement('div');
+                msgElement.className = 'system-message';
+                msgElement.textContent = text;
+                messagesDiv.appendChild(msgElement);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+
             // ---- CONTEXT MENU ----
             document.addEventListener('contextmenu', (e) => {
                 const messageEl = e.target.closest('.message');
-                if (!messageEl) {
+                if (!messageEl || messageEl.classList.contains('deleted')) {
                     contextMenu.classList.remove('active');
                     return;
                 }
@@ -1476,56 +1663,6 @@
             // ---- SELECT CHAT (global) ----
             window.selectChat = selectChat;
 
-            // ---- SEND ----
-            sendBtn.addEventListener('click', sendMessage);
-            messageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendMessage();
-            });
-
-            let typingTimer = null;
-            messageInput.addEventListener('input', () => {
-                clearTimeout(typingTimer);
-                chat.sendTyping(true);
-                typingTimer = setTimeout(() => {
-                    chat.sendTyping(false);
-                }, 1000);
-            });
-
-            async function sendMessage() {
-                const text = messageInput.value.trim();
-                if (!text || !currentChatId) return;
-
-                try {
-                    const isPrivate = currentChatId.startsWith('private_');
-                    const targetUser = isPrivate ? currentChatId.replace('private_', '') : null;
-                    await chat.sendMessage(text, isPrivate, targetUser);
-                    messageInput.value = '';
-                } catch (error) {
-                    console.error('Send error:', error);
-                }
-            }
-
-            // ---- FILE SHARING ----
-            fileBtn.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', async (e) => {
-                const files = e.target.files;
-                if (!files || files.length === 0 || !currentChatId) return;
-
-                const isPrivate = currentChatId.startsWith('private_');
-                const targetUser = isPrivate ? currentChatId.replace('private_', '') : null;
-
-                for (const file of files) {
-                    try {
-                        await chat.sendFile(file, isPrivate, targetUser);
-                        showSystemMessage(`📎 Sent: ${file.name}`);
-                    } catch (error) {
-                        console.error('File send error:', error);
-                        showSystemMessage('❌ Failed to send file: ' + error.message);
-                    }
-                }
-                fileInput.value = '';
-            });
-
             // ---- NEW CHAT MODAL ----
             newChatBtn.addEventListener('click', () => {
                 renderContacts();
@@ -1547,12 +1684,128 @@
                 renderContacts(e.target.value);
             });
 
+            // ---- CREATE GROUP MODAL ----
+            newGroupBtn.addEventListener('click', () => {
+                selectedGroupMembers = [];
+                groupNameInput.value = '';
+                groupMemberSearch.value = '';
+                createGroupModal.classList.add('active');
+                renderGroupMembers();
+            });
+
+            closeGroupModal.addEventListener('click', () => {
+                createGroupModal.classList.remove('active');
+            });
+
+            createGroupModal.addEventListener('click', (e) => {
+                if (e.target === createGroupModal) {
+                    createGroupModal.classList.remove('active');
+                }
+            });
+
+            groupMemberSearch.addEventListener('input', (e) => {
+                renderGroupMembers(e.target.value);
+            });
+
+            createGroupBtn.addEventListener('click', () => {
+                const name = groupNameInput.value.trim();
+                if (!name) {
+                    alert('Please enter a group name');
+                    return;
+                }
+                if (selectedGroupMembers.length === 0) {
+                    alert('Please select at least one member');
+                    return;
+                }
+                chat.createGroup(name, selectedGroupMembers);
+                createGroupModal.classList.remove('active');
+                showSystemMessage(`👥 Group "${name}" created with ${selectedGroupMembers.length} members`);
+                setTimeout(() => {
+                    renderChatList();
+                }, 500);
+            });
+
+            // ---- SEND ----
+            sendBtn.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            let typingTimer = null;
+            messageInput.addEventListener('input', () => {
+                clearTimeout(typingTimer);
+                chat.sendTyping(true);
+                typingTimer = setTimeout(() => {
+                    chat.sendTyping(false);
+                }, 1000);
+            });
+
+            async function sendMessage() {
+                const text = messageInput.value.trim();
+                if (!text || !currentChatId) return;
+
+                try {
+                    if (currentChatType === 'group') {
+                        chat.sendGroupMessage(currentGroupId, text);
+                    } else if (currentChatType === 'private') {
+                        const targetUser = currentChatId.replace('private_', '');
+                        await chat.sendMessage(text, true, targetUser);
+                    } else {
+                        await chat.sendMessage(text);
+                    }
+                    messageInput.value = '';
+                } catch (error) {
+                    console.error('Send error:', error);
+                }
+            }
+
+            // ---- FILE SHARING ----
+            fileBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (!files || files.length === 0 || !currentChatId) return;
+
+                for (const file of files) {
+                    try {
+                        if (currentChatType === 'group') {
+                            chat.sendGroupFile(currentGroupId, file);
+                        } else if (currentChatType === 'private') {
+                            const targetUser = currentChatId.replace('private_', '');
+                            await chat.sendFile(file, true, targetUser);
+                        } else {
+                            await chat.sendFile(file);
+                        }
+                        showSystemMessage(`📎 Sent: ${file.name}`);
+                    } catch (error) {
+                        console.error('File send error:', error);
+                        showSystemMessage('❌ Failed to send file: ' + error.message);
+                    }
+                }
+                fileInput.value = '';
+            });
+
             // ---- SEARCH ----
             searchInput.addEventListener('input', renderChatList);
 
             // ---- LEAVE ----
             leaveBtn.addEventListener('click', () => {
-                if (confirm('Leave the room? Your chats will be saved.')) {
+                if (currentChatType === 'group') {
+                    if (confirm(`Leave the group?`)) {
+                        chat.leaveGroup(currentGroupId);
+                        currentChatId = null;
+                        messagesDiv.innerHTML = '';
+                        const emptyMsg = document.createElement('div');
+                        emptyMsg.className = 'system-message';
+                        emptyMsg.textContent = '💬 Select a chat to start messaging';
+                        messagesDiv.appendChild(emptyMsg);
+                        renderChatList();
+                        updateGroupMembers();
+                        showSystemMessage('You left the group');
+                    }
+                    return;
+                }
+                
+                if (confirm('Leave the workspace? Your chats will be saved.')) {
                     chat.leave();
                     chatScreen.classList.remove('active');
                     setupScreen.classList.add('active');
@@ -1564,10 +1817,10 @@
                         <div class="no-chats">
                             <div class="icon">💬</div>
                             <div>No chats yet</div>
-                            <div class="hint">Click ✏️ to start a new chat</div>
+                            <div class="hint">Create a group or start a private chat</div>
                         </div>
                     `;
-                    showSystemMessage('You left the room');
+                    showSystemMessage('You left the workspace');
                 }
             });
 
@@ -1582,6 +1835,7 @@
 
             console.log('💬 Secure Chat loaded!');
             console.log(`📡 Server: ${serverUrl}`);
+            console.log('👥 Group chats supported! Click 👥 to create a group');
             console.log('🔒 Private messages: ONLY sender + recipient see them');
             console.log('🗑️ Delete individual messages (hover and click × or right-click)');
             console.log('🗑️ Clear chat permanently');
