@@ -5,588 +5,214 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>💬 Secure Chat</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0e17;color:#e0e0e0;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:10px}
-        .container{width:100%;max-width:1000px;background:rgba(20,27,43,0.95);border-radius:16px;padding:20px;box-shadow:0 8px 32px rgba(0,0,0,0.8);border:1px solid rgba(255,255,255,0.05);max-height:98vh;display:flex;flex-direction:column}
-        header{text-align:center;margin-bottom:16px;flex-shrink:0}
-        header h1{background:linear-gradient(135deg,#00d4ff,#0099cc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:28px}
-        header p{color:#8892b0;font-size:13px}
-        .screen{display:none;flex:1;flex-direction:column;min-height:0}
-        .screen.active{display:flex}
-        .setup-section{background:rgba(26,35,50,0.8);padding:20px;border-radius:12px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.05)}
-        .setup-section h2{color:#00d4ff;font-size:17px;margin-bottom:4px}
-        .setup-section .hint{color:#8892b0;font-size:12px;margin-bottom:12px}
-        .divider{text-align:center;color:#8892b0;margin:12px 0;position:relative}
-        .divider::before,.divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:rgba(255,255,255,0.05)}
-        .divider::before{left:0}
-        .divider::after{right:0}
-        .divider span{background:#141b2b;padding:0 12px;font-size:13px}
-        .input-field{width:100%;padding:10px 14px;background:rgba(13,20,33,0.8);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:#e0e0e0;font-size:14px;margin-bottom:10px;transition:all .3s}
-        .input-field:focus{border-color:#00d4ff;outline:none;box-shadow:0 0 0 3px rgba(0,212,255,0.1)}
-        .btn{padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .3s}
-        .btn-primary{background:linear-gradient(135deg,#00d4ff,#0099cc);color:#0a0e17}
-        .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,212,255,0.3)}
-        .btn-primary:disabled{opacity:.5;cursor:not-allowed}
-        .btn-secondary{background:rgba(35,48,68,0.8);color:#e0e0e0}
-        .btn-secondary:hover:not(:disabled){background:rgba(45,62,90,0.8);transform:translateY(-2px)}
-        .btn-danger{background:rgba(255,68,68,0.2);color:#ff4444;border:1px solid rgba(255,68,68,0.2)}
-        .btn-danger:hover{background:rgba(255,68,68,0.3)}
-        .btn-small{padding:4px 10px;background:rgba(35,48,68,0.8);color:#e0e0e0;border:1px solid rgba(255,255,255,0.05);border-radius:4px;font-size:11px;cursor:pointer;transition:all .3s}
-        .btn-small:hover{background:rgba(45,62,90,0.8)}
-        .status-bar{display:flex;justify-content:space-between;padding:6px 12px;background:rgba(13,20,33,0.5);border-radius:8px;font-size:11px;color:#8892b0;margin-top:12px;flex-wrap:wrap;gap:4px}
-        .chat-layout{display:flex;gap:12px;flex:1;min-height:0}
-        .sidebar{width:280px;min-width:240px;background:rgba(13,20,33,0.5);border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
-        .sidebar-header{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0}
-        .sidebar-header .title-row{display:flex;justify-content:space-between;align-items:center}
-        .sidebar-header h3{font-size:13px;color:#8892b0;font-weight:400}
-        .sidebar-header .online-count{color:#00ff88;font-size:12px}
-        .sidebar-header .new-chat-btn{background:none;border:none;color:#00d4ff;font-size:18px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .3s}
-        .sidebar-header .new-chat-btn:hover{background:rgba(0,212,255,0.1)}
-        .sidebar-search{padding:8px 12px;flex-shrink:0}
-        .sidebar-search input{width:100%;padding:6px 10px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.05);border-radius:6px;color:#e0e0e0;font-size:12px}
-        .sidebar-search input:focus{outline:none;border-color:#00d4ff}
-        .chat-list{flex:1;overflow-y:auto;padding:4px 0}
-        .chat-list-item{display:flex;align-items:center;padding:10px 14px;cursor:pointer;transition:all .3s;border-left:3px solid transparent}
-        .chat-list-item:hover{background:rgba(255,255,255,0.03)}
-        .chat-list-item.active{background:rgba(0,212,255,0.08);border-left-color:#00d4ff}
-        .chat-list-item .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;margin-right:12px;flex-shrink:0;font-weight:500}
-        .chat-list-item .avatar.group{background:rgba(0,212,255,0.15)}
-        .chat-list-item .avatar.private{background:rgba(255,170,0,0.15)}
-        .chat-list-item .chat-info{flex:1;min-width:0}
-        .chat-list-item .chat-info .name{font-size:14px;font-weight:500}
-        .chat-list-item .chat-info .last-msg{font-size:12px;color:#8892b0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .chat-list-item .chat-info .last-msg .private-badge{font-size:9px;color:#ffaa00;margin-right:4px}
-        .chat-list-item .chat-meta{font-size:10px;color:#556;text-align:right;flex-shrink:0}
-        .chat-list-item .chat-meta .unread{background:#00d4ff;color:#0a0e17;padding:1px 6px;border-radius:10px;font-size:9px;font-weight:600}
-        .chat-list-item .online-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-left:4px}
-        .chat-list-item .online-dot.online{background:#00ff88;box-shadow:0 0 8px rgba(0,255,136,0.4)}
-        .chat-list-item .online-dot.offline{background:#ff4444}
-        .no-chats{text-align:center;color:#556;padding:30px 10px;font-size:13px}
-        .no-chats .icon{font-size:40px;margin-bottom:12px}
-        .no-chats .hint{color:#8892b0;font-size:12px;margin-top:8px}
-        .chat-main{flex:1;display:flex;flex-direction:column;min-width:0}
-        .chat-header{background:rgba(26,35,50,0.8);padding:10px 14px;border-radius:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);flex-shrink:0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-        .chat-header .chat-title{font-size:16px;font-weight:600}
-        .chat-header .chat-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-        .connection-status{font-size:12px;padding:4px 12px;border-radius:12px}
-        .connection-status.connected{background:rgba(0,255,136,0.1);color:#00ff88}
-        .connection-status.disconnected{background:rgba(255,68,68,0.1);color:#ff4444}
-        .connection-status.connecting{background:rgba(255,170,0,0.1);color:#ffaa00;animation:pulse 1s infinite}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-        .messages-area{flex:1;overflow-y:auto;background:rgba(13,20,33,0.5);border-radius:12px;padding:12px;margin-bottom:10px;min-height:200px}
-        .system-message{text-align:center;color:#8892b0;font-size:12px;padding:8px;opacity:.7}
-        .message{margin-bottom:8px;padding:8px 12px;border-radius:10px;max-width:80%;word-wrap:break-word;animation:fadeIn .25s ease;font-size:14px}
-        .message.own{background:linear-gradient(135deg,#00d4ff,#0099cc);color:#0a0e17;margin-left:auto}
-        .message.other{background:rgba(26,35,50,0.8);color:#e0e0e0}
-        .message .sender-name{display:block;font-size:10px;margin-bottom:3px;opacity:.7}
-        .message .timestamp{display:block;font-size:9px;opacity:.5;margin-top:3px}
-        .message .file-attachment{display:inline-block;margin-top:4px;padding:8px 14px;background:rgba(0,0,0,0.25);border-radius:8px;font-size:13px;text-decoration:none;color:inherit;cursor:pointer;border:1px solid rgba(255,255,255,0.05);transition:all .3s}
-        .message .file-attachment:hover{background:rgba(0,0,0,0.35);transform:scale(1.02)}
-        .message .file-attachment .file-icon{margin-right:8px;font-size:18px}
-        .message .file-attachment .file-name{font-weight:500}
-        .message .file-attachment .file-size{font-size:11px;opacity:.6;margin-left:6px}
-        .input-area{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
-        .input-area .input-field{flex:1;margin-bottom:0;min-width:120px}
-        .input-area .action-buttons{display:flex;gap:4px}
-        .input-area .action-buttons .btn{padding:8px 12px;font-size:16px}
-        .typing-indicator{color:#8892b0;font-size:11px;padding:4px 12px;font-style:italic;min-height:20px}
-        #file-input{display:none}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-        .messages-area::-webkit-scrollbar,.chat-list::-webkit-scrollbar{width:4px}
-        .messages-area::-webkit-scrollbar-track,.chat-list::-webkit-scrollbar-track{background:rgba(13,20,33,0.5)}
-        .messages-area::-webkit-scrollbar-thumb,.chat-list::-webkit-scrollbar-thumb{background:rgba(35,48,68,0.8);border-radius:2px}
-        .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;justify-content:center;align-items:center;backdrop-filter:blur(4px)}
-        .modal-overlay.active{display:flex}
-        .modal{background:rgba(20,27,43,0.98);border-radius:16px;padding:24px;max-width:400px;width:90%;max-height:80vh;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.05)}
-        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-        .modal-header h2{font-size:18px;color:#e0e0e0}
-        .modal-header .close-btn{background:none;border:none;color:#8892b0;font-size:24px;cursor:pointer}
-        .modal-header .close-btn:hover{color:#e0e0e0}
-        .modal-search{padding:8px 0;flex-shrink:0}
-        .modal-search input{width:100%;padding:8px 12px;background:rgba(13,20,33,0.8);border:1px solid rgba(255,255,255,0.05);border-radius:8px;color:#e0e0e0;font-size:14px}
-        .modal-search input:focus{outline:none;border-color:#00d4ff}
-        .contact-list{flex:1;overflow-y:auto;padding:8px 0}
-        .contact-item{display:flex;align-items:center;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .3s}
-        .contact-item:hover{background:rgba(255,255,255,0.05)}
-        .contact-item .avatar{width:40px;height:40px;border-radius:50%;background:rgba(0,212,255,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;margin-right:12px;flex-shrink:0}
-        .contact-item .contact-info{flex:1}
-        .contact-item .contact-info .name{font-size:14px;font-weight:500}
-        .contact-item .contact-info .status{font-size:12px;color:#8892b0}
-        .contact-item .contact-info .status.online{color:#00ff88}
-        .contact-item .contact-info .status.offline{color:#ff4444}
-        .contact-item .start-chat-btn{padding:6px 14px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);border-radius:6px;color:#00d4ff;font-size:12px;cursor:pointer;transition:all .3s}
-        .contact-item .start-chat-btn:hover{background:rgba(0,212,255,0.2)}
-        .no-contacts{text-align:center;color:#556;padding:30px 10px}
-        .no-contacts .icon{font-size:40px;margin-bottom:12px}
-        .clear-btn{background:rgba(255,170,0,0.1);color:#ffaa00;border:1px solid rgba(255,170,0,0.2)}
-        .clear-btn:hover{background:rgba(255,170,0,0.2)}
-        .reconnect-banner{background:rgba(255,170,0,0.1);border:1px solid rgba(255,170,0,0.2);border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:12px;color:#ffaa00;display:none}
-        @media(max-width:768px){.container{padding:12px;max-height:100vh}.chat-layout{flex-direction:column}.sidebar{width:100%;min-width:unset;max-height:180px}.chat-list{display:flex;flex-wrap:wrap;gap:4px;padding:4px 8px}.chat-list-item{padding:6px 10px;flex:0 1 auto;border-left:none;border-bottom:2px solid transparent}.chat-list-item.active{border-left:none;border-bottom-color:#00d4ff}.chat-list-item .avatar{width:28px;height:28px;font-size:12px;margin-right:8px}.chat-list-item .chat-info .name{font-size:12px}.chat-list-item .chat-info .last-msg{font-size:10px}.message{max-width:90%;font-size:13px}.chat-header .chat-title{font-size:14px}}
+        /* ... (all previous styles) ... */
+        .message {
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+            animation: fadeIn .25s ease;
+            font-size: 14px;
+            position: relative;
+            cursor: default;
+            transition: all 0.3s;
+        }
+        .message:hover {
+            filter: brightness(1.05);
+        }
+        .message .delete-btn {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 68, 68, 0.9);
+            border: none;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            line-height: 1;
+        }
+        .message:hover .delete-btn {
+            display: flex;
+        }
+        .message .delete-btn:hover {
+            transform: scale(1.2);
+            background: #ff4444;
+        }
+        .message.deleted {
+            opacity: 0.4;
+            text-decoration: line-through;
+            pointer-events: none;
+        }
+        .message.deleted .delete-btn {
+            display: none !important;
+        }
+        .message.deleted .sender-name::after {
+            content: " (deleted)";
+            color: #ff4444;
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        .message.deleted .timestamp::after {
+            content: " 🗑️";
+        }
+        .context-menu {
+            display: none;
+            position: fixed;
+            background: rgba(20, 27, 43, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 4px 0;
+            min-width: 150px;
+            z-index: 1001;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+        .context-menu.active {
+            display: block;
+        }
+        .context-menu-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            color: #e0e0e0;
+        }
+        .context-menu-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+        .context-menu-item.danger {
+            color: #ff4444;
+        }
+        .context-menu-item.danger:hover {
+            background: rgba(255, 68, 68, 0.1);
+        }
+        .context-menu-item .icon {
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <header>
-            <h1>💬 Secure Chat</h1>
-            <p>End-to-end encrypted · File sharing · Private chats</p>
-        </header>
-
-        <!-- SETUP SCREEN -->
-        <div id="setup-screen" class="screen active">
-            <div class="setup-section">
-                <h2>🚀 Create a Room</h2>
-                <p class="hint">Start a new chat room</p>
-                <input type="text" id="create-username" placeholder="Your name..." class="input-field">
-                <button id="create-room" class="btn btn-primary">Create Room</button>
-            </div>
-            <div class="divider"><span>or</span></div>
-            <div class="setup-section">
-                <h2>🔗 Join a Room</h2>
-                <p class="hint">Enter the room details from your friend</p>
-                <input type="text" id="join-room-id" placeholder="Room ID" class="input-field">
-                <input type="text" id="join-username" placeholder="Your name..." class="input-field">
-                <button id="join-room" class="btn btn-secondary">Join Room</button>
-            </div>
-            <div class="status-bar">
-                <span id="connection-status">⚪ Disconnected</span>
-                <span id="server-status">Server: Not connected</span>
-            </div>
-        </div>
-
-        <!-- CHAT SCREEN -->
-        <div id="chat-screen" class="screen">
-            <div class="chat-layout">
-                <!-- Sidebar -->
-                <div class="sidebar">
-                    <div class="sidebar-header">
-                        <div class="title-row">
-                            <h3>💬 Chats <span class="online-count" id="online-count">(0 online)</span></h3>
-                            <button class="new-chat-btn" id="new-chat-btn" title="New Chat">✏️</button>
-                        </div>
-                    </div>
-                    <div class="sidebar-search">
-                        <input type="text" id="search-chats" placeholder="Search chats..." />
-                    </div>
-                    <div class="chat-list" id="chat-list">
-                        <div class="no-chats">
-                            <div class="icon">💬</div>
-                            <div>No chats yet</div>
-                            <div class="hint">Click ✏️ to start a new chat</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chat Main -->
-                <div class="chat-main">
-                    <div class="chat-header">
-                        <div class="chat-title" id="chat-title">Select a chat</div>
-                        <div class="chat-actions">
-                            <button class="btn-small clear-btn" id="clear-chat-btn" title="Clear chat messages">🗑️ Clear</button>
-                            <span class="connection-status disconnected" id="conn-status">⚪</span>
-                            <button class="btn-small btn-danger" id="leave-btn">🚪 Leave</button>
-                        </div>
-                    </div>
-
-                    <div id="reconnect-banner" class="reconnect-banner">
-                        🔄 Reconnecting...
-                    </div>
-
-                    <div id="messages" class="messages-area">
-                        <div class="system-message">🔒 Select a chat to start messaging</div>
-                    </div>
-
-                    <div class="typing-indicator" id="typing-indicator"></div>
-
-                    <div class="input-area">
-                        <input type="text" id="message-input" placeholder="Type a message..." class="input-field" disabled>
-                        <div class="action-buttons">
-                            <button id="file-btn" class="btn btn-secondary" disabled title="Send file">📎</button>
-                            <button id="send-btn" class="btn btn-primary" disabled>Send</button>
-                        </div>
-                    </div>
-                    <input type="file" id="file-input" multiple>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- NEW CHAT MODAL -->
-    <div class="modal-overlay" id="new-chat-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>✏️ New Chat</h2>
-                <button class="close-btn" id="close-modal">&times;</button>
-            </div>
-            <div class="modal-search">
-                <input type="text" id="contact-search" placeholder="Search contacts..." />
-            </div>
-            <div class="contact-list" id="contact-list">
-                <div class="no-contacts">
-                    <div class="icon">👥</div>
-                    <div>Loading contacts...</div>
-                </div>
-            </div>
+    <!-- ... same HTML structure ... -->
+    
+    <!-- CONTEXT MENU -->
+    <div class="context-menu" id="context-menu">
+        <div class="context-menu-item danger" id="delete-msg-btn">
+            <span class="icon">🗑️</span> Delete for me
         </div>
     </div>
 
     <script>
-        // ============================================================
-        //  ENCRYPTION
-        // ============================================================
-        class ChatEncryption {
-            constructor() {
-                this.key = null;
-                this.encoder = new TextEncoder();
-                this.decoder = new TextDecoder();
-            }
-            async generateKey() {
-                this.key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
-                return this.key;
-            }
-            async exportKey() {
-                const exported = await crypto.subtle.exportKey("raw", this.key);
-                return btoa(String.fromCharCode(...new Uint8Array(exported)));
-            }
-            async importKey(base64Key) {
-                const keyData = Uint8Array.from(atob(base64Key), c => c.charCodeAt(0));
-                this.key = await crypto.subtle.importKey("raw", keyData, { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
-                return this.key;
-            }
-            async encrypt(message) {
-                if (!this.key || typeof message !== 'string') return message;
-                const iv = crypto.getRandomValues(new Uint8Array(12));
-                const encoded = this.encoder.encode(message);
-                const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, this.key, encoded);
-                const result = new Uint8Array(iv.length + encrypted.byteLength);
-                result.set(iv, 0);
-                result.set(new Uint8Array(encrypted), iv.length);
-                return btoa(String.fromCharCode(...result));
-            }
-            async decrypt(encryptedBase64) {
-                if (!this.key || typeof encryptedBase64 !== 'string') return encryptedBase64;
-                try {
-                    const encrypted = Uint8Array.from(atob(encryptedBase64), c => c.charCodeAt(0));
-                    const iv = encrypted.slice(0, 12);
-                    const data = encrypted.slice(12);
-                    const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, this.key, data);
-                    return this.decoder.decode(decrypted);
-                } catch (e) {
-                    return encryptedBase64;
-                }
-            }
-            async encryptFile(file) {
-                const chunks = [];
-                const chunkSize = 64 * 1024;
-                const iv = crypto.getRandomValues(new Uint8Array(12));
-                let offset = 0;
-                while (offset < file.size) {
-                    const chunk = file.slice(offset, offset + chunkSize);
-                    const arrayBuffer = await chunk.arrayBuffer();
-                    const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, this.key, arrayBuffer);
-                    chunks.push(new Uint8Array(encrypted));
-                    offset += chunkSize;
-                }
-                const totalLength = iv.length + chunks.reduce((sum, chunk) => sum + chunk.length, 0);
-                const result = new Uint8Array(totalLength);
-                result.set(iv, 0);
-                let position = iv.length;
-                for (const chunk of chunks) {
-                    result.set(chunk, position);
-                    position += chunk.length;
-                }
-                return result.buffer;
-            }
-            async decryptFile(encryptedData) {
-                const data = new Uint8Array(encryptedData);
-                const iv = data.slice(0, 12);
-                const encryptedContent = data.slice(12);
-                return await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, this.key, encryptedContent);
-            }
-        }
+        // ... encryption class (same) ...
 
         // ============================================================
-        //  CHAT CLIENT - WITH AUTO-RECONNECT
+        //  CHAT CLIENT - WITH DELETE SUPPORT
         // ============================================================
         class SecureChat {
             constructor(serverUrl) {
-                this.serverUrl = serverUrl;
-                this.ws = null;
-                this.username = null;
-                this.roomId = null;
-                this.encryption = new ChatEncryption();
-                this.isConnected = false;
-                this.processedIds = new Set();
-                this.chats = {};
-                this.currentChatId = null;
-                this.roomUsers = [];
-                this.onMessage = null;
-                this.onChatUpdate = null;
-                this.onConnectionChange = null;
-                this.onTyping = null;
-                this.onReconnecting = null;
-                this.storageKey = 'secure_chat_session_';
-                this.reconnectAttempts = 0;
-                this.maxReconnectAttempts = 10;
-                this.loadSession();
+                // ... same properties ...
+                this.deletedMessageIds = new Set(); // Track locally deleted messages
             }
 
-            saveSession() {
-                try {
-                    const session = {
-                        username: this.username,
-                        roomId: this.roomId,
-                        encryptionKey: this.encryption.key ? 'saved' : null,
-                        chats: this.chats,
-                        currentChatId: this.currentChatId
-                    };
-                    localStorage.setItem(this.storageKey + 'data', JSON.stringify(session));
-                } catch (e) {}
+            // ... all previous methods ...
+
+            // ===== NEW: Delete a single message =====
+            deleteMessage(messageId, isPrivate = false, targetUser = null) {
+                this.ws.send(JSON.stringify({
+                    type: 'delete-message',
+                    messageId: messageId,
+                    isPrivate: isPrivate,
+                    targetUser: targetUser
+                }));
+                
+                // Mark as deleted locally
+                this.deletedMessageIds.add(messageId);
+                
+                // Remove from chat UI
+                this.removeMessageFromChat(messageId);
             }
 
-            loadSession() {
-                try {
-                    const data = localStorage.getItem(this.storageKey + 'data');
-                    if (data) {
-                        const session = JSON.parse(data);
-                        this.username = session.username;
-                        this.roomId = session.roomId;
-                        this.currentChatId = session.currentChatId;
-                        if (session.chats) {
-                            this.chats = session.chats;
-                        }
-                        return session;
-                    }
-                } catch (e) {}
-                return null;
-            }
-
-            clearSession() {
-                localStorage.removeItem(this.storageKey + 'data');
-            }
-
-            getChatId(username, isPrivate = false) {
-                if (isPrivate) {
-                    return 'private_' + username;
-                }
-                return 'room_' + this.roomId;
-            }
-
-            getChatList() {
-                const list = [];
-                for (const [id, chat] of Object.entries(this.chats)) {
-                    let name = id;
-                    let isPrivate = false;
-                    let targetUser = null;
-                    
-                    if (id.startsWith('private_')) {
-                        targetUser = id.replace('private_', '');
-                        name = targetUser;
-                        isPrivate = true;
-                    } else {
-                        name = 'Group Chat';
-                    }
-                    
-                    if (chat.messages && chat.messages.length > 0) {
-                        list.push({
-                            id: id,
-                            name: name,
-                            isPrivate: isPrivate,
-                            targetUser: targetUser,
-                            lastMessage: chat.lastMessage || '',
-                            lastTime: chat.lastTime || 0,
-                            unread: chat.unread || 0,
-                            messages: chat.messages || []
-                        });
-                    }
-                }
-                list.sort((a, b) => (b.lastTime || 0) - (a.lastTime || 0));
-                return list;
-            }
-
-            getChatMessages(chatId) {
+            // ===== NEW: Clear entire chat =====
+            clearChat(chatId) {
+                const isPrivate = chatId.startsWith('private_');
+                const targetUser = isPrivate ? chatId.replace('private_', '') : null;
+                
+                this.ws.send(JSON.stringify({
+                    type: 'clear-chat',
+                    chatType: isPrivate ? 'private' : 'public',
+                    targetUser: targetUser
+                }));
+                
+                // Clear locally
                 if (this.chats[chatId]) {
-                    return this.chats[chatId].messages || [];
-                }
-                return [];
-            }
-
-            addMessageToChat(chatId, message, isOwn = false) {
-                if (!this.chats[chatId]) {
-                    this.chats[chatId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0 };
-                }
-                
-                const chat = this.chats[chatId];
-                if (message.id && chat.messages.some(m => m.id === message.id)) {
-                    return;
-                }
-                
-                chat.messages.push(message);
-                chat.lastMessage = message.message || (message.fileName ? `📎 ${message.fileName}` : '');
-                chat.lastTime = message.timestamp || Date.now();
-                
-                if (!isOwn && chatId !== this.currentChatId) {
-                    chat.unread = (chat.unread || 0) + 1;
-                }
-                
-                this.saveSession();
-                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-            }
-
-            markChatRead(chatId) {
-                if (this.chats[chatId]) {
+                    // Mark all messages as deleted
+                    for (const msg of this.chats[chatId].messages) {
+                        this.deletedMessageIds.add(msg.id);
+                    }
+                    this.chats[chatId].messages = [];
+                    this.chats[chatId].lastMessage = null;
+                    this.chats[chatId].lastTime = 0;
                     this.chats[chatId].unread = 0;
                     this.saveSession();
                     if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                 }
             }
 
-            clearChatMessages(chatId) {
+            // ===== NEW: Remove a message from chat =====
+            removeMessageFromChat(messageId) {
+                for (const [chatId, chat] of Object.entries(this.chats)) {
+                    const index = chat.messages.findIndex(m => m.id === messageId);
+                    if (index !== -1) {
+                        // Remove from messages array
+                        chat.messages.splice(index, 1);
+                        // Update last message if needed
+                        if (chat.messages.length > 0) {
+                            const last = chat.messages[chat.messages.length - 1];
+                            chat.lastMessage = last.message || (last.fileName ? `📎 ${last.fileName}` : '');
+                            chat.lastTime = last.timestamp || Date.now();
+                        } else {
+                            chat.lastMessage = null;
+                            chat.lastTime = 0;
+                        }
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                        break;
+                    }
+                }
+            }
+
+            // ===== NEW: Handle message deletion from server =====
+            handleMessageDeleted(messageId) {
+                this.deletedMessageIds.add(messageId);
+                this.removeMessageFromChat(messageId);
+            }
+
+            // ===== NEW: Handle chat cleared from server =====
+            handleChatCleared(chatId) {
                 if (this.chats[chatId]) {
                     this.chats[chatId].messages = [];
                     this.chats[chatId].lastMessage = null;
                     this.chats[chatId].lastTime = 0;
+                    this.chats[chatId].unread = 0;
                     this.saveSession();
                     if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                 }
             }
 
-            async createRoom(username) {
-                this.username = username;
-                this.roomId = this.generateRoomId();
-                await this.encryption.generateKey();
-                const key = await this.encryption.exportKey();
-                await this.connect();
-                this.ws.send(JSON.stringify({
-                    type: 'register',
-                    roomId: this.roomId,
-                    username: username,
-                    encryptionKey: key
-                }));
-                this.saveSession();
-                return { roomId: this.roomId, encryptionKey: key };
-            }
-
-            async joinRoom(roomId, username, encryptionKey) {
-                this.username = username;
-                this.roomId = roomId;
-                await this.encryption.importKey(encryptionKey);
-                await this.connect();
-                this.ws.send(JSON.stringify({
-                    type: 'register',
-                    roomId: roomId,
-                    username: username,
-                    encryptionKey: encryptionKey
-                }));
-                this.saveSession();
-            }
-
-            generateRoomId() {
-                return Math.random().toString(36).substring(2, 10).toUpperCase();
-            }
-
-            generateMessageId() {
-                return Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6);
-            }
-
-            async connect() {
-                return new Promise((resolve, reject) => {
-                    this.ws = new WebSocket(this.serverUrl);
-
-                    this.ws.onopen = () => {
-                        this.isConnected = true;
-                        this.reconnectAttempts = 0;
-                        if (this.onReconnecting) this.onReconnecting(false);
-                        if (this.onConnectionChange) this.onConnectionChange(true);
-                        resolve();
-                    };
-
-                    this.ws.onmessage = async (event) => {
-                        try {
-                            const data = JSON.parse(event.data);
-                            await this.handleMessage(data);
-                        } catch (e) {
-                            console.error('Message error:', e);
-                        }
-                    };
-
-                    this.ws.onclose = () => {
-                        this.isConnected = false;
-                        if (this.onConnectionChange) this.onConnectionChange(false);
-                        this.autoReconnect();
-                    };
-
-                    this.ws.onerror = () => {
-                        reject(new Error('Connection failed'));
-                    };
-
-                    setTimeout(() => {
-                        if (!this.isConnected) {
-                            reject(new Error('Timeout'));
-                        }
-                    }, 10000);
-                });
-            }
-
-            autoReconnect() {
-                if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-                    console.log('❌ Max reconnect attempts reached');
-                    return;
-                }
-
-                this.reconnectAttempts++;
-                if (this.onReconnecting) this.onReconnecting(true);
-
-                console.log(`🔄 Reconnect attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
-
-                setTimeout(async () => {
-                    if (this.roomId && this.username) {
-                        try {
-                            // Reconnect using stored session
-                            const session = this.loadSession();
-                            if (session && session.encryptionKey) {
-                                // We need the encryption key - check if we have it
-                                const key = await this.encryption.exportKey();
-                                await this.connect();
-                                this.ws.send(JSON.stringify({
-                                    type: 'register',
-                                    roomId: this.roomId,
-                                    username: this.username,
-                                    encryptionKey: key
-                                }));
-                                console.log('✅ Reconnected successfully');
-                                if (this.onReconnecting) this.onReconnecting(false);
-                            } else {
-                                // Need to re-enter key
-                                const key = prompt(`Reconnecting as ${this.username}. Enter encryption key:`);
-                                if (key) {
-                                    await this.encryption.importKey(key);
-                                    await this.connect();
-                                    this.ws.send(JSON.stringify({
-                                        type: 'register',
-                                        roomId: this.roomId,
-                                        username: this.username,
-                                        encryptionKey: key
-                                    }));
-                                    console.log('✅ Reconnected successfully');
-                                    if (this.onReconnecting) this.onReconnecting(false);
-                                }
-                            }
-                        } catch (e) {
-                            console.error('Reconnect failed:', e);
-                            this.autoReconnect();
-                        }
-                    }
-                }, 2000 * Math.min(this.reconnectAttempts, 5));
-            }
-
+            // ... override handleMessage to support delete events ...
             async handleMessage(data) {
                 console.log(`📨 Received: ${data.type}`);
 
                 switch (data.type) {
                     case 'history':
                         for (const msg of data.messages) {
-                            if (this.processedIds.has(msg.id)) continue;
+                            if (this.processedIds.has(msg.id) || this.deletedMessageIds.has(msg.id)) continue;
                             this.processedIds.add(msg.id);
                             
                             const chatId = this.getChatId('room', false);
@@ -604,804 +230,151 @@
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
 
-                    case 'private-history':
-                        for (const msg of data.messages) {
-                            if (this.processedIds.has(msg.id)) continue;
-                            this.processedIds.add(msg.id);
-                            
-                            const otherUser = msg.sender === this.username ? msg.targetUser : msg.sender;
-                            const chatId = this.getChatId(otherUser, true);
-                            
-                            const decrypted = await this.encryption.decrypt(msg.message);
-                            msg.message = decrypted;
-                            msg.isPrivate = true;
-                            
-                            const isOwn = msg.sender === this.username;
-                            this.addMessageToChat(chatId, msg, isOwn);
-                            if (this.onMessage) {
-                                this.onMessage(msg, isOwn, chatId);
-                            }
-                        }
-                        this.saveSession();
-                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                        break;
+                    // ... other cases ...
 
-                    case 'message':
-                        if (this.processedIds.has(data.message.id)) break;
-                        this.processedIds.add(data.message.id);
-                        
-                        const chatId = this.getChatId('room', false);
-                        const decrypted = await this.encryption.decrypt(data.message.message);
-                        data.message.message = decrypted;
-                        
-                        if (data.message.sender !== this.username) {
-                            this.addMessageToChat(chatId, data.message, false);
-                            if (this.onMessage) {
-                                this.onMessage(data.message, false, chatId);
-                            }
-                        }
-                        this.saveSession();
-                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                        break;
-
-                    case 'private-message':
-                        if (this.processedIds.has(data.message.id)) break;
-                        this.processedIds.add(data.message.id);
-                        
-                        const otherUser = data.message.sender === this.username ? data.message.targetUser : data.message.sender;
-                        const pChatId = this.getChatId(otherUser, true);
-                        
-                        const pDecrypted = await this.encryption.decrypt(data.message.message);
-                        data.message.message = pDecrypted;
-                        data.message.isPrivate = true;
-                        
-                        const isOwn = data.message.sender === this.username;
-                        this.addMessageToChat(pChatId, data.message, isOwn);
-                        if (this.onMessage) {
-                            this.onMessage(data.message, isOwn, pChatId);
-                        }
-                        this.saveSession();
-                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                        break;
-
-                    case 'file':
-                        if (this.processedIds.has(data.message.id)) break;
-                        this.processedIds.add(data.message.id);
-                        
-                        let fileChatId;
-                        let fileIsPrivate = data.message.isPrivate || false;
-                        if (fileIsPrivate && data.message.targetUser) {
-                            const ftargetUser = data.message.sender === this.username ? data.message.targetUser : data.message.sender;
-                            fileChatId = this.getChatId(ftargetUser, true);
-                        } else {
-                            fileChatId = this.getChatId('room', false);
-                        }
-                        
-                        data.message.isFile = true;
-                        if (data.message.sender !== this.username) {
-                            this.addMessageToChat(fileChatId, data.message, false);
-                            if (this.onMessage) {
-                                this.onMessage(data.message, false, fileChatId);
-                            }
-                        }
-                        this.saveSession();
-                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                        break;
-
-                    case 'user-joined':
-                        this.roomUsers = data.users || [];
-                        console.log(`👥 Users online: ${this.roomUsers.join(', ')}`);
-                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                        break;
-
-                    case 'user-left':
-                        this.roomUsers = data.users || [];
-                        console.log(`👥 Users online: ${this.roomUsers.join(', ')}`);
-                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                        break;
-
-                    case 'typing':
-                        if (this.onTyping) {
-                            this.onTyping(data.username, data.isTyping);
+                    case 'message-deleted':
+                        this.handleMessageDeleted(data.messageId);
+                        if (this.onMessageDeleted) {
+                            this.onMessageDeleted(data.messageId);
                         }
                         break;
 
-                    case 'pong':
+                    case 'chat-cleared':
+                        this.handleChatCleared(data.chatId);
+                        if (this.onChatCleared) {
+                            this.onChatCleared(data.chatId);
+                        }
                         break;
 
-                    default:
-                        console.log('Unknown message type:', data.type);
+                    // ... rest of cases ...
                 }
-            }
-
-            async sendMessage(text, isPrivate = false, targetUser = null) {
-                if (!text.trim()) return;
-
-                const id = this.generateMessageId();
-                const encrypted = await this.encryption.encrypt(text);
-                
-                this.ws.send(JSON.stringify({
-                    type: 'message',
-                    message: encrypted,
-                    isPrivate: isPrivate,
-                    targetUser: targetUser,
-                    id: id
-                }));
-
-                const chatId = isPrivate ? this.getChatId(targetUser, true) : this.getChatId('room', false);
-                
-                const msg = {
-                    id: id,
-                    sender: this.username,
-                    message: text,
-                    timestamp: Date.now(),
-                    isPrivate: isPrivate,
-                    targetUser: targetUser
-                };
-                
-                this.processedIds.add(id);
-                this.addMessageToChat(chatId, msg, true);
-                
-                if (this.onMessage) {
-                    this.onMessage(msg, true, chatId);
-                }
-                this.saveSession();
-                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-            }
-
-            async sendFile(file, isPrivate = false, targetUser = null) {
-                const id = this.generateMessageId();
-                const fileName = file.name;
-                const fileSize = file.size;
-                const fileType = file.type || 'application/octet-stream';
-
-                const encryptedData = await this.encryption.encryptFile(file);
-                const uint8Array = new Uint8Array(encryptedData);
-                let binary = '';
-                for (let i = 0; i < uint8Array.length; i++) {
-                    binary += String.fromCharCode(uint8Array[i]);
-                }
-                const base64Data = btoa(binary);
-
-                this.ws.send(JSON.stringify({
-                    type: 'file',
-                    id: id,
-                    fileName: fileName,
-                    fileSize: fileSize,
-                    fileType: fileType,
-                    fileData: base64Data,
-                    isPrivate: isPrivate,
-                    targetUser: targetUser
-                }));
-
-                const chatId = isPrivate ? this.getChatId(targetUser, true) : this.getChatId('room', false);
-                
-                const msg = {
-                    id: id,
-                    sender: this.username,
-                    fileName: fileName,
-                    fileSize: fileSize,
-                    fileType: fileType,
-                    fileData: base64Data,
-                    timestamp: Date.now(),
-                    isPrivate: isPrivate,
-                    targetUser: targetUser,
-                    isFile: true
-                };
-                
-                this.processedIds.add(id);
-                this.addMessageToChat(chatId, msg, true);
-                
-                if (this.onMessage) {
-                    this.onMessage(msg, true, chatId);
-                }
-                this.saveSession();
-                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-            }
-
-            async downloadFile(fileData) {
-                try {
-                    const binaryString = atob(fileData.fileData);
-                    const bytes = new Uint8Array(binaryString.length);
-                    for (let i = 0; i < binaryString.length; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
-                    const decrypted = await this.encryption.decryptFile(bytes.buffer);
-                    const blob = new Blob([decrypted], { type: fileData.fileType || 'application/octet-stream' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = fileData.fileName || 'download';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    setTimeout(() => URL.revokeObjectURL(url), 5000);
-                } catch (e) {
-                    console.error('Download error:', e);
-                    alert('Failed to download file: ' + e.message);
-                }
-            }
-
-            sendTyping(isTyping) {
-                if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
-                this.ws.send(JSON.stringify({
-                    type: 'typing',
-                    isTyping: isTyping
-                }));
-            }
-
-            getUsers() {
-                return this.roomUsers || [];
-            }
-
-            leave() {
-                if (this.ws) {
-                    try {
-                        this.ws.send(JSON.stringify({ type: 'leave' }));
-                        this.ws.close();
-                    } catch (e) {}
-                }
-                this.clearSession();
-                this.isConnected = false;
-                this.username = null;
-                this.roomId = null;
-                this.processedIds.clear();
-                this.chats = {};
-                this.currentChatId = null;
-            }
-
-            startPrivateChat(targetUser) {
-                const chatId = this.getChatId(targetUser, true);
-                if (!this.chats[chatId]) {
-                    this.chats[chatId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0 };
-                }
-                this.currentChatId = chatId;
-                this.saveSession();
-                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                return chatId;
             }
         }
 
         // ============================================================
-        //  UI CONTROLLER
+        //  UI CONTROLLER - WITH CONTEXT MENU
         // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
-            const defaultUsername = 'User_' + Math.random().toString(36).substring(2, 6);
-            document.getElementById('create-username').value = defaultUsername;
+            // ... previous setup ...
 
-            const serverUrl = 'wss://chasedavision.onrender.com';
-            const chat = new SecureChat(serverUrl);
+            // ===== CONTEXT MENU =====
+            const contextMenu = document.getElementById('context-menu');
+            const deleteBtn = document.getElementById('delete-msg-btn');
+            let selectedMessageId = null;
+            let selectedMessageIsPrivate = false;
+            let selectedMessageTarget = null;
 
-            const setupScreen = document.getElementById('setup-screen');
-            const chatScreen = document.getElementById('chat-screen');
-            const messagesDiv = document.getElementById('messages');
-            const messageInput = document.getElementById('message-input');
-            const sendBtn = document.getElementById('send-btn');
-            const createBtn = document.getElementById('create-room');
-            const joinBtn = document.getElementById('join-room');
-            const leaveBtn = document.getElementById('leave-btn');
-            const fileBtn = document.getElementById('file-btn');
-            const fileInput = document.getElementById('file-input');
-            const connStatus = document.getElementById('conn-status');
-            const chatList = document.getElementById('chat-list');
-            const searchInput = document.getElementById('search-chats');
-            const onlineCount = document.getElementById('online-count');
-            const newChatBtn = document.getElementById('new-chat-btn');
-            const clearChatBtn = document.getElementById('clear-chat-btn');
-            const modal = document.getElementById('new-chat-modal');
-            const closeModal = document.getElementById('close-modal');
-            const contactSearch = document.getElementById('contact-search');
-            const contactList = document.getElementById('contact-list');
-            const reconnectBanner = document.getElementById('reconnect-banner');
-
-            let currentChatId = null;
-            let allChats = [];
-            let allContacts = [];
-
-            // ---- RECONNECT BANNER ----
-            chat.onReconnecting = (isReconnecting) => {
-                if (isReconnecting) {
-                    reconnectBanner.style.display = 'block';
-                    reconnectBanner.textContent = '🔄 Reconnecting...';
-                } else {
-                    reconnectBanner.style.display = 'none';
-                }
-            };
-
-            // ---- RESTORE SESSION ----
-            async function restoreSession() {
-                const session = chat.loadSession();
-                if (session && session.roomId && session.username) {
-                    const key = prompt(`Welcome back ${session.username}!\nEnter encryption key to reconnect:`);
-                    if (key) {
-                        try {
-                            await chat.joinRoom(session.roomId, session.username, key);
-                            setupScreen.classList.remove('active');
-                            chatScreen.classList.add('active');
-                            messageInput.disabled = false;
-                            sendBtn.disabled = false;
-                            fileBtn.disabled = false;
-                            showSystemMessage('🔗 Reconnected to room!');
-                            renderChatList();
-                            updateContacts();
-                            if (session.currentChatId) {
-                                selectChat(session.currentChatId);
-                            }
-                            return true;
-                        } catch (e) {
-                            console.error('Reconnect failed:', e);
-                            alert('Failed to reconnect. Please join again.');
-                        }
-                    }
-                }
-                return false;
-            }
-
-            restoreSession();
-
-            // ---- CHAT CALLBACKS ----
-            chat.onMessage = (msg, isOwn, chatId) => {
-                if (chatId === currentChatId) {
-                    displayMessage(msg, isOwn);
-                    chat.markChatRead(chatId);
-                }
-                renderChatList();
-            };
-
-            chat.onChatUpdate = (chats) => {
-                allChats = chats;
-                renderChatList();
-                updateContacts();
-                const userCount = chat.getUsers().filter(u => u !== chat.username).length;
-                onlineCount.textContent = `(${userCount} online)`;
-            };
-
-            chat.onConnectionChange = (connected) => {
-                if (connected) {
-                    connStatus.textContent = '🟢';
-                    connStatus.className = 'connection-status connected';
-                    document.getElementById('connection-status').textContent = '🟢 Connected';
-                    document.getElementById('connection-status').style.color = '#00ff88';
-                    document.getElementById('server-status').textContent = '✅ Connected';
-                    document.getElementById('server-status').style.color = '#00ff88';
-                } else {
-                    connStatus.textContent = '🔴';
-                    connStatus.className = 'connection-status disconnected';
-                    document.getElementById('connection-status').textContent = '🔴 Disconnected';
-                    document.getElementById('connection-status').style.color = '#ff4444';
-                    document.getElementById('server-status').textContent = '❌ Disconnected';
-                    document.getElementById('server-status').style.color = '#ff4444';
-                }
-            };
-
-            chat.onTyping = (username, isTyping) => {
-                const typingIndicator = document.getElementById('typing-indicator');
-                if (isTyping && username !== chat.username) {
-                    typingIndicator.textContent = `${username} is typing...`;
-                } else {
-                    typingIndicator.textContent = '';
-                }
-            };
-
-            // ---- UPDATE CONTACTS ----
-            function updateContacts() {
-                const users = chat.getUsers();
-                const currentUser = chat.username;
-                allContacts = users.filter(u => u !== currentUser).map(u => ({
-                    username: u,
-                    isOnline: true
-                }));
-                
-                for (const [id, chatData] of Object.entries(chat.chats)) {
-                    if (id.startsWith('private_')) {
-                        const targetUser = id.replace('private_', '');
-                        if (!allContacts.find(c => c.username === targetUser)) {
-                            allContacts.push({
-                                username: targetUser,
-                                isOnline: false
-                            });
-                        }
-                    }
-                }
-            }
-
-            // ---- RENDER CONTACT LIST ----
-            function renderContacts(filter = '') {
-                const search = filter.toLowerCase();
-                const filtered = allContacts.filter(c => 
-                    c.username.toLowerCase().includes(search)
-                );
-
-                if (filtered.length === 0) {
-                    contactList.innerHTML = `
-                        <div class="no-contacts">
-                            <div class="icon">👥</div>
-                            <div>${allContacts.length === 0 ? 'No contacts available' : 'No results found'}</div>
-                            <div class="hint">${allContacts.length === 0 ? 'Wait for others to join the room' : 'Try a different search'}</div>
-                        </div>
-                    `;
+            // Show context menu on right-click
+            document.addEventListener('contextmenu', (e) => {
+                const messageEl = e.target.closest('.message');
+                if (!messageEl) {
+                    contextMenu.classList.remove('active');
                     return;
                 }
-
-                contactList.innerHTML = filtered.map(contact => `
-                    <div class="contact-item" onclick="window.startPrivateChat('${contact.username}')">
-                        <div class="avatar">${contact.username.charAt(0).toUpperCase()}</div>
-                        <div class="contact-info">
-                            <div class="name">${contact.username}</div>
-                            <div class="status ${contact.isOnline ? 'online' : 'offline'}">
-                                ${contact.isOnline ? '🟢 Online' : '⚪ Offline'}
-                            </div>
-                        </div>
-                        <button class="start-chat-btn" onclick="event.stopPropagation(); window.startPrivateChat('${contact.username}')">
-                            💬 Chat
-                        </button>
-                    </div>
-                `).join('');
-            }
-
-            // ---- CREATE ROOM ----
-            createBtn.addEventListener('click', async () => {
-                const username = document.getElementById('create-username').value.trim();
-                if (!username) { alert('Please enter a username'); return; }
-
-                createBtn.disabled = true;
-                createBtn.textContent = 'Creating...';
-
-                try {
-                    const roomInfo = await chat.createRoom(username);
-                    setupScreen.classList.remove('active');
-                    chatScreen.classList.add('active');
-                    messageInput.disabled = false;
-                    sendBtn.disabled = false;
-                    fileBtn.disabled = false;
-
-                    const info = `Room ID: ${roomInfo.roomId}\nEncryption Key: ${roomInfo.encryptionKey}`;
-                    navigator.clipboard.writeText(info).then(() => {
-                        showSystemMessage('📋 Room info copied! Share with friends.');
-                    });
-                    showSystemMessage(`🚀 Room created! ID: ${roomInfo.roomId}`);
-                    renderChatList();
-
-                } catch (error) {
-                    alert('Failed: ' + error.message);
-                } finally {
-                    createBtn.disabled = false;
-                    createBtn.textContent = 'Create Room';
-                }
+                
+                e.preventDefault();
+                selectedMessageId = messageEl.dataset.msgId;
+                selectedMessageIsPrivate = messageEl.dataset.isPrivate === 'true';
+                selectedMessageTarget = messageEl.dataset.targetUser || null;
+                
+                contextMenu.style.left = e.clientX + 'px';
+                contextMenu.style.top = e.clientY + 'px';
+                contextMenu.classList.add('active');
             });
 
-            // ---- JOIN ROOM ----
-            joinBtn.addEventListener('click', async () => {
-                const roomId = document.getElementById('join-room-id').value.trim().toUpperCase();
-                const username = document.getElementById('join-username').value.trim();
-
-                if (!roomId || !username) {
-                    alert('Please fill in all fields');
-                    return;
-                }
-
-                const key = prompt('Enter the encryption key:');
-                if (!key) return;
-
-                joinBtn.disabled = true;
-                joinBtn.textContent = 'Joining...';
-
-                try {
-                    await chat.joinRoom(roomId, username, key);
-                    setupScreen.classList.remove('active');
-                    chatScreen.classList.add('active');
-                    messageInput.disabled = false;
-                    sendBtn.disabled = false;
-                    fileBtn.disabled = false;
-                    showSystemMessage('🔗 Joined the room!');
-                    renderChatList();
-
-                } catch (error) {
-                    alert('Failed: ' + error.message);
-                } finally {
-                    joinBtn.disabled = false;
-                    joinBtn.textContent = 'Join Room';
-                }
+            // Hide context menu on click elsewhere
+            document.addEventListener('click', () => {
+                contextMenu.classList.remove('active');
             });
 
-            // ---- SELECT CHAT ----
-            function selectChat(chatId) {
-                currentChatId = chatId;
-                chat.currentChatId = chatId;
-                chat.markChatRead(chatId);
-                
-                const chatData = allChats.find(c => c.id === chatId);
-                if (chatData) {
-                    const title = chatData.isPrivate ? `🔒 ${chatData.name}` : `💬 ${chatData.name}`;
-                    document.getElementById('chat-title').textContent = title;
-                }
-                
-                const messages = chat.getChatMessages(chatId);
-                messagesDiv.innerHTML = '';
-                if (messages.length === 0) {
-                    const emptyMsg = document.createElement('div');
-                    emptyMsg.className = 'system-message';
-                    emptyMsg.textContent = '💬 No messages yet. Start chatting!';
-                    messagesDiv.appendChild(emptyMsg);
-                } else {
-                    messages.forEach(msg => {
-                        const isOwn = msg.sender === chat.username;
-                        displayMessage(msg, isOwn);
-                    });
-                }
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                
-                messageInput.disabled = false;
-                sendBtn.disabled = false;
-                fileBtn.disabled = false;
-                
-                renderChatList();
-                chat.saveSession();
-            }
-
-            // ---- RENDER CHAT LIST ----
-            function renderChatList() {
-                const chats = chat.getChatList();
-                const searchTerm = searchInput.value.toLowerCase();
-                
-                let filtered = chats;
-                if (searchTerm) {
-                    filtered = chats.filter(c => c.name.toLowerCase().includes(searchTerm));
-                }
-                
-                if (filtered.length === 0) {
-                    chatList.innerHTML = `
-                        <div class="no-chats">
-                            <div class="icon">💬</div>
-                            <div>${chats.length === 0 ? 'No chats yet' : 'No results found'}</div>
-                            <div class="hint">${chats.length === 0 ? 'Click ✏️ to start a new chat' : 'Try a different search'}</div>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                chatList.innerHTML = filtered.map(chatItem => {
-                    const isActive = chatItem.id === currentChatId;
-                    const unread = chatItem.unread || 0;
-                    const lastMsg = chatItem.lastMessage || 'No messages';
-                    const time = chatItem.lastTime ? new Date(chatItem.lastTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-                    
-                    let onlineStatus = '';
-                    if (chatItem.isPrivate) {
-                        const isOnline = allContacts.find(c => c.username === chatItem.name)?.isOnline || false;
-                        onlineStatus = `<span class="online-dot ${isOnline ? 'online' : 'offline'}"></span>`;
+            // Delete message
+            deleteBtn.addEventListener('click', () => {
+                if (selectedMessageId) {
+                    if (confirm('Delete this message?')) {
+                        chat.deleteMessage(selectedMessageId, selectedMessageIsPrivate, selectedMessageTarget);
                     }
-                    
-                    return `
-                        <div class="chat-list-item ${isActive ? 'active' : ''}" onclick="window.selectChat('${chatItem.id}')">
-                            <div class="avatar ${chatItem.isPrivate ? 'private' : 'group'} ${chatItem.isPrivate && allContacts.find(c => c.username === chatItem.name)?.isOnline ? 'online' : ''}">
-                                ${chatItem.isPrivate ? chatItem.name.charAt(0).toUpperCase() : '👥'}
-                            </div>
-                            <div class="chat-info">
-                                <div class="name">
-                                    ${chatItem.name}
-                                    ${onlineStatus}
-                                </div>
-                                <div class="last-msg">
-                                    ${chatItem.isPrivate ? '<span class="private-badge">🔒</span>' : ''}
-                                    ${lastMsg}
-                                </div>
-                            </div>
-                            <div class="chat-meta">
-                                <div>${time}</div>
-                                ${unread > 0 ? `<div class="unread">${unread}</div>` : ''}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
+                }
+                contextMenu.classList.remove('active');
+            });
 
-            // ---- CLEAR CHAT ----
+            // ===== CLEAR CHAT - Updated =====
             clearChatBtn.addEventListener('click', () => {
                 if (!currentChatId) return;
-                if (confirm('Clear all messages in this chat?')) {
-                    chat.clearChatMessages(currentChatId);
+                if (confirm('Clear all messages in this chat? This cannot be undone.')) {
+                    chat.clearChat(currentChatId);
                     messagesDiv.innerHTML = '';
                     const emptyMsg = document.createElement('div');
                     emptyMsg.className = 'system-message';
-                    emptyMsg.textContent = '💬 Chat cleared. Start chatting!';
+                    emptyMsg.textContent = '💬 Chat cleared permanently';
                     messagesDiv.appendChild(emptyMsg);
                     renderChatList();
-                    showSystemMessage('🗑️ Chat cleared');
+                    showSystemMessage('🗑️ Chat cleared permanently');
                 }
             });
 
-            // ---- START PRIVATE CHAT ----
-            function startPrivateChat(username) {
-                if (username === chat.username) {
-                    alert("You can't chat with yourself!");
-                    return;
-                }
-                
-                const chatId = chat.startPrivateChat(username);
-                selectChat(chatId);
-                modal.classList.remove('active');
-                showSystemMessage(`🔒 Started private chat with ${username}`);
-            }
-
-            // ---- DISPLAY MESSAGE ----
+            // ===== DISPLAY MESSAGE - With delete button =====
             function displayMessage(msg, isOwn) {
-                if (messagesDiv.children.length === 1 &&
-                    messagesDiv.children[0].classList.contains('system-message') &&
-                    (messagesDiv.children[0].textContent.includes('Select a chat') || 
-                     messagesDiv.children[0].textContent.includes('No messages yet') ||
-                     messagesDiv.children[0].textContent.includes('Chat cleared'))) {
-                    messagesDiv.innerHTML = '';
-                }
-
+                // ... previous code ...
+                
                 const msgElement = document.createElement('div');
                 msgElement.className = `message ${isOwn ? 'own' : 'other'}`;
+                msgElement.dataset.msgId = msg.id || Date.now().toString(36);
+                msgElement.dataset.isPrivate = msg.isPrivate || false;
+                msgElement.dataset.targetUser = msg.targetUser || '';
                 
-                let content = '';
-                if (msg.isFile || msg.fileData) {
-                    const fileSize = msg.fileSize ? 
-                        (msg.fileSize > 1024 * 1024 ? 
-                            (msg.fileSize / (1024 * 1024)).toFixed(1) + ' MB' : 
-                            (msg.fileSize / 1024).toFixed(1) + ' KB') 
-                        : 'Unknown size';
-                    let fileIcon = '📁';
-                    if (msg.fileType) {
-                        if (msg.fileType.startsWith('image/')) fileIcon = '🖼️';
-                        else if (msg.fileType.startsWith('video/')) fileIcon = '🎬';
-                        else if (msg.fileType.startsWith('audio/')) fileIcon = '🎵';
-                        else if (msg.fileType.includes('pdf')) fileIcon = '📄';
-                        else if (msg.fileType.includes('zip')) fileIcon = '📦';
-                    }
-                    const fileId = msg.id || Date.now().toString(36);
-                    if (msg.fileData) {
-                        window._fileData = window._fileData || {};
-                        window._fileData[fileId] = msg;
-                    }
-                    content = `
-                        <span class="file-attachment" onclick="window.downloadFile('${fileId}')">
-                            <span class="file-icon">${fileIcon}</span>
-                            <span class="file-name">${msg.fileName || 'file'}</span>
-                            <span class="file-size">(${fileSize})</span>
-                        </span>
-                    `;
-                } else {
-                    content = msg.message || '';
+                // Check if message is deleted
+                if (chat.deletedMessageIds.has(msg.id)) {
+                    msgElement.classList.add('deleted');
                 }
                 
-                const isPrivate = msg.isPrivate || false;
-                const privateTag = isPrivate ? ' 🔒' : '';
+                // ... rest of message rendering ...
                 
-                msgElement.innerHTML = `
-                    <span class="sender-name">${msg.sender}${privateTag}</span>
-                    <span>${content}</span>
-                    <span class="timestamp">${new Date(msg.timestamp || Date.now()).toLocaleTimeString()}</span>
-                `;
+                // Add delete button for own messages
+                if (isOwn) {
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.textContent = '×';
+                    deleteBtn.title = 'Delete message';
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (confirm('Delete this message?')) {
+                            chat.deleteMessage(msg.id, msg.isPrivate || false, msg.targetUser || null);
+                        }
+                    });
+                    msgElement.appendChild(deleteBtn);
+                }
+                
                 messagesDiv.appendChild(msgElement);
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
             }
 
-            // ---- SEND ----
-            sendBtn.addEventListener('click', sendMessage);
-            messageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendMessage();
-            });
-
-            let typingTimer = null;
-            messageInput.addEventListener('input', () => {
-                clearTimeout(typingTimer);
-                chat.sendTyping(true);
-                typingTimer = setTimeout(() => {
-                    chat.sendTyping(false);
-                }, 1000);
-            });
-
-            async function sendMessage() {
-                const text = messageInput.value.trim();
-                if (!text || !currentChatId) return;
-
-                try {
-                    const isPrivate = currentChatId.startsWith('private_');
-                    const targetUser = isPrivate ? currentChatId.replace('private_', '') : null;
-                    await chat.sendMessage(text, isPrivate, targetUser);
-                    messageInput.value = '';
-                } catch (error) {
-                    console.error('Send error:', error);
-                }
-            }
-
-            // ---- FILE SHARING ----
-            fileBtn.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', async (e) => {
-                const files = e.target.files;
-                if (!files || files.length === 0 || !currentChatId) return;
-
-                const isPrivate = currentChatId.startsWith('private_');
-                const targetUser = isPrivate ? currentChatId.replace('private_', '') : null;
-
-                for (const file of files) {
-                    try {
-                        await chat.sendFile(file, isPrivate, targetUser);
-                        showSystemMessage(`📎 Sent: ${file.name}`);
-                    } catch (error) {
-                        console.error('File send error:', error);
-                        showSystemMessage('❌ Failed to send file: ' + error.message);
-                    }
-                }
-                fileInput.value = '';
-            });
-
-            // ---- NEW CHAT MODAL ----
-            newChatBtn.addEventListener('click', () => {
-                renderContacts();
-                modal.classList.add('active');
-                contactSearch.value = '';
-            });
-
-            closeModal.addEventListener('click', () => {
-                modal.classList.remove('active');
-            });
-
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
-            });
-
-            contactSearch.addEventListener('input', (e) => {
-                renderContacts(e.target.value);
-            });
-
-            // ---- SEARCH ----
-            searchInput.addEventListener('input', renderChatList);
-
-            // ---- LEAVE ----
-            leaveBtn.addEventListener('click', () => {
-                if (confirm('Leave the room? Your chats will be saved.')) {
-                    chat.leave();
-                    chatScreen.classList.remove('active');
-                    setupScreen.classList.add('active');
-                    messageInput.disabled = true;
-                    sendBtn.disabled = true;
-                    fileBtn.disabled = true;
-                    messagesDiv.innerHTML = '';
-                    chatList.innerHTML = `
-                        <div class="no-chats">
-                            <div class="icon">💬</div>
-                            <div>No chats yet</div>
-                            <div class="hint">Click ✏️ to start a new chat</div>
-                        </div>
-                    `;
-                    showSystemMessage('You left the room');
-                }
-            });
-
-            // ---- GLOBAL FUNCTIONS ----
-            window.selectChat = selectChat;
-            window.startPrivateChat = startPrivateChat;
-            
-            window.downloadFile = function(id) {
-                if (window._fileData && window._fileData[id]) {
-                    chat.downloadFile(window._fileData[id]);
-                } else {
-                    alert('File data not available.');
+            // ===== HANDLE MESSAGE DELETED =====
+            chat.onMessageDeleted = (messageId) => {
+                // Remove the message from UI
+                const msgElement = messagesDiv.querySelector(`[data-msg-id="${messageId}"]`);
+                if (msgElement) {
+                    msgElement.classList.add('deleted');
+                    // Remove after animation
+                    setTimeout(() => {
+                        if (msgElement.parentNode) {
+                            msgElement.remove();
+                        }
+                    }, 300);
                 }
             };
 
-            // ---- SYSTEM MESSAGE ----
-            function showSystemMessage(text) {
-                const msgElement = document.createElement('div');
-                msgElement.className = 'system-message';
-                msgElement.textContent = text;
-                messagesDiv.appendChild(msgElement);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }
+            chat.onChatCleared = (chatId) => {
+                if (chatId === currentChatId) {
+                    messagesDiv.innerHTML = '';
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.className = 'system-message';
+                    emptyMsg.textContent = '💬 Chat has been cleared';
+                    messagesDiv.appendChild(emptyMsg);
+                }
+            };
 
-            console.log('💬 Secure Chat loaded!');
-            console.log(`📡 Server: ${serverUrl}`);
-            console.log('🔒 Users tracked by username (not connection ID)');
-            console.log('🔄 Auto-reconnect enabled - refresh won\'t break chats');
+            // ... rest of UI controller ...
         });
     </script>
-
 </body>
 </html>
