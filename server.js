@@ -1,18 +1,14 @@
-// server.js - Server-based chat (like WhatsApp)
+// server.js - With file support
 const WebSocket = require('ws');
 const http = require('http');
 const fs = require('fs');
-const path = require('path');
 
 const PORT = process.env.PORT || 8080;
 
-// Store all messages per room
 const messages = {};
-// Store active connections
 const clients = {};
 
 const server = http.createServer((req, res) => {
-    // Serve the HTML file
     fs.readFile('index.html', (err, data) => {
         if (err) {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -36,30 +32,24 @@ wss.on('connection', (ws) => {
 
             switch (msg.type) {
                 case 'register':
-                    // User joins a room
                     const roomId = msg.roomId;
                     const username = msg.username;
                     
                     userInfo = { roomId, username };
                     
-                    // Store client
                     if (!clients[roomId]) clients[roomId] = {};
                     clients[roomId][username] = ws;
                     
-                    // Initialize messages for room
                     if (!messages[roomId]) messages[roomId] = [];
                     
-                    // Send last 50 messages to user
                     const history = messages[roomId].slice(-50);
                     ws.send(JSON.stringify({
                         type: 'history',
                         messages: history
                     }));
                     
-                    // Notify everyone in room
                     broadcast(roomId, {
                         type: 'user-joined',
-                        username: username,
                         users: Object.keys(clients[roomId])
                     });
                     
@@ -67,11 +57,10 @@ wss.on('connection', (ws) => {
                     break;
 
                 case 'message':
-                    // User sends a message
                     if (!userInfo) return;
                     
                     const messageData = {
-                        id: Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
+                        id: msg.id || Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
                         sender: userInfo.username,
                         message: msg.message,
                         timestamp: Date.now(),
@@ -79,17 +68,13 @@ wss.on('connection', (ws) => {
                         targetUser: msg.targetUser || null
                     };
                     
-                    // Store in history
                     messages[userInfo.roomId].push(messageData);
                     
-                    // Send to everyone in room (or specific user for private)
                     if (messageData.isPrivate && messageData.targetUser) {
-                        // Private message - send only to target
                         sendPrivate(userInfo.roomId, messageData.targetUser, {
                             type: 'private-message',
                             message: messageData
                         });
-                        // Also send to sender
                         if (clients[userInfo.roomId][userInfo.username]) {
                             clients[userInfo.roomId][userInfo.username].send(JSON.stringify({
                                 type: 'private-message',
@@ -97,7 +82,6 @@ wss.on('connection', (ws) => {
                             }));
                         }
                     } else {
-                        // Public message - broadcast to all
                         broadcast(userInfo.roomId, {
                             type: 'message',
                             message: messageData
@@ -105,8 +89,44 @@ wss.on('connection', (ws) => {
                     }
                     break;
 
+                case 'file':
+                    if (!userInfo) return;
+                    
+                    const fileData = {
+                        id: msg.id || Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
+                        sender: userInfo.username,
+                        fileName: msg.fileName,
+                        fileSize: msg.fileSize,
+                        fileType: msg.fileType,
+                        fileData: msg.fileData,
+                        timestamp: Date.now(),
+                        isPrivate: msg.isPrivate || false,
+                        targetUser: msg.targetUser || null,
+                        isFile: true
+                    };
+                    
+                    messages[userInfo.roomId].push(fileData);
+                    
+                    if (fileData.isPrivate && fileData.targetUser) {
+                        sendPrivate(userInfo.roomId, fileData.targetUser, {
+                            type: 'file',
+                            message: fileData
+                        });
+                        if (clients[userInfo.roomId][userInfo.username]) {
+                            clients[userInfo.roomId][userInfo.username].send(JSON.stringify({
+                                type: 'file',
+                                message: fileData
+                            }));
+                        }
+                    } else {
+                        broadcast(userInfo.roomId, {
+                            type: 'file',
+                            message: fileData
+                        });
+                    }
+                    break;
+
                 case 'typing':
-                    // Typing indicator
                     if (!userInfo) return;
                     broadcast(userInfo.roomId, {
                         type: 'typing',
@@ -135,7 +155,6 @@ wss.on('connection', (ws) => {
 
 function broadcast(roomId, data, exclude = []) {
     if (!clients[roomId]) return;
-    
     const message = JSON.stringify(data);
     Object.keys(clients[roomId]).forEach(username => {
         if (exclude.includes(username)) return;
@@ -159,14 +178,10 @@ function handleDisconnect(userInfo) {
     
     if (clients[roomId]) {
         delete clients[roomId][username];
-        
-        // Notify others
         broadcast(roomId, {
             type: 'user-left',
-            username: username,
             users: Object.keys(clients[roomId])
         });
-        
         console.log(`👋 ${username} left room ${roomId}`);
     }
 }
@@ -174,10 +189,10 @@ function handleDisconnect(userInfo) {
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`
     ╔════════════════════════════════════════════════════╗
-    ║   💬 Secure Chat Server (WhatsApp-style)          ║
+    ║   💬 Secure Chat Server                           ║
     ║   Running on: http://0.0.0.0:${PORT}               ║
-    ║   Messages are stored in memory                   ║
-    ║   🔒 End-to-end encryption enabled                 ║
+    ║   🔒 End-to-end encryption                        ║
+    ║   📎 File sharing supported                       ║
     ╚════════════════════════════════════════════════════╝
     `);
 });
