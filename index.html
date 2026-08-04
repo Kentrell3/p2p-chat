@@ -64,19 +64,12 @@
         .chat-list-item .chat-info .last-msg .group-badge{font-size:8px;color:#00ff88;margin-right:4px}
         .chat-list-item .chat-meta{font-size:9px;color:#556;text-align:right;flex-shrink:0}
         .chat-list-item .chat-meta .unread{background:#00d4ff;color:#0a0e17;padding:1px 6px;border-radius:10px;font-size:8px;font-weight:600}
-        .chat-list-item .online-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-left:4px}
-        .chat-list-item .online-dot.online{background:#00ff88;box-shadow:0 0 6px rgba(0,255,136,0.4)}
-        .chat-list-item .online-dot.offline{background:#ff4444}
         .no-chats{text-align:center;color:#556;padding:30px 10px;font-size:13px}
         .no-chats .icon{font-size:40px;margin-bottom:12px}
         .no-chats .hint{color:#8892b0;font-size:12px;margin-top:8px}
         .chat-main{flex:1;display:flex;flex-direction:column;min-width:0}
         .chat-header{background:rgba(26,35,50,0.8);padding:10px 14px;border-radius:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);flex-shrink:0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
         .chat-header .chat-title{font-size:16px;font-weight:600}
-        .chat-header .chat-title .badge{font-size:10px;padding:2px 8px;border-radius:10px;margin-left:6px}
-        .chat-header .chat-title .badge.group-badge{background:rgba(0,255,136,0.15);color:#00ff88}
-        .chat-header .chat-title .badge.private-badge{background:rgba(255,170,0,0.15);color:#ffaa00}
-        .chat-header .chat-title .badge.public-badge{background:rgba(0,212,255,0.15);color:#00d4ff}
         .chat-header .chat-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
         .connection-status{font-size:12px;padding:4px 12px;border-radius:12px}
         .connection-status.connected{background:rgba(0,255,136,0.1);color:#00ff88}
@@ -86,7 +79,6 @@
         .messages-area{flex:1;overflow-y:auto;background:rgba(13,20,33,0.5);border-radius:12px;padding:12px;margin-bottom:10px;min-height:200px}
         .system-message{text-align:center;color:#8892b0;font-size:12px;padding:8px;opacity:.7}
         .message{margin-bottom:8px;padding:8px 12px;border-radius:10px;max-width:80%;word-wrap:break-word;animation:fadeIn .25s ease;font-size:14px;position:relative;cursor:default;transition:all .3s}
-        .message:hover{filter:brightness(1.05)}
         .message .delete-btn{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:rgba(255,68,68,0.9);border:none;color:#fff;font-size:12px;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all .3s;line-height:1}
         .message:hover .delete-btn{display:flex}
         .message .delete-btn:hover{transform:scale(1.2);background:#ff4444}
@@ -95,7 +87,6 @@
         .message.own{background:linear-gradient(135deg,#00d4ff,#0099cc);color:#0a0e17;margin-left:auto}
         .message.other{background:rgba(26,35,50,0.8);color:#e0e0e0}
         .message .sender-name{display:block;font-size:10px;margin-bottom:3px;opacity:.7}
-        .message .sender-name .group-tag{color:#00ff88;font-weight:600}
         .message .timestamp{display:block;font-size:9px;opacity:.5;margin-top:3px}
         .message .file-attachment{display:inline-block;margin-top:4px;padding:8px 14px;background:rgba(0,0,0,0.25);border-radius:8px;font-size:13px;text-decoration:none;color:inherit;cursor:pointer;border:1px solid rgba(255,255,255,0.05);transition:all .3s}
         .message .file-attachment:hover{background:rgba(0,0,0,0.35);transform:scale(1.02)}
@@ -133,8 +124,6 @@
         .contact-item .contact-info .status.offline{color:#ff4444}
         .contact-item .start-chat-btn{padding:6px 14px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);border-radius:6px;color:#00d4ff;font-size:12px;cursor:pointer;transition:all .3s}
         .contact-item .start-chat-btn:hover{background:rgba(0,212,255,0.2)}
-        .contact-item .selected-check{color:#00ff88;font-size:18px;display:none}
-        .contact-item .selected-check.checked{display:block}
         .no-contacts{text-align:center;color:#556;padding:30px 10px}
         .no-contacts .icon{font-size:40px;margin-bottom:12px}
         .clear-btn{background:rgba(255,170,0,0.1);color:#ffaa00;border:1px solid rgba(255,170,0,0.2)}
@@ -149,8 +138,6 @@
         .context-menu-item .icon{margin-right:8px}
         .group-member-list{display:flex;flex-wrap:wrap;gap:4px;padding:4px 0}
         .group-member-chip{padding:2px 10px;background:rgba(0,255,136,0.05);border-radius:12px;font-size:11px;border:1px solid rgba(0,255,136,0.1)}
-        .group-member-chip .remove-btn{background:none;border:none;color:#ff4444;cursor:pointer;margin-left:4px;font-size:10px}
-        .group-member-chip .remove-btn:hover{color:#ff0000}
         @media(max-width:768px){.container{padding:12px;max-height:100vh}.chat-layout{flex-direction:column}.sidebar{width:100%;min-width:unset;max-height:200px}.chat-list{display:flex;flex-wrap:wrap;gap:4px;padding:4px 8px}.chat-list-item{padding:6px 10px;flex:0 1 auto;border-left:none;border-bottom:2px solid transparent}.chat-list-item.active{border-left:none;border-bottom-color:#00d4ff}.chat-list-item .avatar{width:24px;height:24px;font-size:11px;margin-right:6px}.chat-list-item .chat-info .name{font-size:11px}.chat-list-item .chat-info .last-msg{font-size:9px}.message{max-width:90%;font-size:13px}.chat-header .chat-title{font-size:14px}}
     </style>
 </head>
@@ -224,8 +211,6 @@
 
                     <div id="reconnect-banner" class="reconnect-banner">🔄 Reconnecting...</div>
 
-                    <div id="group-members" class="group-member-list" style="padding:0 12px 8px 12px;display:none;"></div>
-
                     <div id="messages" class="messages-area">
                         <div class="system-message">🔒 Select a chat to start messaging</div>
                     </div>
@@ -292,7 +277,7 @@
 
     <script>
         // ============================================================
-        //  ENCRYPTION (same as before)
+        //  ENCRYPTION
         // ============================================================
         class ChatEncryption {
             constructor() {
@@ -366,7 +351,7 @@
         }
 
         // ============================================================
-        //  CHAT CLIENT - WITH GROUPS
+        //  CHAT CLIENT
         // ============================================================
         class SecureChat {
             constructor(serverUrl) {
@@ -379,9 +364,9 @@
                 this.processedIds = new Set();
                 this.deletedIds = new Set();
                 this.chats = {};
-                this.groups = {}; // groupId -> { name, members, messages }
+                this.groups = {};
                 this.currentChatId = null;
-                this.currentChatType = null; // 'public', 'private', 'group'
+                this.currentChatType = null;
                 this.roomUsers = [];
                 this.onMessage = null;
                 this.onChatUpdate = null;
@@ -449,15 +434,10 @@
                 return 'room_' + this.roomId;
             }
 
-            getGroupId(groupId) {
-                return 'group_' + groupId;
-            }
-
             getChatList() {
                 const list = [];
                 
-                // Public chat
-                if (this.chats['room_' + this.roomId] && this.chats['room_' + this.roomId].messages.length > 0) {
+                if (this.chats['room_' + this.roomId] && this.chats['room_' + this.roomId].messages && this.chats['room_' + this.roomId].messages.length > 0) {
                     list.push({
                         id: 'room_' + this.roomId,
                         name: '💬 Group Chat',
@@ -468,7 +448,6 @@
                     });
                 }
                 
-                // Private chats
                 for (const [id, chat] of Object.entries(this.chats)) {
                     if (id.startsWith('private_')) {
                         const targetUser = id.replace('private_', '');
@@ -486,7 +465,6 @@
                     }
                 }
                 
-                // Groups
                 for (const [groupId, group] of Object.entries(this.groups)) {
                     if (group.messages && group.messages.length > 0) {
                         list.push({
@@ -626,57 +604,65 @@
 
             async connect() {
                 return new Promise((resolve, reject) => {
-                    this.ws = new WebSocket(this.serverUrl);
+                    try {
+                        this.ws = new WebSocket(this.serverUrl);
 
-                    this.ws.onopen = () => {
-                        this.isConnected = true;
-                        this.reconnectAttempts = 0;
-                        if (this.onReconnecting) this.onReconnecting(false);
-                        if (this.onConnectionChange) this.onConnectionChange(true);
-                        resolve();
-                    };
+                        this.ws.onopen = () => {
+                            this.isConnected = true;
+                            this.reconnectAttempts = 0;
+                            if (this.onReconnecting) this.onReconnecting(false);
+                            if (this.onConnectionChange) this.onConnectionChange(true);
+                            resolve();
+                        };
 
-                    this.ws.onmessage = async (event) => {
-                        try {
-                            const data = JSON.parse(event.data);
-                            await this.handleMessage(data);
-                        } catch (e) {
-                            console.error('Message error:', e);
-                        }
-                    };
+                        this.ws.onmessage = async (event) => {
+                            try {
+                                const data = JSON.parse(event.data);
+                                await this.handleMessage(data);
+                            } catch (e) {
+                                console.error('Message error:', e);
+                            }
+                        };
 
-                    this.ws.onclose = () => {
-                        this.isConnected = false;
-                        if (this.onConnectionChange) this.onConnectionChange(false);
-                        this.autoReconnect();
-                    };
+                        this.ws.onclose = () => {
+                            this.isConnected = false;
+                            if (this.onConnectionChange) this.onConnectionChange(false);
+                            this.autoReconnect();
+                        };
 
-                    this.ws.onerror = () => {
-                        reject(new Error('Connection failed'));
-                    };
+                        this.ws.onerror = (error) => {
+                            console.error('WebSocket error:', error);
+                            reject(new Error('Connection failed'));
+                        };
 
-                    setTimeout(() => {
-                        if (!this.isConnected) {
-                            reject(new Error('Timeout'));
-                        }
-                    }, 10000);
+                        setTimeout(() => {
+                            if (!this.isConnected) {
+                                reject(new Error('Timeout'));
+                            }
+                        }, 15000);
+                    } catch (error) {
+                        reject(error);
+                    }
                 });
             }
 
             autoReconnect() {
                 if (this.reconnectAttempts >= this.maxReconnectAttempts) {
                     console.log('❌ Max reconnect attempts reached');
+                    if (this.onReconnecting) this.onReconnecting(false);
                     return;
                 }
 
                 this.reconnectAttempts++;
                 if (this.onReconnecting) this.onReconnecting(true);
 
+                console.log(`🔄 Reconnect attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
+
                 setTimeout(async () => {
                     if (this.roomId && this.username) {
                         try {
                             const session = this.loadSession();
-                            if (session && session.encryptionKey) {
+                            if (session && session.encryptionKey && session.encryptionKey === 'saved') {
                                 const key = await this.encryption.exportKey();
                                 await this.connect();
                                 this.ws.send(JSON.stringify({
@@ -687,8 +673,9 @@
                                 }));
                                 console.log('✅ Reconnected successfully');
                                 if (this.onReconnecting) this.onReconnecting(false);
-                            } else {
-                                const key = prompt(`Reconnecting as ${this.username}. Enter encryption key:`);
+                            } else if (session && session.roomId) {
+                                // Need key - prompt user
+                                const key = prompt(`Reconnecting to room ${session.roomId} as ${session.username}. Enter encryption key:`);
                                 if (key) {
                                     await this.encryption.importKey(key);
                                     await this.connect();
@@ -700,14 +687,18 @@
                                     }));
                                     console.log('✅ Reconnected successfully');
                                     if (this.onReconnecting) this.onReconnecting(false);
+                                } else {
+                                    console.log('❌ Reconnect cancelled - no key provided');
+                                    if (this.onReconnecting) this.onReconnecting(false);
                                 }
                             }
                         } catch (e) {
                             console.error('Reconnect failed:', e);
-                            this.autoReconnect();
+                            // Don't auto-retry, let user retry manually
+                            if (this.onReconnecting) this.onReconnecting(false);
                         }
                     }
-                }, 2000 * Math.min(this.reconnectAttempts, 5));
+                }, 3000 * Math.min(this.reconnectAttempts, 5));
             }
 
             // ===== GROUP METHODS =====
@@ -807,7 +798,6 @@
                     type: 'leave-group',
                     groupId: groupId
                 }));
-                // Remove from local groups
                 if (this.groups[groupId]) {
                     delete this.groups[groupId];
                     this.saveSession();
@@ -815,20 +805,27 @@
                 }
             }
 
-            deleteMessage(messageId, isPrivate = false, targetUser = null) {
+            deleteMessage(messageId, isPrivate = false, targetUser = null, isGroup = false, groupId = null) {
                 this.deletedIds.add(messageId);
-                this.ws.send(JSON.stringify({
-                    type: 'delete-message',
-                    messageId: messageId,
-                    isPrivate: isPrivate,
-                    targetUser: targetUser
-                }));
+                if (isGroup && groupId) {
+                    this.ws.send(JSON.stringify({
+                        type: 'delete-group-message',
+                        groupId: groupId,
+                        messageId: messageId
+                    }));
+                } else {
+                    this.ws.send(JSON.stringify({
+                        type: 'delete-message',
+                        messageId: messageId,
+                        isPrivate: isPrivate,
+                        targetUser: targetUser
+                    }));
+                }
                 this.removeMessageFromChat(messageId);
                 this.saveSession();
             }
 
             removeMessageFromChat(messageId) {
-                // Check public chats
                 for (const [chatId, chat] of Object.entries(this.chats)) {
                     const index = chat.messages.findIndex(m => m.id === messageId);
                     if (index !== -1) {
@@ -847,7 +844,6 @@
                     }
                 }
                 
-                // Check groups
                 for (const [groupId, group] of Object.entries(this.groups)) {
                     const index = group.messages.findIndex(m => m.id === messageId);
                     if (index !== -1) {
@@ -915,9 +911,43 @@
                 console.log(`📨 Received: ${data.type}`);
 
                 switch (data.type) {
-                    // ... (history, private-history, message, private-message, file, message-deleted, chat-cleared cases)
-                    // These are the same as before, plus:
-                    
+                    case 'history':
+                        for (const msg of data.messages) {
+                            if (this.processedIds.has(msg.id) || this.deletedIds.has(msg.id)) continue;
+                            this.processedIds.add(msg.id);
+                            const chatId = this.getChatId('room', false);
+                            const decrypted = await this.encryption.decrypt(msg.message);
+                            msg.message = decrypted;
+                            if (msg.sender !== this.username) {
+                                const added = this.addMessageToChat(chatId, msg, false);
+                                if (added && this.onMessage) {
+                                    this.onMessage(msg, false, chatId);
+                                }
+                            }
+                        }
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                        break;
+
+                    case 'private-history':
+                        for (const msg of data.messages) {
+                            if (this.processedIds.has(msg.id) || this.deletedIds.has(msg.id)) continue;
+                            this.processedIds.add(msg.id);
+                            const otherUser = msg.sender === this.username ? msg.targetUser : msg.sender;
+                            const chatId = this.getChatId(otherUser, true);
+                            const decrypted = await this.encryption.decrypt(msg.message);
+                            msg.message = decrypted;
+                            msg.isPrivate = true;
+                            const isOwn = msg.sender === this.username;
+                            const added = this.addMessageToChat(chatId, msg, isOwn);
+                            if (added && this.onMessage) {
+                                this.onMessage(msg, isOwn, chatId);
+                            }
+                        }
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                        break;
+
                     case 'group-history':
                         if (!this.groups[data.groupId]) {
                             this.groups[data.groupId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0, name: 'Group', members: [] };
@@ -1022,17 +1052,282 @@
                         }
                         break;
 
-                    // ... rest of cases (user-joined, user-left, typing, pong)
+                    case 'message':
+                        if (this.processedIds.has(data.message.id) || this.deletedIds.has(data.message.id)) break;
+                        this.processedIds.add(data.message.id);
+                        const chatId = this.getChatId('room', false);
+                        const decrypted = await this.encryption.decrypt(data.message.message);
+                        data.message.message = decrypted;
+                        if (data.message.sender !== this.username) {
+                            const added = this.addMessageToChat(chatId, data.message, false);
+                            if (added && this.onMessage) {
+                                this.onMessage(data.message, false, chatId);
+                            }
+                        }
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                        break;
+
+                    case 'private-message':
+                        if (this.processedIds.has(data.message.id) || this.deletedIds.has(data.message.id)) break;
+                        this.processedIds.add(data.message.id);
+                        const otherUser = data.message.sender === this.username ? data.message.targetUser : data.message.sender;
+                        const pChatId = this.getChatId(otherUser, true);
+                        const pDecrypted = await this.encryption.decrypt(data.message.message);
+                        data.message.message = pDecrypted;
+                        data.message.isPrivate = true;
+                        const isOwn = data.message.sender === this.username;
+                        const added = this.addMessageToChat(pChatId, data.message, isOwn);
+                        if (added && this.onMessage) {
+                            this.onMessage(data.message, isOwn, pChatId);
+                        }
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                        break;
+
+                    case 'file':
+                        if (this.processedIds.has(data.message.id) || this.deletedIds.has(data.message.id)) break;
+                        this.processedIds.add(data.message.id);
+                        let fileChatId;
+                        let fileIsPrivate = data.message.isPrivate || false;
+                        if (fileIsPrivate && data.message.targetUser) {
+                            const ftargetUser = data.message.sender === this.username ? data.message.targetUser : data.message.sender;
+                            fileChatId = this.getChatId(ftargetUser, true);
+                        } else {
+                            fileChatId = this.getChatId('room', false);
+                        }
+                        data.message.isFile = true;
+                        if (data.message.sender !== this.username) {
+                            const added = this.addMessageToChat(fileChatId, data.message, false);
+                            if (added && this.onMessage) {
+                                this.onMessage(data.message, false, fileChatId);
+                            }
+                        }
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                        break;
+
+                    case 'message-deleted':
+                        this.deletedIds.add(data.messageId);
+                        this.removeMessageFromChat(data.messageId);
+                        if (this.onMessageDeleted) {
+                            this.onMessageDeleted(data.messageId);
+                        }
+                        break;
+
+                    case 'chat-cleared':
+                        this.handleChatCleared(data.chatId);
+                        if (this.onChatCleared) {
+                            this.onChatCleared(data.chatId);
+                        }
+                        break;
+
+                    case 'user-joined':
+                        this.roomUsers = data.users || [];
+                        console.log(`👥 Users online: ${this.roomUsers.join(', ')}`);
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                        break;
+
+                    case 'user-left':
+                        this.roomUsers = data.users || [];
+                        console.log(`👥 Users online: ${this.roomUsers.join(', ')}`);
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                        break;
+
+                    case 'typing':
+                        if (this.onTyping) {
+                            this.onTyping(data.username, data.isTyping);
+                        }
+                        break;
+
+                    case 'pong':
+                        break;
+
                     default:
                         console.log('Unknown message type:', data.type);
                 }
             }
 
-            // ... (sendMessage, sendFile, downloadFile, sendTyping, getUsers, leave, startPrivateChat methods from before)
+            handleChatCleared(chatId) {
+                if (chatId.startsWith('group_')) {
+                    const groupId = chatId.replace('group_', '');
+                    if (this.groups[groupId]) {
+                        for (const msg of this.groups[groupId].messages) {
+                            this.deletedIds.add(msg.id);
+                        }
+                        this.groups[groupId].messages = [];
+                        this.groups[groupId].lastMessage = null;
+                        this.groups[groupId].lastTime = 0;
+                        this.groups[groupId].unread = 0;
+                        this.saveSession();
+                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                    }
+                    return;
+                }
+                if (this.chats[chatId]) {
+                    for (const msg of this.chats[chatId].messages) {
+                        this.deletedIds.add(msg.id);
+                    }
+                    this.chats[chatId].messages = [];
+                    this.chats[chatId].lastMessage = null;
+                    this.chats[chatId].lastTime = 0;
+                    this.chats[chatId].unread = 0;
+                    this.saveSession();
+                    if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                }
+            }
+
+            async sendMessage(text, isPrivate = false, targetUser = null) {
+                if (!text.trim()) return;
+
+                const id = this.generateMessageId();
+                const encrypted = await this.encryption.encrypt(text);
+                
+                this.ws.send(JSON.stringify({
+                    type: 'message',
+                    message: encrypted,
+                    isPrivate: isPrivate,
+                    targetUser: targetUser,
+                    id: id
+                }));
+
+                const chatId = isPrivate ? this.getChatId(targetUser, true) : this.getChatId('room', false);
+                
+                const msg = {
+                    id: id,
+                    sender: this.username,
+                    message: text,
+                    timestamp: Date.now(),
+                    isPrivate: isPrivate,
+                    targetUser: targetUser
+                };
+                
+                this.processedIds.add(id);
+                this.addMessageToChat(chatId, msg, true);
+                
+                if (this.onMessage) {
+                    this.onMessage(msg, true, chatId);
+                }
+                this.saveSession();
+                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+            }
+
+            async sendFile(file, isPrivate = false, targetUser = null) {
+                const id = this.generateMessageId();
+                const fileName = file.name;
+                const fileSize = file.size;
+                const fileType = file.type || 'application/octet-stream';
+
+                const encryptedData = await this.encryption.encryptFile(file);
+                const uint8Array = new Uint8Array(encryptedData);
+                let binary = '';
+                for (let i = 0; i < uint8Array.length; i++) {
+                    binary += String.fromCharCode(uint8Array[i]);
+                }
+                const base64Data = btoa(binary);
+
+                this.ws.send(JSON.stringify({
+                    type: 'file',
+                    id: id,
+                    fileName: fileName,
+                    fileSize: fileSize,
+                    fileType: fileType,
+                    fileData: base64Data,
+                    isPrivate: isPrivate,
+                    targetUser: targetUser
+                }));
+
+                const chatId = isPrivate ? this.getChatId(targetUser, true) : this.getChatId('room', false);
+                
+                const msg = {
+                    id: id,
+                    sender: this.username,
+                    fileName: fileName,
+                    fileSize: fileSize,
+                    fileType: fileType,
+                    fileData: base64Data,
+                    timestamp: Date.now(),
+                    isPrivate: isPrivate,
+                    targetUser: targetUser,
+                    isFile: true
+                };
+                
+                this.processedIds.add(id);
+                this.addMessageToChat(chatId, msg, true);
+                
+                if (this.onMessage) {
+                    this.onMessage(msg, true, chatId);
+                }
+                this.saveSession();
+                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+            }
+
+            async downloadFile(fileData) {
+                try {
+                    const binaryString = atob(fileData.fileData);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    const decrypted = await this.encryption.decryptFile(bytes.buffer);
+                    const blob = new Blob([decrypted], { type: fileData.fileType || 'application/octet-stream' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileData.fileName || 'download';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(url), 5000);
+                } catch (e) {
+                    console.error('Download error:', e);
+                    alert('Failed to download file: ' + e.message);
+                }
+            }
+
+            sendTyping(isTyping) {
+                if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
+                this.ws.send(JSON.stringify({
+                    type: 'typing',
+                    isTyping: isTyping
+                }));
+            }
+
+            getUsers() {
+                return this.roomUsers || [];
+            }
+
+            leave() {
+                if (this.ws) {
+                    try {
+                        this.ws.send(JSON.stringify({ type: 'leave' }));
+                        this.ws.close();
+                    } catch (e) {}
+                }
+                this.clearSession();
+                this.isConnected = false;
+                this.username = null;
+                this.roomId = null;
+                this.processedIds.clear();
+                this.chats = {};
+                this.groups = {};
+                this.currentChatId = null;
+            }
+
+            startPrivateChat(targetUser) {
+                const chatId = this.getChatId(targetUser, true);
+                if (!this.chats[chatId]) {
+                    this.chats[chatId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0 };
+                }
+                this.currentChatId = chatId;
+                this.saveSession();
+                if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
+                return chatId;
+            }
         }
 
         // ============================================================
-        //  UI CONTROLLER - WITH GROUPS
+        //  UI CONTROLLER
         // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
             const defaultUsername = 'User_' + Math.random().toString(36).substring(2, 6);
@@ -1071,7 +1366,6 @@
             const reconnectBanner = document.getElementById('reconnect-banner');
             const contextMenu = document.getElementById('context-menu');
             const deleteMsgBtn = document.getElementById('delete-msg-btn');
-            const groupMembersDiv = document.getElementById('group-members');
 
             let currentChatId = null;
             let currentChatType = null;
@@ -1097,7 +1391,32 @@
             async function restoreSession() {
                 const session = chat.loadSession();
                 if (session && session.roomId && session.username) {
-                    const key = prompt(`Welcome back ${session.username}!\nEnter encryption key to reconnect:`);
+                    // Check if we have the key saved
+                    if (session.encryptionKey === 'saved') {
+                        try {
+                            // Try to reconnect with saved key
+                            const key = await chat.encryption.exportKey();
+                            await chat.joinRoom(session.roomId, session.username, key);
+                            setupScreen.classList.remove('active');
+                            chatScreen.classList.add('active');
+                            messageInput.disabled = false;
+                            sendBtn.disabled = false;
+                            fileBtn.disabled = false;
+                            showSystemMessage('🔗 Reconnected to room!');
+                            renderChatList();
+                            updateContacts();
+                            if (session.currentChatId) {
+                                selectChat(session.currentChatId);
+                            }
+                            return true;
+                        } catch (e) {
+                            console.error('Auto-reconnect failed:', e);
+                            // Fall through to manual reconnection
+                        }
+                    }
+                    
+                    // Manual reconnection - ask for key
+                    const key = prompt(`Welcome back ${session.username}!\nRoom: ${session.roomId}\nEnter encryption key to reconnect:`);
                     if (key) {
                         try {
                             await chat.joinRoom(session.roomId, session.username, key);
@@ -1116,13 +1435,21 @@
                         } catch (e) {
                             console.error('Reconnect failed:', e);
                             alert('Failed to reconnect. Please join again.');
+                            chat.clearSession();
+                            return false;
                         }
+                    } else {
+                        chat.clearSession();
+                        return false;
                     }
                 }
                 return false;
             }
 
-            restoreSession();
+            // Try to restore session, but don't block UI
+            setTimeout(() => {
+                restoreSession();
+            }, 500);
 
             // ---- CHAT CALLBACKS ----
             chat.onMessage = (msg, isOwn, chatId) => {
@@ -1143,7 +1470,6 @@
                 updateContacts();
                 const userCount = chat.getUsers().filter(u => u !== chat.username).length;
                 onlineCount.textContent = `(${userCount} online)`;
-                updateGroupMembers();
             };
 
             chat.onConnectionChange = (connected) => {
@@ -1295,34 +1621,6 @@
                 renderGroupMembers(groupMemberSearch.value);
             };
 
-            // ---- UPDATE GROUP MEMBERS DISPLAY ----
-            function updateGroupMembers() {
-                if (currentChatType === 'group' && currentGroupId) {
-                    const group = chat.groups[currentGroupId];
-                    if (group && group.members) {
-                        groupMembersDiv.style.display = 'flex';
-                        groupMembersDiv.innerHTML = group.members.map(m => `
-                            <span class="group-member-chip">
-                                ${m} ${m === chat.username ? '(You)' : ''}
-                                ${m !== chat.username ? `<button class="remove-btn" onclick="removeFromGroup('${currentGroupId}','${m}')">×</button>` : ''}
-                            </span>
-                        `).join('');
-                    } else {
-                        groupMembersDiv.style.display = 'none';
-                    }
-                } else {
-                    groupMembersDiv.style.display = 'none';
-                }
-            }
-
-            // ---- REMOVE FROM GROUP ----
-            window.removeFromGroup = function(groupId, username) {
-                if (confirm(`Remove ${username} from the group?`)) {
-                    // This would require a server endpoint - for now, we'll just leave
-                    alert('Remove member feature coming soon');
-                }
-            };
-
             // ---- CREATE ROOM ----
             createBtn.addEventListener('click', async () => {
                 const username = document.getElementById('create-username').value.trim();
@@ -1345,7 +1643,6 @@
                     });
                     showSystemMessage(`🚀 Workspace created! ID: ${roomInfo.roomId}`);
                     renderChatList();
-                    updateGroupMembers();
 
                 } catch (error) {
                     alert('Failed: ' + error.message);
@@ -1378,7 +1675,6 @@
                     fileBtn.disabled = false;
                     showSystemMessage('🔗 Joined the workspace!');
                     renderChatList();
-                    updateGroupMembers();
 
                 } catch (error) {
                     alert('Failed: ' + error.message);
@@ -1394,26 +1690,23 @@
                 chat.currentChatId = chatId;
                 chat.markChatRead(chatId);
                 
-                // Determine chat type
                 if (chatId.startsWith('group_')) {
                     currentChatType = 'group';
                     currentGroupId = chatId.replace('group_', '');
                     const group = chat.groups[currentGroupId];
                     if (group) {
-                        document.getElementById('chat-title').innerHTML = `👥 ${group.name} <span class="badge group-badge">Group</span>`;
+                        document.getElementById('chat-title').innerHTML = `👥 ${group.name} <span style="font-size:12px;color:#8892b0;font-weight:400;">Group</span>`;
                     }
                 } else if (chatId.startsWith('private_')) {
                     currentChatType = 'private';
                     currentGroupId = null;
                     const targetUser = chatId.replace('private_', '');
-                    document.getElementById('chat-title').innerHTML = `🔒 ${targetUser} <span class="badge private-badge">Private</span>`;
+                    document.getElementById('chat-title').innerHTML = `🔒 ${targetUser} <span style="font-size:12px;color:#8892b0;font-weight:400;">Private</span>`;
                 } else {
                     currentChatType = 'public';
                     currentGroupId = null;
-                    document.getElementById('chat-title').innerHTML = `💬 Group Chat <span class="badge public-badge">Public</span>`;
+                    document.getElementById('chat-title').innerHTML = `💬 Group Chat <span style="font-size:12px;color:#8892b0;font-weight:400;">Public</span>`;
                 }
-                
-                updateGroupMembers();
                 
                 const messages = chat.getChatMessages(chatId);
                 messagesDiv.innerHTML = '';
@@ -1472,15 +1765,15 @@
                     if (chatItem.type === 'group') {
                         icon = '👥';
                         avatarClass = 'group';
-                        badge = '<span class="badge group-badge">Group</span>';
+                        badge = '<span style="font-size:9px;color:#00ff88;margin-left:4px;">Group</span>';
                     } else if (chatItem.type === 'private') {
                         icon = '🔒';
                         avatarClass = 'private';
-                        badge = '<span class="badge private-badge">Private</span>';
+                        badge = '<span style="font-size:9px;color:#ffaa00;margin-left:4px;">Private</span>';
                     } else {
                         icon = '💬';
                         avatarClass = 'public';
-                        badge = '<span class="badge public-badge">Public</span>';
+                        badge = '<span style="font-size:9px;color:#00d4ff;margin-left:4px;">Public</span>';
                     }
                     
                     return `
@@ -1521,12 +1814,7 @@
                     return;
                 }
                 
-                const chatId = chat.getChatId(username, true);
-                if (!chat.chats[chatId]) {
-                    chat.chats[chatId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0 };
-                }
-                chat.currentChatId = chatId;
-                chat.saveSession();
+                const chatId = chat.startPrivateChat(username);
                 selectChat(chatId);
                 modal.classList.remove('active');
                 showSystemMessage(`🔒 Started private chat with ${username}`);
@@ -1593,7 +1881,6 @@
                     <span class="timestamp">${new Date(msg.timestamp || Date.now()).toLocaleTimeString()}</span>
                 `;
                 
-                // Add delete button for own messages
                 if (isOwn && !chat.deletedIds.has(msg.id)) {
                     const delBtn = document.createElement('button');
                     delBtn.className = 'delete-btn';
@@ -1602,7 +1889,9 @@
                     delBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         if (confirm('Delete this message?')) {
-                            chat.deleteMessage(msg.id, msg.isPrivate || false, msg.targetUser || null);
+                            const isGroup = currentChatType === 'group';
+                            const groupId = isGroup ? currentGroupId : null;
+                            chat.deleteMessage(msg.id, msg.isPrivate || false, msg.targetUser || null, isGroup, groupId);
                         }
                     });
                     msgElement.appendChild(delBtn);
@@ -1645,7 +1934,9 @@
             deleteMsgBtn.addEventListener('click', () => {
                 if (selectedMessageId) {
                     if (confirm('Delete this message?')) {
-                        chat.deleteMessage(selectedMessageId, selectedMessageIsPrivate, selectedMessageTarget);
+                        const isGroup = currentChatType === 'group';
+                        const groupId = isGroup ? currentGroupId : null;
+                        chat.deleteMessage(selectedMessageId, selectedMessageIsPrivate, selectedMessageTarget, isGroup, groupId);
                     }
                 }
                 contextMenu.classList.remove('active');
@@ -1799,7 +2090,6 @@
                         emptyMsg.textContent = '💬 Select a chat to start messaging';
                         messagesDiv.appendChild(emptyMsg);
                         renderChatList();
-                        updateGroupMembers();
                         showSystemMessage('You left the group');
                     }
                     return;
