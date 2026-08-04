@@ -165,6 +165,14 @@
         .btn-small:hover {
             background: rgba(45, 62, 90, 0.8);
         }
+        .btn-success {
+            background: rgba(0, 255, 136, 0.15);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+        .btn-success:hover {
+            background: rgba(0, 255, 136, 0.25);
+        }
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -262,6 +270,23 @@
             border-radius: 10px;
             margin-left: 4px;
         }
+        .message .file-attachment {
+            display: inline-block;
+            margin-top: 4px;
+            padding: 6px 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            font-size: 12px;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+        .message .file-attachment:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .message .file-attachment .file-icon {
+            margin-right: 6px;
+        }
         .input-area {
             display: flex;
             gap: 8px;
@@ -325,12 +350,25 @@
             background: #00ff88;
             display: inline-block;
         }
-        .user-chip .offline-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #ff4444;
-            display: inline-block;
+        .file-progress {
+            background: rgba(13, 20, 33, 0.8);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+        .file-progress .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .file-progress .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+            transition: width 0.3s;
+            width: 0%;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
@@ -384,6 +422,9 @@
             color: #00d4ff;
             word-break: break-all;
         }
+        #file-input {
+            display: none;
+        }
         @media (max-width: 768px) {
             .container {
                 padding: 12px;
@@ -396,6 +437,10 @@
             .chat-header .chat-title {
                 font-size: 14px;
             }
+            .input-area .private-toggle {
+                font-size: 10px;
+                padding: 6px 8px;
+            }
         }
     </style>
 </head>
@@ -404,7 +449,7 @@
     <div class="container">
         <header>
             <h1>💬 Secure Chat</h1>
-            <p>End-to-end encrypted · Server-based · Like WhatsApp</p>
+            <p>End-to-end encrypted · File sharing · Private messages</p>
         </header>
 
         <!-- SETUP SCREEN -->
@@ -452,9 +497,11 @@
                 <input type="text" id="message-input" placeholder="Type a message..." class="input-field" disabled>
                 <button class="private-toggle" id="private-toggle">🔒</button>
                 <div class="action-buttons">
+                    <button id="file-btn" class="btn btn-secondary" disabled title="Send file">📎</button>
                     <button id="send-btn" class="btn btn-primary" disabled>Send</button>
                 </div>
             </div>
+            <input type="file" id="file-input" multiple>
         </div>
     </div>
 
@@ -486,7 +533,7 @@
             }
 
             async encrypt(message) {
-                if (!this.key) return message;
+                if (!this.key || typeof message !== 'string') return message;
                 const iv = crypto.getRandomValues(new Uint8Array(12));
                 const encoded = this.encoder.encode(message);
                 const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, this.key, encoded);
@@ -497,12 +544,48 @@
             }
 
             async decrypt(encryptedBase64) {
-                if (!this.key) return encryptedBase64;
-                const encrypted = Uint8Array.from(atob(encryptedBase64), c => c.charCodeAt(0));
-                const iv = encrypted.slice(0, 12);
-                const data = encrypted.slice(12);
-                const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, this.key, data);
-                return this.decoder.decode(decrypted);
+                if (!this.key || typeof encryptedBase64 !== 'string') return encryptedBase64;
+                try {
+                    const encrypted = Uint8Array.from(atob(encryptedBase64), c => c.charCodeAt(0));
+                    const iv = encrypted.slice(0, 12);
+                    const data = encrypted.slice(12);
+                    const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, this.key, data);
+                    return this.decoder.decode(decrypted);
+                } catch (e) {
+                    return encryptedBase64;
+                }
+            }
+
+            async encryptFile(file) {
+                const chunks = [];
+                const chunkSize = 64 * 1024;
+                const iv = crypto.getRandomValues(new Uint8Array(12));
+                let offset = 0;
+
+                while (offset < file.size) {
+                    const chunk = file.slice(offset, offset + chunkSize);
+                    const arrayBuffer = await chunk.arrayBuffer();
+                    const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, this.key, arrayBuffer);
+                    chunks.push(new Uint8Array(encrypted));
+                    offset += chunkSize;
+                }
+
+                const totalLength = iv.length + chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+                const result = new Uint8Array(totalLength);
+                result.set(iv, 0);
+                let position = iv.length;
+                for (const chunk of chunks) {
+                    result.set(chunk, position);
+                    position += chunk.length;
+                }
+                return result.buffer;
+            }
+
+            async decryptFile(encryptedData) {
+                const data = new Uint8Array(encryptedData);
+                const iv = data.slice(0, 12);
+                const encryptedContent = data.slice(12);
+                return await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, this.key, encryptedContent);
             }
         }
 
@@ -518,10 +601,12 @@
                 this.encryption = new ChatEncryption();
                 this.isConnected = false;
                 this.messageHistory = [];
+                this.pendingMessages = new Set(); // Track message IDs to prevent duplicates
                 this.onMessage = null;
                 this.onUserUpdate = null;
                 this.onConnectionChange = null;
                 this.onTyping = null;
+                this.onFileProgress = null;
                 this.typingTimeout = null;
             }
 
@@ -555,6 +640,10 @@
 
             generateRoomId() {
                 return Math.random().toString(36).substring(2, 10).toUpperCase();
+            }
+
+            generateMessageId() {
+                return Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6);
             }
 
             async connect() {
@@ -602,28 +691,57 @@
                 switch (data.type) {
                     case 'history':
                         for (const msg of data.messages) {
-                            const decrypted = await this.encryption.decrypt(msg.message);
-                            msg.message = decrypted;
-                            if (this.onMessage) {
-                                this.onMessage(msg, false);
+                            if (!this.pendingMessages.has(msg.id)) {
+                                this.pendingMessages.add(msg.id);
+                                const decrypted = await this.encryption.decrypt(msg.message);
+                                msg.message = decrypted;
+                                if (this.onMessage) {
+                                    this.onMessage(msg, msg.sender === this.username);
+                                }
                             }
                         }
                         break;
 
                     case 'message':
-                        const decrypted = await this.encryption.decrypt(data.message.message);
-                        data.message.message = decrypted;
-                        if (this.onMessage) {
-                            this.onMessage(data.message, data.message.sender === this.username);
+                        if (!this.pendingMessages.has(data.message.id)) {
+                            this.pendingMessages.add(data.message.id);
+                            const decrypted = await this.encryption.decrypt(data.message.message);
+                            data.message.message = decrypted;
+                            if (this.onMessage) {
+                                this.onMessage(data.message, data.message.sender === this.username);
+                            }
                         }
                         break;
 
                     case 'private-message':
-                        const pDecrypted = await this.encryption.decrypt(data.message.message);
-                        data.message.message = pDecrypted;
-                        data.message.isPrivate = true;
-                        if (this.onMessage) {
-                            this.onMessage(data.message, data.message.sender === this.username);
+                        if (!this.pendingMessages.has(data.message.id)) {
+                            this.pendingMessages.add(data.message.id);
+                            const pDecrypted = await this.encryption.decrypt(data.message.message);
+                            data.message.message = pDecrypted;
+                            data.message.isPrivate = true;
+                            if (this.onMessage) {
+                                this.onMessage(data.message, data.message.sender === this.username);
+                            }
+                        }
+                        break;
+
+                    case 'file':
+                        if (!this.pendingMessages.has(data.message.id)) {
+                            this.pendingMessages.add(data.message.id);
+                            // File message - show download link
+                            const fileData = {
+                                id: data.message.id,
+                                sender: data.message.sender,
+                                fileName: data.message.fileName,
+                                fileSize: data.message.fileSize,
+                                fileType: data.message.fileType,
+                                fileData: data.message.fileData,
+                                timestamp: data.message.timestamp,
+                                isPrivate: data.message.isPrivate || false
+                            };
+                            if (this.onMessage) {
+                                this.onMessage(fileData, fileData.sender === this.username);
+                            }
                         }
                         break;
 
@@ -656,25 +774,101 @@
             async sendMessage(text, isPrivate = false, targetUser = null) {
                 if (!text.trim()) return;
 
+                const id = this.generateMessageId();
                 const encrypted = await this.encryption.encrypt(text);
+                
                 this.ws.send(JSON.stringify({
                     type: 'message',
                     message: encrypted,
                     isPrivate: isPrivate,
-                    targetUser: targetUser
+                    targetUser: targetUser,
+                    id: id
                 }));
 
-                // Optimistically show message
+                // Show message optimistically
                 const msg = {
-                    id: Date.now().toString(36),
+                    id: id,
                     sender: this.username,
                     message: text,
                     timestamp: Date.now(),
                     isPrivate: isPrivate,
                     targetUser: targetUser
                 };
+                this.pendingMessages.add(id);
                 if (this.onMessage) {
                     this.onMessage(msg, true);
+                }
+            }
+
+            async sendFile(file, isPrivate = false, targetUser = null) {
+                const id = this.generateMessageId();
+                const fileName = file.name;
+                const fileSize = file.size;
+                const fileType = file.type || 'application/octet-stream';
+
+                // Read and encrypt file
+                const arrayBuffer = await file.arrayBuffer();
+                const encryptedData = await this.encryption.encryptFile(file);
+                
+                // Convert to base64 for transmission
+                const uint8Array = new Uint8Array(encryptedData);
+                let binary = '';
+                for (let i = 0; i < uint8Array.length; i++) {
+                    binary += String.fromCharCode(uint8Array[i]);
+                }
+                const base64Data = btoa(binary);
+
+                // Send file metadata + data
+                this.ws.send(JSON.stringify({
+                    type: 'file',
+                    id: id,
+                    fileName: fileName,
+                    fileSize: fileSize,
+                    fileType: fileType,
+                    fileData: base64Data,
+                    isPrivate: isPrivate,
+                    targetUser: targetUser
+                }));
+
+                // Show file message optimistically
+                const msg = {
+                    id: id,
+                    sender: this.username,
+                    fileName: fileName,
+                    fileSize: fileSize,
+                    fileType: fileType,
+                    fileData: base64Data,
+                    timestamp: Date.now(),
+                    isPrivate: isPrivate,
+                    targetUser: targetUser,
+                    isFile: true
+                };
+                this.pendingMessages.add(id);
+                if (this.onMessage) {
+                    this.onMessage(msg, true);
+                }
+            }
+
+            async downloadFile(fileData) {
+                try {
+                    const binaryString = atob(fileData.fileData);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    const decrypted = await this.encryption.decryptFile(bytes.buffer);
+                    const blob = new Blob([decrypted], { type: fileData.fileType || 'application/octet-stream' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileData.fileName || 'download';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(url), 5000);
+                } catch (e) {
+                    console.error('Download error:', e);
+                    alert('Failed to download file: ' + e.message);
                 }
             }
 
@@ -696,6 +890,7 @@
                 this.isConnected = false;
                 this.username = null;
                 this.roomId = null;
+                this.pendingMessages.clear();
             }
         }
 
@@ -717,6 +912,8 @@
             const createBtn = document.getElementById('create-room');
             const joinBtn = document.getElementById('join-room');
             const leaveBtn = document.getElementById('leave-btn');
+            const fileBtn = document.getElementById('file-btn');
+            const fileInput = document.getElementById('file-input');
             const privateToggle = document.getElementById('private-toggle');
             const connStatus = document.getElementById('conn-status');
             const userList = document.getElementById('user-list');
@@ -726,10 +923,16 @@
             let privateTarget = null;
             let users = [];
             let typingTimeout = null;
+            let processedMessageIds = new Set();
 
             // ---- CHAT CALLBACKS ----
             chat.onMessage = (msg, isOwn) => {
-                displayMessage(msg, isOwn);
+                // Check if this is a file message
+                if (msg.isFile || msg.fileData) {
+                    displayFileMessage(msg, isOwn);
+                } else {
+                    displayMessage(msg, isOwn);
+                }
             };
 
             chat.onUserUpdate = (userList) => {
@@ -779,6 +982,7 @@
                     chatScreen.classList.add('active');
                     messageInput.disabled = false;
                     sendBtn.disabled = false;
+                    fileBtn.disabled = false;
 
                     const info = `Room ID: ${roomInfo.roomId}\nEncryption Key: ${roomInfo.encryptionKey}`;
                     navigator.clipboard.writeText(info).then(() => {
@@ -816,6 +1020,7 @@
                     chatScreen.classList.add('active');
                     messageInput.disabled = false;
                     sendBtn.disabled = false;
+                    fileBtn.disabled = false;
                     showSystemMessage('🔗 Joined the room!');
 
                 } catch (error) {
@@ -832,7 +1037,6 @@
                 if (e.key === 'Enter') sendMessage();
             });
 
-            // Typing indicator
             let typingTimer = null;
             messageInput.addEventListener('input', () => {
                 clearTimeout(typingTimer);
@@ -857,6 +1061,27 @@
                     console.error('Send error:', error);
                 }
             }
+
+            // ---- FILE SHARING ----
+            fileBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', async (e) => {
+                const files = e.target.files;
+                if (!files || files.length === 0) return;
+
+                for (const file of files) {
+                    try {
+                        if (isPrivateMode && privateTarget) {
+                            await chat.sendFile(file, true, privateTarget);
+                        } else {
+                            await chat.sendFile(file);
+                        }
+                    } catch (error) {
+                        console.error('File send error:', error);
+                        showSystemMessage('❌ Failed to send file: ' + error.message);
+                    }
+                }
+                fileInput.value = '';
+            });
 
             // ---- PRIVATE TOGGLE ----
             privateToggle.addEventListener('click', () => {
@@ -894,12 +1119,15 @@
                     setupScreen.classList.add('active');
                     messageInput.disabled = true;
                     sendBtn.disabled = true;
+                    fileBtn.disabled = true;
+                    processedMessageIds.clear();
                     showSystemMessage('You left the room');
                 }
             });
 
             // ---- UI HELPERS ----
             function displayMessage(msg, isOwn) {
+                // Remove system message if present
                 if (messagesDiv.children.length === 1 &&
                     messagesDiv.children[0].classList.contains('system-message') &&
                     messagesDiv.children[0].textContent.includes('Waiting')) {
@@ -921,10 +1149,61 @@
                 messagesDiv.appendChild(msgElement);
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
+                // Limit messages
                 while (messagesDiv.children.length > 200) {
                     messagesDiv.removeChild(messagesDiv.children[0]);
                 }
             }
+
+            function displayFileMessage(msg, isOwn) {
+                if (messagesDiv.children.length === 1 &&
+                    messagesDiv.children[0].classList.contains('system-message') &&
+                    messagesDiv.children[0].textContent.includes('Waiting')) {
+                    messagesDiv.innerHTML = '';
+                }
+
+                const isPrivate = msg.isPrivate || false;
+                const fileSize = msg.fileSize ? (msg.fileSize / 1024).toFixed(1) + ' KB' : 'Unknown size';
+                const fileIcon = msg.fileType && msg.fileType.startsWith('image/') ? '🖼️' : '📁';
+
+                const msgElement = document.createElement('div');
+                msgElement.className = `message ${isOwn ? 'own' : 'other'} ${isPrivate ? 'private' : ''}`;
+                
+                const privateBadge = isPrivate ? '<span class="private-badge">🔒 Private</span>' : '';
+                const targetInfo = msg.targetUser && msg.targetUser !== msg.sender ? ` → ${msg.targetUser}` : '';
+                
+                msgElement.innerHTML = `
+                    <span class="sender-name">${msg.sender}${targetInfo} ${privateBadge}</span>
+                    <div>
+                        <span class="file-attachment" onclick="window.downloadFile('${msg.id}')">
+                            <span class="file-icon">${fileIcon}</span>
+                            ${msg.fileName || 'file'} (${fileSize})
+                        </span>
+                    </div>
+                    <span class="timestamp">${new Date(msg.timestamp || Date.now()).toLocaleTimeString()}</span>
+                `;
+                messagesDiv.appendChild(msgElement);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                // Store file data for download
+                if (msg.fileData) {
+                    window._fileData = window._fileData || {};
+                    window._fileData[msg.id] = msg;
+                }
+
+                while (messagesDiv.children.length > 200) {
+                    messagesDiv.removeChild(messagesDiv.children[0]);
+                }
+            }
+
+            // Global download function
+            window.downloadFile = function(id) {
+                if (window._fileData && window._fileData[id]) {
+                    chat.downloadFile(window._fileData[id]);
+                } else {
+                    alert('File data not available');
+                }
+            };
 
             function showSystemMessage(text) {
                 const msgElement = document.createElement('div');
@@ -938,7 +1217,7 @@
                 const currentUser = chat.username;
                 let html = users.map(u => `
                     <span class="user-chip">
-                        <span class="${u === currentUser ? 'online-dot' : 'online-dot'}"></span>
+                        <span class="online-dot"></span>
                         ${u} ${u === currentUser ? '(You)' : ''}
                     </span>
                 `).join('');
@@ -948,6 +1227,7 @@
             console.log('💬 Secure Chat loaded!');
             console.log(`📡 Server: ${serverUrl}`);
             console.log('🔒 Messages are end-to-end encrypted');
+            console.log('📎 File sharing enabled');
         });
     </script>
 
