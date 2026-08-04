@@ -1,4 +1,4 @@
-// server.js - Complete Fixed Version
+// server.js - With Call Support + 150 Message History
 const WebSocket = require('ws');
 const http = require('http');
 const fs = require('fs');
@@ -12,6 +12,19 @@ const groupMessages = {};
 const groupMembers = {};
 const deletedMessages = {};
 const clients = {};
+const activeCalls = {}; // Track active calls
+
+// ===== LIMITS =====
+const MAX_MESSAGES_PER_ROOM = 150;
+const MAX_PRIVATE_PER_USER = 150;
+const MAX_GROUP_MESSAGES = 150;
+
+// Helper to limit array size
+function limitArray(arr, max) {
+    if (arr.length > max) {
+        arr.splice(0, arr.length - max);
+    }
+}
 
 const server = http.createServer((req, res) => {
     fs.readFile('index.html', (err, data) => {
@@ -63,13 +76,13 @@ wss.on('connection', (ws) => {
                     
                     const userDeleted = deletedMessages[roomId][username] || new Set();
                     
-                    // Send public history
+                    // Send public history (150 messages)
                     const publicHistory = publicMessages[roomId]
                         .filter(m => !userDeleted.has(m.id))
-                        .slice(-50);
+                        .slice(-MAX_MESSAGES_PER_ROOM);
                     ws.send(JSON.stringify({ type: 'history', messages: publicHistory }));
                     
-                    // Send private history
+                    // Send private history (150 messages)
                     const userPrivateMessages = [];
                     for (const [key, messages] of Object.entries(privateMessages)) {
                         if (key.includes(username) || key.startsWith(roomId + '_')) {
@@ -88,14 +101,14 @@ wss.on('connection', (ws) => {
                         }
                     }
                     uniquePrivate.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-                    ws.send(JSON.stringify({ type: 'private-history', messages: uniquePrivate.slice(-50) }));
+                    ws.send(JSON.stringify({ type: 'private-history', messages: uniquePrivate.slice(-MAX_PRIVATE_PER_USER) }));
                     
-                    // Send group history
+                    // Send group history (150 messages)
                     for (const [groupId, members] of Object.entries(groupMembers)) {
                         if (members.includes(username)) {
                             const groupMsgs = (groupMessages[groupId] || [])
                                 .filter(m => !userDeleted.has(m.id))
-                                .slice(-50);
+                                .slice(-MAX_GROUP_MESSAGES);
                             ws.send(JSON.stringify({
                                 type: 'group-history',
                                 groupId: groupId,
@@ -114,6 +127,125 @@ wss.on('connection', (ws) => {
                     break;
                 }
 
+                // ===== CALL: Initiate Call =====
+                case 'call-initiate': {
+                    if (!currentUsername || !currentRoomId) return;
+                    
+                    const { targetUser, callType, offer } = msg;
+                    console.log(`📞 ${currentUsername} calling ${targetUser} (${callType})`);
+                    
+                    // Store call info
+                    const callId = Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+                    activeCalls[callId] = {
+                        caller: currentUsername,
+                        target: targetUser,
+                        roomId: currentRoomId,
+                        callType: callType || 'audio',
+                        active: true,
+                        startTime: Date.now()
+                    };
+                    
+                    // Send call offer to target
+                    if (clients[currentRoomId][targetUser]) {
+                        clients[currentRoomId][targetUser].send(JSON.stringify({
+                            type: 'call-incoming',
+                            callId: callId,
+                            caller: currentUsername,
+                            callType: callType || 'audio',
+                            offer: offer
+                        }));
+                        console.log(`📞 Call offer sent to ${targetUser}`);
+                    } else {
+                        ws.send(JSON.stringify({
+                            type: 'call-error',
+                            message: `${targetUser} is not online`
+                        }));
+                    }
+                    break;
+                }
+
+                // ===== CALL: Answer =====
+                case 'call-answer': {
+                    if (!currentUsername || !currentRoomId) return;
+                    
+                    const { callId, answer } = msg;
+                    
+                    if (activeCalls[callId]) {
+                        const call = activeCalls[callId];
+                        if (clients[currentRoomId][call.caller]) {
+                            clients[currentRoomId][call.caller].send(JSON.stringify({
+                                type: 'call-answered',
+                                callId: callId,
+                                answer: answer
+                            }));
+                            console.log(`📞 ${currentUsername} answered call ${callId}`);
+                        }
+                    }
+                    break;
+                }
+
+                // ===== CALL: ICE Candidate =====
+                case 'call-ice': {
+                    if (!currentUsername || !currentRoomId) return;
+                    
+                    const { targetUser, candidate } = msg;
+                    
+                    if (clients[currentRoomId][targetUser]) {
+                        clients[currentRoomId][targetUser].send(JSON.stringify({
+                            type: 'call-ice',
+                            from: currentUsername,
+                            candidate: candidate
+                        }));
+                    }
+                    break;
+                }
+
+                // ===== CALL: End Call =====
+                case 'call-end': {
+                    if (!currentUsername || !currentRoomId) return;
+                    
+                    const { callId, targetUser } = msg;
+                    
+                    // Notify the other party
+                    if (clients[currentRoomId][targetUser]) {
+                        clients[currentRoomId][targetUser].send(JSON.stringify({
+                            type: 'call-ended',
+                            callId: callId,
+                            by: currentUsername
+                        }));
+                    }
+                    
+                    // Remove from active calls
+                    if (activeCalls[callId]) {
+                        delete activeCalls[callId];
+                    }
+                    
+                    console.log(`📞 Call ${callId} ended by ${currentUsername}`);
+                    break;
+                }
+
+                // ===== CALL: Reject Call =====
+                case 'call-reject': {
+                    if (!currentUsername || !currentRoomId) return;
+                    
+                    const { callId } = msg;
+                    
+                    if (activeCalls[callId]) {
+                        const call = activeCalls[callId];
+                        if (clients[currentRoomId][call.caller]) {
+                            clients[currentRoomId][call.caller].send(JSON.stringify({
+                                type: 'call-rejected',
+                                callId: callId,
+                                by: currentUsername
+                            }));
+                        }
+                        delete activeCalls[callId];
+                    }
+                    console.log(`📞 Call ${callId} rejected by ${currentUsername}`);
+                    break;
+                }
+
+                // ===== CREATE GROUP =====
                 case 'create-group': {
                     if (!currentUsername || !currentRoomId) return;
                     
@@ -144,6 +276,7 @@ wss.on('connection', (ws) => {
                     break;
                 }
 
+                // ===== GROUP MESSAGE =====
                 case 'group-message': {
                     if (!currentUsername || !currentRoomId) return;
                     
@@ -167,6 +300,7 @@ wss.on('connection', (ws) => {
                     
                     if (!groupMessages[gId]) groupMessages[gId] = [];
                     groupMessages[gId].push(groupMsgData);
+                    limitArray(groupMessages[gId], MAX_GROUP_MESSAGES);
                     
                     for (const member of groupMembers[gId]) {
                         if (clients[currentRoomId][member]) {
@@ -180,6 +314,7 @@ wss.on('connection', (ws) => {
                     break;
                 }
 
+                // ===== GROUP FILE =====
                 case 'group-file': {
                     if (!currentUsername || !currentRoomId) return;
                     
@@ -207,6 +342,7 @@ wss.on('connection', (ws) => {
                     
                     if (!groupMessages[gfId]) groupMessages[gfId] = [];
                     groupMessages[gfId].push(groupFileMsg);
+                    limitArray(groupMessages[gfId], MAX_GROUP_MESSAGES);
                     
                     for (const member of groupMembers[gfId]) {
                         if (clients[currentRoomId][member]) {
@@ -220,6 +356,7 @@ wss.on('connection', (ws) => {
                     break;
                 }
 
+                // ===== ADD TO GROUP =====
                 case 'add-to-group': {
                     if (!currentUsername || !currentRoomId) return;
                     
@@ -257,6 +394,7 @@ wss.on('connection', (ws) => {
                     break;
                 }
 
+                // ===== DELETE GROUP MESSAGE =====
                 case 'delete-group-message': {
                     if (!currentUsername || !currentRoomId) return;
                     
@@ -288,6 +426,7 @@ wss.on('connection', (ws) => {
                     break;
                 }
 
+                // ===== LEAVE GROUP =====
                 case 'leave-group': {
                     if (!currentUsername || !currentRoomId) return;
                     
@@ -317,6 +456,7 @@ wss.on('connection', (ws) => {
                     break;
                 }
 
+                // ===== MESSAGE =====
                 case 'message': {
                     if (!currentUsername || !currentRoomId) return;
                     
@@ -335,10 +475,12 @@ wss.on('connection', (ws) => {
                         const privateKey = currentRoomId + '_' + msgData.sender + '_' + msgData.targetUser;
                         if (!privateMessages[privateKey]) privateMessages[privateKey] = [];
                         privateMessages[privateKey].push(msgData);
+                        limitArray(privateMessages[privateKey], MAX_PRIVATE_PER_USER);
                         
                         const reverseKey = currentRoomId + '_' + msgData.targetUser + '_' + msgData.sender;
                         if (!privateMessages[reverseKey]) privateMessages[reverseKey] = [];
                         privateMessages[reverseKey].push(msgData);
+                        limitArray(privateMessages[reverseKey], MAX_PRIVATE_PER_USER);
                         
                         if (clients[currentRoomId][msgData.targetUser]) {
                             clients[currentRoomId][msgData.targetUser].send(JSON.stringify({
@@ -355,6 +497,7 @@ wss.on('connection', (ws) => {
                     } else {
                         console.log(`💬 Public from ${msgData.sender}`);
                         publicMessages[currentRoomId].push(msgData);
+                        limitArray(publicMessages[currentRoomId], MAX_MESSAGES_PER_ROOM);
                         broadcast(currentRoomId, {
                             type: 'message',
                             message: msgData
@@ -363,6 +506,7 @@ wss.on('connection', (ws) => {
                     break;
                 }
 
+                // ===== FILE =====
                 case 'file': {
                     if (!currentUsername || !currentRoomId) return;
                     
@@ -385,10 +529,12 @@ wss.on('connection', (ws) => {
                         const privateKey = currentRoomId + '_' + fileMsg.sender + '_' + fileMsg.targetUser;
                         if (!privateMessages[privateKey]) privateMessages[privateKey] = [];
                         privateMessages[privateKey].push(fileMsg);
+                        limitArray(privateMessages[privateKey], MAX_PRIVATE_PER_USER);
                         
                         const reverseKey = currentRoomId + '_' + fileMsg.targetUser + '_' + fileMsg.sender;
                         if (!privateMessages[reverseKey]) privateMessages[reverseKey] = [];
                         privateMessages[reverseKey].push(fileMsg);
+                        limitArray(privateMessages[reverseKey], MAX_PRIVATE_PER_USER);
                         
                         if (clients[currentRoomId][fileMsg.targetUser]) {
                             clients[currentRoomId][fileMsg.targetUser].send(JSON.stringify({
@@ -404,6 +550,7 @@ wss.on('connection', (ws) => {
                         }
                     } else {
                         publicMessages[currentRoomId].push(fileMsg);
+                        limitArray(publicMessages[currentRoomId], MAX_MESSAGES_PER_ROOM);
                         broadcast(currentRoomId, {
                             type: 'file',
                             message: fileMsg
@@ -412,6 +559,7 @@ wss.on('connection', (ws) => {
                     break;
                 }
 
+                // ===== DELETE MESSAGE =====
                 case 'delete-message': {
                     if (!currentUsername || !currentRoomId) return;
                     
@@ -449,6 +597,7 @@ wss.on('connection', (ws) => {
                     break;
                 }
 
+                // ===== CLEAR CHAT =====
                 case 'clear-chat': {
                     if (!currentUsername || !currentRoomId) return;
                     
@@ -517,6 +666,7 @@ wss.on('connection', (ws) => {
                     break;
                 }
 
+                // ===== TYPING =====
                 case 'typing': {
                     if (!currentUsername || !currentRoomId) return;
                     
@@ -606,12 +756,14 @@ server.listen(PORT, '0.0.0.0', () => {
     ║   Running on: http://0.0.0.0:${PORT}                            ║
     ║                                                                 ║
     ║   🔒 End-to-end encryption                                     ║
+    ║   📞 Voice & Video Calls (WebRTC)                             ║
     ║   👥 Group Chats - Create groups and add members              ║
     ║   💬 Public chats - Everyone in the room                      ║
     ║   🔒 Private chats - 1-on-1 conversations                     ║
     ║   🗑️ Delete individual messages                               ║
     ║   🗑️ Clear chat permanently                                   ║
     ║   📎 File sharing                                              ║
+    ║   📊 History limit: 150 messages per chat                     ║
     ╚══════════════════════════════════════════════════════════════════╝
     `);
 });
