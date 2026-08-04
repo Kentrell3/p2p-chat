@@ -1,4 +1,4 @@
-// server.js - COMPLETE FIX WITH USER TRACKING
+// server.js - With message deletion support
 const WebSocket = require('ws');
 const http = require('http');
 const fs = require('fs');
@@ -8,10 +8,8 @@ const PORT = process.env.PORT || 8080;
 // ===== STORAGE =====
 const publicMessages = {};
 const privateMessages = {};
-// Track users by username (not connection ID)
-const clients = {}; // roomId -> { username: ws }
-// Track user connections per room
-const userConnections = {}; // roomId -> { username: { ws, connected: true } }
+const deletedMessages = {}; // Track deleted message IDs per user
+const clients = {};
 
 const server = http.createServer((req, res) => {
     fs.readFile('index.html', (err, data) => {
@@ -44,12 +42,12 @@ wss.on('connection', (ws) => {
                     currentUsername = username;
                     currentRoomId = roomId;
                     
-                    // Initialize room if needed
                     if (!clients[roomId]) clients[roomId] = {};
                     if (!publicMessages[roomId]) publicMessages[roomId] = [];
+                    if (!deletedMessages[roomId]) deletedMessages[roomId] = {};
+                    if (!deletedMessages[roomId][username]) deletedMessages[roomId][username] = new Set();
                     
-                    // ===== UPDATE USER CONNECTION =====
-                    // If user already exists with old connection, close it
+                    // Close old connection
                     if (clients[roomId][username]) {
                         const oldWs = clients[roomId][username];
                         if (oldWs !== ws && oldWs.readyState === WebSocket.OPEN) {
@@ -58,17 +56,20 @@ wss.on('connection', (ws) => {
                         }
                     }
                     
-                    // Store new connection
                     clients[roomId][username] = ws;
                     
-                    // ===== SEND PUBLIC HISTORY =====
-                    const history = publicMessages[roomId].slice(-50);
+                    // ===== SEND PUBLIC HISTORY (filter deleted) =====
+                    const userDeleted = deletedMessages[roomId][username] || new Set();
+                    const history = publicMessages[roomId]
+                        .filter(m => !userDeleted.has(m.id))
+                        .slice(-50);
+                    
                     ws.send(JSON.stringify({
                         type: 'history',
                         messages: history
                     }));
                     
-                    // ===== SEND PRIVATE HISTORY =====
+                    // ===== SEND PRIVATE HISTORY (filter deleted) =====
                     const userPrivateMessages = [];
                     for (const [key, messages] of Object.entries(privateMessages)) {
                         if (key.includes(username) || key.startsWith(roomId + '_')) {
@@ -82,7 +83,7 @@ wss.on('connection', (ws) => {
                     const uniquePrivate = [];
                     const seenIds = new Set();
                     for (const msg of userPrivateMessages) {
-                        if (!seenIds.has(msg.id)) {
+                        if (!seenIds.has(msg.id) && !userDeleted.has(msg.id)) {
                             seenIds.add(msg.id);
                             uniquePrivate.push(msg);
                         }
@@ -94,7 +95,7 @@ wss.on('connection', (ws) => {
                         messages: uniquePrivate.slice(-50)
                     }));
                     
-                    // ===== BROADCAST UPDATED USER LIST =====
+                    // Broadcast user list
                     const userList = Object.keys(clients[roomId]);
                     broadcast(roomId, {
                         type: 'user-joined',
@@ -102,7 +103,6 @@ wss.on('connection', (ws) => {
                     });
                     
                     console.log(`✅ ${username} joined/refreshed room ${roomId}`);
-                    console.log(`👥 Users: ${userList.join(', ')}`);
                     break;
 
                 case 'message':
@@ -118,7 +118,6 @@ wss.on('connection', (ws) => {
                     };
                     
                     if (messageData.isPrivate && messageData.targetUser) {
-                        // ===== 🔒 PRIVATE MESSAGE =====
                         console.log(`🔒 Private from ${messageData.sender} to ${messageData.targetUser}`);
                         
                         const privateKey = currentRoomId + '_' + messageData.sender + '_' + messageData.targetUser;
@@ -129,18 +128,12 @@ wss.on('connection', (ws) => {
                         if (!privateMessages[reverseKey]) privateMessages[reverseKey] = [];
                         privateMessages[reverseKey].push(messageData);
                         
-                        // ===== SEND TO TARGET (if online) =====
                         if (clients[currentRoomId][messageData.targetUser]) {
                             clients[currentRoomId][messageData.targetUser].send(JSON.stringify({
                                 type: 'private-message',
                                 message: messageData
                             }));
-                            console.log(`✅ Sent private to ${messageData.targetUser}`);
-                        } else {
-                            console.log(`⚠️ ${messageData.targetUser} not online, message stored`);
                         }
-                        
-                        // Send to sender
                         if (clients[currentRoomId][currentUsername]) {
                             clients[currentRoomId][currentUsername].send(JSON.stringify({
                                 type: 'private-message',
@@ -148,7 +141,6 @@ wss.on('connection', (ws) => {
                             }));
                         }
                     } else {
-                        // ===== 🌐 PUBLIC MESSAGE =====
                         console.log(`💬 Public from ${messageData.sender}`);
                         publicMessages[currentRoomId].push(messageData);
                         broadcast(currentRoomId, {
@@ -206,6 +198,115 @@ wss.on('connection', (ws) => {
                     }
                     break;
 
+                case 'delete-message':
+                    // Delete a specific message for a specific user
+                    if (!currentUsername || !currentRoomId) return;
+                    
+                    const { messageId, isPrivate, targetUser } = msg;
+                    console.log(`🗑️ ${currentUsername} deleting message ${messageId}`);
+                    
+                    // Store deletion for this user
+                    if (!deletedMessages[currentRoomId]) deletedMessages[currentRoomId] = {};
+                    if (!deletedMessages[currentRoomId][currentUsername]) {
+                        deletedMessages[currentRoomId][currentUsername] = new Set();
+                    }
+                    deletedMessages[currentRoomId][currentUsername].add(messageId);
+                    
+                    // Notify the user that the message was deleted
+                    ws.send(JSON.stringify({
+                        type: 'message-deleted',
+                        messageId: messageId
+                    }));
+                    
+                    // If it's a private message, also notify the other user if they're online
+                    if (isPrivate && targetUser) {
+                        if (clients[currentRoomId][targetUser]) {
+                            clients[currentRoomId][targetUser].send(JSON.stringify({
+                                type: 'message-deleted',
+                                messageId: messageId
+                            }));
+                        }
+                        // Also store deletion for the target user
+                        if (!deletedMessages[currentRoomId][targetUser]) {
+                            deletedMessages[currentRoomId][targetUser] = new Set();
+                        }
+                        deletedMessages[currentRoomId][targetUser].add(messageId);
+                    } else {
+                        // For public messages, notify all users in the room
+                        broadcast(currentRoomId, {
+                            type: 'message-deleted',
+                            messageId: messageId
+                        }, [currentUsername]);
+                    }
+                    
+                    console.log(`✅ Message ${messageId} deleted for ${currentUsername}`);
+                    break;
+
+                case 'clear-chat':
+                    // Clear ALL messages for a user in a specific chat
+                    if (!currentUsername || !currentRoomId) return;
+                    
+                    const { chatType, targetUser: clearTarget } = msg;
+                    console.log(`🗑️ ${currentUsername} clearing chat`);
+                    
+                    if (!deletedMessages[currentRoomId]) deletedMessages[currentRoomId] = {};
+                    if (!deletedMessages[currentRoomId][currentUsername]) {
+                        deletedMessages[currentRoomId][currentUsername] = new Set();
+                    }
+                    
+                    // Get all messages in this chat and mark them as deleted
+                    if (chatType === 'private' && clearTarget) {
+                        // Private chat - get messages between these two users
+                        const privateKey = currentRoomId + '_' + currentUsername + '_' + clearTarget;
+                        const reverseKey = currentRoomId + '_' + clearTarget + '_' + currentUsername;
+                        
+                        const messagesToDelete = [];
+                        if (privateMessages[privateKey]) {
+                            messagesToDelete.push(...privateMessages[privateKey]);
+                        }
+                        if (privateMessages[reverseKey]) {
+                            messagesToDelete.push(...privateMessages[reverseKey]);
+                        }
+                        
+                        for (const m of messagesToDelete) {
+                            deletedMessages[currentRoomId][currentUsername].add(m.id);
+                            // Also delete for the other user
+                            if (clients[currentRoomId][clearTarget]) {
+                                if (!deletedMessages[currentRoomId][clearTarget]) {
+                                    deletedMessages[currentRoomId][clearTarget] = new Set();
+                                }
+                                deletedMessages[currentRoomId][clearTarget].add(m.id);
+                            }
+                        }
+                        
+                        // Notify both users
+                        ws.send(JSON.stringify({
+                            type: 'chat-cleared',
+                            chatId: 'private_' + clearTarget
+                        }));
+                        
+                        if (clients[currentRoomId][clearTarget]) {
+                            clients[currentRoomId][clearTarget].send(JSON.stringify({
+                                type: 'chat-cleared',
+                                chatId: 'private_' + currentUsername
+                            }));
+                        }
+                    } else {
+                        // Public chat - clear all public messages for this user
+                        const allPublicMessages = publicMessages[currentRoomId] || [];
+                        for (const m of allPublicMessages) {
+                            deletedMessages[currentRoomId][currentUsername].add(m.id);
+                        }
+                        
+                        ws.send(JSON.stringify({
+                            type: 'chat-cleared',
+                            chatId: 'room_' + currentRoomId
+                        }));
+                    }
+                    
+                    console.log(`✅ Chat cleared for ${currentUsername}`);
+                    break;
+
                 case 'typing':
                     if (!currentUsername || !currentRoomId) return;
                     
@@ -238,7 +339,6 @@ wss.on('connection', (ws) => {
     });
 
     ws.on('close', () => {
-        // Only disconnect if this is still the active connection for this user
         if (currentUsername && currentRoomId) {
             if (clients[currentRoomId] && clients[currentRoomId][currentUsername] === ws) {
                 handleDisconnect(currentUsername, currentRoomId);
@@ -264,7 +364,6 @@ function handleDisconnect(username, roomId) {
     if (!username || !roomId) return;
     
     if (clients[roomId]) {
-        // Check if this is still the active connection
         if (clients[roomId][username]) {
             delete clients[roomId][username];
             const userList = Object.keys(clients[roomId]);
@@ -273,7 +372,6 @@ function handleDisconnect(username, roomId) {
                 users: userList
             });
             console.log(`👋 ${username} left room ${roomId}`);
-            console.log(`👥 Remaining: ${userList.join(', ') || 'none'}`);
         }
     }
 }
@@ -284,11 +382,12 @@ server.listen(PORT, '0.0.0.0', () => {
     ║   💬 Secure Chat Server                                        ║
     ║   Running on: http://0.0.0.0:${PORT}                            ║
     ║                                                                 ║
-    ║   🔒 Users tracked by username (not connection ID)            ║
-    ║   🔄 When user refreshes, old connection is replaced           ║
-    ║   📨 Messages are delivered to the active connection           ║
+    ║   🔒 End-to-end encryption                                     ║
+    ║   🗑️ Delete individual messages                                ║
+    ║   🗑️ Clear entire chat permanently                             ║
     ║   🔒 Private messages: ONLY sender + recipient see them       ║
-    ║   📎 File sharing supported                                    ║
+    ║   🔄 Auto-reconnect support                                    ║
+    ║   📎 File sharing                                              ║
     ╚══════════════════════════════════════════════════════════════════╝
     `);
 });
