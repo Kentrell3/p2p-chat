@@ -1,4 +1,4 @@
-// server.js - Fixed private messages and real-time delivery
+// server.js - Fixed private messages (ONLY sender + recipient see them)
 const WebSocket = require('ws');
 const http = require('http');
 const fs = require('fs');
@@ -42,14 +42,12 @@ wss.on('connection', (ws) => {
                     
                     if (!messages[roomId]) messages[roomId] = [];
                     
-                    // Send history to the user
                     const history = messages[roomId].slice(-50);
                     ws.send(JSON.stringify({
                         type: 'history',
                         messages: history
                     }));
                     
-                    // Broadcast updated user list to everyone in the room
                     const userList = Object.keys(clients[roomId]);
                     broadcast(roomId, {
                         type: 'user-joined',
@@ -72,18 +70,22 @@ wss.on('connection', (ws) => {
                         targetUser: msg.targetUser || null
                     };
                     
-                    // Store in room history
                     messages[userInfo.roomId].push(messageData);
                     
                     if (messageData.isPrivate && messageData.targetUser) {
-                        // PRIVATE MESSAGE: Send ONLY to sender and target
-                        console.log(`🔒 Private message from ${messageData.sender} to ${messageData.targetUser}`);
+                        // 🔒 PRIVATE: ONLY send to sender + target
+                        console.log(`🔒 Private from ${messageData.sender} to ${messageData.targetUser}`);
                         
-                        // Send to target user
-                        sendPrivate(userInfo.roomId, messageData.targetUser, {
-                            type: 'private-message',
-                            message: messageData
-                        });
+                        // Send to target (if online)
+                        if (clients[userInfo.roomId][messageData.targetUser]) {
+                            clients[userInfo.roomId][messageData.targetUser].send(JSON.stringify({
+                                type: 'private-message',
+                                message: messageData
+                            }));
+                            console.log(`✅ Sent private to ${messageData.targetUser}`);
+                        } else {
+                            console.log(`❌ ${messageData.targetUser} not online`);
+                        }
                         
                         // Send to sender (so they see their own message)
                         if (clients[userInfo.roomId][userInfo.username]) {
@@ -93,8 +95,8 @@ wss.on('connection', (ws) => {
                             }));
                         }
                     } else {
-                        // PUBLIC MESSAGE: Send to everyone in the room
-                        console.log(`💬 Public message from ${messageData.sender}`);
+                        // 🌐 PUBLIC: Send to everyone in room
+                        console.log(`💬 Public from ${messageData.sender}`);
                         broadcast(userInfo.roomId, {
                             type: 'message',
                             message: messageData
@@ -121,13 +123,15 @@ wss.on('connection', (ws) => {
                     messages[userInfo.roomId].push(fileData);
                     
                     if (fileData.isPrivate && fileData.targetUser) {
-                        // PRIVATE FILE: Send ONLY to sender and target
+                        // 🔒 PRIVATE FILE: ONLY send to sender + target
                         console.log(`🔒 Private file from ${fileData.sender} to ${fileData.targetUser}`);
                         
-                        sendPrivate(userInfo.roomId, fileData.targetUser, {
-                            type: 'file',
-                            message: fileData
-                        });
+                        if (clients[userInfo.roomId][fileData.targetUser]) {
+                            clients[userInfo.roomId][fileData.targetUser].send(JSON.stringify({
+                                type: 'file',
+                                message: fileData
+                            }));
+                        }
                         
                         if (clients[userInfo.roomId][userInfo.username]) {
                             clients[userInfo.roomId][userInfo.username].send(JSON.stringify({
@@ -136,7 +140,6 @@ wss.on('connection', (ws) => {
                             }));
                         }
                     } else {
-                        // PUBLIC FILE: Send to everyone
                         broadcast(userInfo.roomId, {
                             type: 'file',
                             message: fileData
@@ -147,7 +150,6 @@ wss.on('connection', (ws) => {
                 case 'typing':
                     if (!userInfo) return;
                     
-                    // Forward typing indicator to everyone EXCEPT sender
                     const typingData = {
                         type: 'typing',
                         username: userInfo.username,
@@ -156,9 +158,10 @@ wss.on('connection', (ws) => {
                     
                     if (msg.isPrivate && msg.targetUser) {
                         // Private typing: send only to target
-                        sendPrivate(userInfo.roomId, msg.targetUser, typingData);
+                        if (clients[userInfo.roomId][msg.targetUser]) {
+                            clients[userInfo.roomId][msg.targetUser].send(JSON.stringify(typingData));
+                        }
                     } else {
-                        // Public typing: send to everyone except sender
                         broadcast(userInfo.roomId, typingData, [userInfo.username]);
                     }
                     break;
@@ -185,35 +188,13 @@ function broadcast(roomId, data, exclude = []) {
     if (!clients[roomId]) return;
     
     const message = JSON.stringify(data);
-    const recipients = Object.keys(clients[roomId]).filter(u => !exclude.includes(u));
-    
-    console.log(`📡 Broadcasting to ${recipients.length} users: ${recipients.join(', ')}`);
-    
-    recipients.forEach(username => {
+    Object.keys(clients[roomId]).forEach(username => {
+        if (exclude.includes(username)) return;
         const ws = clients[roomId][username];
         if (ws && ws.readyState === WebSocket.OPEN) {
             ws.send(message);
         }
     });
-}
-
-function sendPrivate(roomId, targetUsername, data) {
-    if (!clients[roomId]) {
-        console.log(`❌ Room ${roomId} not found`);
-        return;
-    }
-    
-    if (clients[roomId][targetUsername]) {
-        const ws = clients[roomId][targetUsername];
-        if (ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify(data));
-            console.log(`✅ Private message sent to ${targetUsername}`);
-        } else {
-            console.log(`❌ ${targetUsername} is not connected`);
-        }
-    } else {
-        console.log(`❌ ${targetUsername} not found in room`);
-    }
 }
 
 function handleDisconnect(userInfo) {
@@ -223,15 +204,11 @@ function handleDisconnect(userInfo) {
     if (clients[roomId]) {
         delete clients[roomId][username];
         const userList = Object.keys(clients[roomId]);
-        
-        // Broadcast updated user list
         broadcast(roomId, {
             type: 'user-left',
             users: userList
         });
-        
         console.log(`👋 ${username} left room ${roomId}`);
-        console.log(`👥 Remaining users: ${userList.join(', ') || 'none'}`);
     }
 }
 
@@ -241,9 +218,8 @@ server.listen(PORT, '0.0.0.0', () => {
     ║   💬 Secure Chat Server                                 ║
     ║   Running on: http://0.0.0.0:${PORT}                     ║
     ║   🔒 End-to-end encryption                              ║
+    ║   🔒 Private messages: ONLY sender + recipient see them ║
     ║   📎 File sharing supported                             ║
-    ║   🔒 Private messages are ONLY sent to target user     ║
-    ║   👥 Real-time message delivery                         ║
     ╚═══════════════════════════════════════════════════════════╝
     `);
 });
