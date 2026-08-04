@@ -35,6 +35,10 @@
         .btn-small:hover{background:rgba(45,62,90,0.8)}
         .btn-success{background:rgba(0,255,136,0.15);color:#00ff88;border:1px solid rgba(0,255,136,0.2)}
         .btn-success:hover{background:rgba(0,255,136,0.25)}
+        .btn-call{background:rgba(0,212,255,0.15);color:#00d4ff;border:1px solid rgba(0,212,255,0.2)}
+        .btn-call:hover{background:rgba(0,212,255,0.25)}
+        .btn-call-end{background:rgba(255,68,68,0.2);color:#ff4444;border:1px solid rgba(255,68,68,0.2)}
+        .btn-call-end:hover{background:rgba(255,68,68,0.3)}
         .status-bar{display:flex;justify-content:space-between;padding:6px 12px;background:rgba(13,20,33,0.5);border-radius:8px;font-size:11px;color:#8892b0;margin-top:12px;flex-wrap:wrap;gap:4px}
         .chat-layout{display:flex;gap:12px;flex:1;min-height:0}
         .sidebar{width:280px;min-width:240px;background:rgba(13,20,33,0.5);border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
@@ -60,8 +64,6 @@
         .chat-list-item .chat-info{flex:1;min-width:0}
         .chat-list-item .chat-info .name{font-size:13px;font-weight:500}
         .chat-list-item .chat-info .last-msg{font-size:11px;color:#8892b0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .chat-list-item .chat-info .last-msg .private-badge{font-size:8px;color:#ffaa00;margin-right:4px}
-        .chat-list-item .chat-info .last-msg .group-badge{font-size:8px;color:#00ff88;margin-right:4px}
         .chat-list-item .chat-meta{font-size:9px;color:#556;text-align:right;flex-shrink:0}
         .chat-list-item .chat-meta .unread{background:#00d4ff;color:#0a0e17;padding:1px 6px;border-radius:10px;font-size:8px;font-weight:600}
         .no-chats{text-align:center;color:#556;padding:30px 10px;font-size:13px}
@@ -124,6 +126,8 @@
         .contact-item .contact-info .status.offline{color:#ff4444}
         .contact-item .start-chat-btn{padding:6px 14px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);border-radius:6px;color:#00d4ff;font-size:12px;cursor:pointer;transition:all .3s}
         .contact-item .start-chat-btn:hover{background:rgba(0,212,255,0.2)}
+        .contact-item .call-btn{padding:6px 10px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);border-radius:6px;color:#00d4ff;font-size:12px;cursor:pointer;transition:all .3s}
+        .contact-item .call-btn:hover{background:rgba(0,212,255,0.2)}
         .no-contacts{text-align:center;color:#556;padding:30px 10px}
         .no-contacts .icon{font-size:40px;margin-bottom:12px}
         .clear-btn{background:rgba(255,170,0,0.1);color:#ffaa00;border:1px solid rgba(255,170,0,0.2)}
@@ -138,6 +142,29 @@
         .context-menu-item .icon{margin-right:8px}
         .group-member-list{display:flex;flex-wrap:wrap;gap:4px;padding:4px 0}
         .group-member-chip{padding:2px 10px;background:rgba(0,255,136,0.05);border-radius:12px;font-size:11px;border:1px solid rgba(0,255,136,0.1)}
+        /* === CALL OVERLAY === */
+        .call-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:2000;justify-content:center;align-items:center;flex-direction:column}
+        .call-overlay.active{display:flex}
+        .call-container{background:rgba(20,27,43,0.95);border-radius:20px;padding:30px;max-width:400px;width:90%;text-align:center;border:1px solid rgba(255,255,255,0.05)}
+        .call-container .call-avatar{width:80px;height:80px;border-radius:50%;background:rgba(0,212,255,0.15);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 16px}
+        .call-container .caller-name{font-size:24px;font-weight:600;margin-bottom:4px}
+        .call-container .call-status{font-size:14px;color:#8892b0;margin-bottom:20px}
+        .call-container .call-timer{font-size:14px;color:#00ff88;margin-bottom:20px;font-variant-numeric:tabular-nums}
+        .call-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+        .call-buttons button{width:56px;height:56px;border-radius:50%;border:none;font-size:24px;cursor:pointer;transition:all .3s}
+        .call-buttons button:hover{transform:scale(1.05)}
+        .call-buttons .call-end{background:#ff4444;color:#fff}
+        .call-buttons .call-end:hover{background:#cc0000}
+        .call-buttons .call-mute{background:rgba(255,255,255,0.1);color:#fff}
+        .call-buttons .call-mute:hover{background:rgba(255,255,255,0.2)}
+        .call-buttons .call-mute.muted{background:#ffaa00;color:#000}
+        .call-buttons .call-video{background:rgba(255,255,255,0.1);color:#fff}
+        .call-buttons .call-video:hover{background:rgba(255,255,255,0.2)}
+        .call-buttons .call-video.video-off{background:#ff4444;color:#fff}
+        .call-videos{display:flex;gap:12px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+        .call-videos video{width:100%;max-width:300px;border-radius:12px;background:#0a0e17;transform:scaleX(-1)}
+        .call-videos video.local-video{max-width:120px;position:absolute;bottom:100px;right:20px;border:2px solid rgba(0,212,255,0.3)}
+        .call-container .call-actions{position:relative;display:flex;flex-direction:column;align-items:center}
         @media(max-width:768px){.container{padding:12px;max-height:100vh}.chat-layout{flex-direction:column}.sidebar{width:100%;min-width:unset;max-height:200px}.chat-list{display:flex;flex-wrap:wrap;gap:4px;padding:4px 8px}.chat-list-item{padding:6px 10px;flex:0 1 auto;border-left:none;border-bottom:2px solid transparent}.chat-list-item.active{border-left:none;border-bottom-color:#00d4ff}.chat-list-item .avatar{width:24px;height:24px;font-size:11px;margin-right:6px}.chat-list-item .chat-info .name{font-size:11px}.chat-list-item .chat-info .last-msg{font-size:9px}.message{max-width:90%;font-size:13px}.chat-header .chat-title{font-size:14px}}
     </style>
 </head>
@@ -146,7 +173,7 @@
     <div class="container">
         <header>
             <h1>💬 Secure Chat</h1>
-            <p>End-to-end encrypted · Group chats · Private chats</p>
+            <p>End-to-end encrypted · Group chats · Private chats · Voice/Video Calls</p>
         </header>
 
         <!-- SETUP SCREEN -->
@@ -221,6 +248,8 @@
                         <input type="text" id="message-input" placeholder="Type a message..." class="input-field" disabled>
                         <div class="action-buttons">
                             <button id="file-btn" class="btn btn-secondary" disabled title="Send file">📎</button>
+                            <button id="call-btn" class="btn btn-call" disabled title="Voice call">📞</button>
+                            <button id="video-call-btn" class="btn btn-call" disabled title="Video call">📹</button>
                             <button id="send-btn" class="btn btn-primary" disabled>Send</button>
                         </div>
                     </div>
@@ -275,6 +304,25 @@
         </div>
     </div>
 
+    <!-- CALL OVERLAY -->
+    <div class="call-overlay" id="call-overlay">
+        <div class="call-container">
+            <div class="call-avatar" id="call-avatar">📞</div>
+            <div class="caller-name" id="caller-name">Calling...</div>
+            <div class="call-status" id="call-status">Connecting...</div>
+            <div class="call-timer" id="call-timer">00:00</div>
+            <div class="call-videos" id="call-videos" style="display:none;">
+                <video id="remote-video" autoplay playsinline></video>
+                <video id="local-video" autoplay playsinline muted class="local-video"></video>
+            </div>
+            <div class="call-buttons">
+                <button class="call-mute" id="call-mute-btn" title="Mute">🎤</button>
+                <button class="call-end" id="call-end-btn" title="End call">📞</button>
+                <button class="call-video" id="call-video-toggle" title="Toggle video" style="display:none;">📹</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ============================================================
         //  ENCRYPTION
@@ -284,7 +332,7 @@
                 this.key = null;
                 this.encoder = new TextEncoder();
                 this.decoder = new TextDecoder();
-                this.keyString = null; // Store the base64 string
+                this.keyString = null;
             }
             async generateKey() {
                 this.key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
@@ -301,9 +349,7 @@
                 this.key = await crypto.subtle.importKey("raw", keyData, { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
                 return this.key;
             }
-            getKeyString() {
-                return this.keyString;
-            }
+            getKeyString() { return this.keyString; }
             async encrypt(message) {
                 if (!this.key || typeof message !== 'string') return message;
                 const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -322,9 +368,7 @@
                     const data = encrypted.slice(12);
                     const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, this.key, data);
                     return this.decoder.decode(decrypted);
-                } catch (e) {
-                    return encryptedBase64;
-                }
+                } catch (e) { return encryptedBase64; }
             }
             async encryptFile(file) {
                 const chunks = [];
@@ -357,7 +401,7 @@
         }
 
         // ============================================================
-        //  CHAT CLIENT - WITH KEY PERSISTENCE
+        //  CHAT CLIENT WITH CALLS
         // ============================================================
         class SecureChat {
             constructor(serverUrl) {
@@ -381,10 +425,21 @@
                 this.onReconnecting = null;
                 this.onMessageDeleted = null;
                 this.onChatCleared = null;
+                this.onIncomingCall = null;
+                this.onCallEnded = null;
                 this.storageKey = 'secure_chat_session_';
                 this.reconnectAttempts = 0;
                 this.maxReconnectAttempts = 10;
                 this.loadSession();
+                // Call state
+                this.currentCall = null;
+                this.callTimer = null;
+                this.callSeconds = 0;
+                this.peerConnection = null;
+                this.localStream = null;
+                this.remoteStream = null;
+                this.isCallMuted = false;
+                this.isVideoEnabled = true;
             }
 
             saveSession() {
@@ -392,7 +447,7 @@
                     const session = {
                         username: this.username,
                         roomId: this.roomId,
-                        encryptionKey: this.encryption.getKeyString() || null, // Save the actual key!
+                        encryptionKey: this.encryption.getKeyString() || null,
                         chats: this.chats,
                         groups: this.groups,
                         currentChatId: this.currentChatId,
@@ -411,19 +466,10 @@
                         this.username = session.username;
                         this.roomId = session.roomId;
                         this.currentChatId = session.currentChatId;
-                        if (session.chats) {
-                            this.chats = session.chats;
-                        }
-                        if (session.groups) {
-                            this.groups = session.groups;
-                        }
-                        if (session.deletedIds) {
-                            this.deletedIds = new Set(session.deletedIds);
-                        }
-                        if (session.processedIds) {
-                            this.processedIds = new Set(session.processedIds);
-                        }
-                        // Load the encryption key if available
+                        if (session.chats) { this.chats = session.chats; }
+                        if (session.groups) { this.groups = session.groups; }
+                        if (session.deletedIds) { this.deletedIds = new Set(session.deletedIds); }
+                        if (session.processedIds) { this.processedIds = new Set(session.processedIds); }
                         if (session.encryptionKey) {
                             this.encryption.importKey(session.encryptionKey);
                         }
@@ -438,63 +484,31 @@
                 return session && session.roomId && session.username && session.encryptionKey;
             }
 
-            clearSession() {
-                localStorage.removeItem(this.storageKey + 'data');
-            }
+            clearSession() { localStorage.removeItem(this.storageKey + 'data'); }
 
             getChatId(username, isPrivate = false) {
-                if (isPrivate) {
-                    return 'private_' + username;
-                }
+                if (isPrivate) { return 'private_' + username; }
                 return 'room_' + this.roomId;
             }
 
             getChatList() {
                 const list = [];
-                
                 if (this.chats['room_' + this.roomId] && this.chats['room_' + this.roomId].messages && this.chats['room_' + this.roomId].messages.length > 0) {
-                    list.push({
-                        id: 'room_' + this.roomId,
-                        name: '💬 Group Chat',
-                        type: 'public',
-                        lastMessage: this.chats['room_' + this.roomId].lastMessage || '',
-                        lastTime: this.chats['room_' + this.roomId].lastTime || 0,
-                        unread: this.chats['room_' + this.roomId].unread || 0
-                    });
+                    list.push({ id: 'room_' + this.roomId, name: '💬 Group Chat', type: 'public', lastMessage: this.chats['room_' + this.roomId].lastMessage || '', lastTime: this.chats['room_' + this.roomId].lastTime || 0, unread: this.chats['room_' + this.roomId].unread || 0 });
                 }
-                
                 for (const [id, chat] of Object.entries(this.chats)) {
                     if (id.startsWith('private_')) {
                         const targetUser = id.replace('private_', '');
                         if (chat.messages && chat.messages.length > 0) {
-                            list.push({
-                                id: id,
-                                name: '🔒 ' + targetUser,
-                                type: 'private',
-                                targetUser: targetUser,
-                                lastMessage: chat.lastMessage || '',
-                                lastTime: chat.lastTime || 0,
-                                unread: chat.unread || 0
-                            });
+                            list.push({ id: id, name: '🔒 ' + targetUser, type: 'private', targetUser: targetUser, lastMessage: chat.lastMessage || '', lastTime: chat.lastTime || 0, unread: chat.unread || 0 });
                         }
                     }
                 }
-                
                 for (const [groupId, group] of Object.entries(this.groups)) {
                     if (group.messages && group.messages.length > 0) {
-                        list.push({
-                            id: 'group_' + groupId,
-                            name: '👥 ' + (group.name || 'Group'),
-                            type: 'group',
-                            groupId: groupId,
-                            members: group.members || [],
-                            lastMessage: group.lastMessage || '',
-                            lastTime: group.lastTime || 0,
-                            unread: group.unread || 0
-                        });
+                        list.push({ id: 'group_' + groupId, name: '👥 ' + (group.name || 'Group'), type: 'group', groupId: groupId, members: group.members || [], lastMessage: group.lastMessage || '', lastTime: group.lastTime || 0, unread: group.unread || 0 });
                     }
                 }
-                
                 list.sort((a, b) => (b.lastTime || 0) - (a.lastTime || 0));
                 return list;
             }
@@ -502,14 +516,10 @@
             getChatMessages(chatId) {
                 if (chatId.startsWith('group_')) {
                     const groupId = chatId.replace('group_', '');
-                    if (this.groups[groupId]) {
-                        return this.groups[groupId].messages || [];
-                    }
+                    if (this.groups[groupId]) { return this.groups[groupId].messages || []; }
                     return [];
                 }
-                if (this.chats[chatId]) {
-                    return this.chats[chatId].messages || [];
-                }
+                if (this.chats[chatId]) { return this.chats[chatId].messages || []; }
                 return [];
             }
 
@@ -520,43 +530,26 @@
                         this.groups[groupId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0, name: 'Group', members: [] };
                     }
                     const group = this.groups[groupId];
-                    if (message.id && group.messages.some(m => m.id === message.id)) {
-                        return false;
-                    }
-                    if (this.deletedIds.has(message.id)) {
-                        return false;
-                    }
+                    if (message.id && group.messages.some(m => m.id === message.id)) { return false; }
+                    if (this.deletedIds.has(message.id)) { return false; }
                     group.messages.push(message);
                     group.lastMessage = message.message || (message.fileName ? `📎 ${message.fileName}` : '');
                     group.lastTime = message.timestamp || Date.now();
-                    if (!isOwn && chatId !== this.currentChatId) {
-                        group.unread = (group.unread || 0) + 1;
-                    }
+                    if (!isOwn && chatId !== this.currentChatId) { group.unread = (group.unread || 0) + 1; }
                     this.saveSession();
                     if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                     return true;
                 }
-                
                 if (!this.chats[chatId]) {
                     this.chats[chatId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0 };
                 }
-                
                 const chat = this.chats[chatId];
-                if (message.id && chat.messages.some(m => m.id === message.id)) {
-                    return false;
-                }
-                if (this.deletedIds.has(message.id)) {
-                    return false;
-                }
-                
+                if (message.id && chat.messages.some(m => m.id === message.id)) { return false; }
+                if (this.deletedIds.has(message.id)) { return false; }
                 chat.messages.push(message);
                 chat.lastMessage = message.message || (message.fileName ? `📎 ${message.fileName}` : '');
                 chat.lastTime = message.timestamp || Date.now();
-                
-                if (!isOwn && chatId !== this.currentChatId) {
-                    chat.unread = (chat.unread || 0) + 1;
-                }
-                
+                if (!isOwn && chatId !== this.currentChatId) { chat.unread = (chat.unread || 0) + 1; }
                 this.saveSession();
                 if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                 return true;
@@ -565,18 +558,10 @@
             markChatRead(chatId) {
                 if (chatId.startsWith('group_')) {
                     const groupId = chatId.replace('group_', '');
-                    if (this.groups[groupId]) {
-                        this.groups[groupId].unread = 0;
-                        this.saveSession();
-                        if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                    }
+                    if (this.groups[groupId]) { this.groups[groupId].unread = 0; this.saveSession(); if (this.onChatUpdate) this.onChatUpdate(this.getChatList()); }
                     return;
                 }
-                if (this.chats[chatId]) {
-                    this.chats[chatId].unread = 0;
-                    this.saveSession();
-                    if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
-                }
+                if (this.chats[chatId]) { this.chats[chatId].unread = 0; this.saveSession(); if (this.onChatUpdate) this.onChatUpdate(this.getChatList()); }
             }
 
             async createRoom(username) {
@@ -585,12 +570,7 @@
                 await this.encryption.generateKey();
                 const key = await this.encryption.exportKey();
                 await this.connect();
-                this.ws.send(JSON.stringify({
-                    type: 'register',
-                    roomId: this.roomId,
-                    username: username,
-                    encryptionKey: key
-                }));
+                this.ws.send(JSON.stringify({ type: 'register', roomId: this.roomId, username: username, encryptionKey: key }));
                 this.saveSession();
                 return { roomId: this.roomId, encryptionKey: key };
             }
@@ -600,12 +580,7 @@
                 this.roomId = roomId;
                 await this.encryption.importKey(encryptionKey);
                 await this.connect();
-                this.ws.send(JSON.stringify({
-                    type: 'register',
-                    roomId: roomId,
-                    username: username,
-                    encryptionKey: encryptionKey
-                }));
+                this.ws.send(JSON.stringify({ type: 'register', roomId: roomId, username: username, encryptionKey: encryptionKey }));
                 this.saveSession();
             }
 
@@ -614,30 +589,19 @@
                 if (session && session.roomId && session.username && session.encryptionKey) {
                     await this.encryption.importKey(session.encryptionKey);
                     await this.connect();
-                    this.ws.send(JSON.stringify({
-                        type: 'register',
-                        roomId: session.roomId,
-                        username: session.username,
-                        encryptionKey: session.encryptionKey
-                    }));
+                    this.ws.send(JSON.stringify({ type: 'register', roomId: session.roomId, username: session.username, encryptionKey: session.encryptionKey }));
                     return true;
                 }
                 return false;
             }
 
-            generateRoomId() {
-                return Math.random().toString(36).substring(2, 10).toUpperCase();
-            }
-
-            generateMessageId() {
-                return Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6);
-            }
+            generateRoomId() { return Math.random().toString(36).substring(2, 10).toUpperCase(); }
+            generateMessageId() { return Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6); }
 
             async connect() {
                 return new Promise((resolve, reject) => {
                     try {
                         this.ws = new WebSocket(this.serverUrl);
-
                         this.ws.onopen = () => {
                             this.isConnected = true;
                             this.reconnectAttempts = 0;
@@ -645,35 +609,25 @@
                             if (this.onConnectionChange) this.onConnectionChange(true);
                             resolve();
                         };
-
                         this.ws.onmessage = async (event) => {
                             try {
                                 const data = JSON.parse(event.data);
                                 await this.handleMessage(data);
-                            } catch (e) {
-                                console.error('Message error:', e);
-                            }
+                            } catch (e) { console.error('Message error:', e); }
                         };
-
                         this.ws.onclose = () => {
                             this.isConnected = false;
                             if (this.onConnectionChange) this.onConnectionChange(false);
                             this.autoReconnect();
                         };
-
                         this.ws.onerror = (error) => {
                             console.error('WebSocket error:', error);
                             reject(new Error('Connection failed'));
                         };
-
                         setTimeout(() => {
-                            if (!this.isConnected) {
-                                reject(new Error('Timeout'));
-                            }
+                            if (!this.isConnected) { reject(new Error('Timeout')); }
                         }, 15000);
-                    } catch (error) {
-                        reject(error);
-                    }
+                    } catch (error) { reject(error); }
                 });
             }
 
@@ -683,12 +637,9 @@
                     if (this.onReconnecting) this.onReconnecting(false);
                     return;
                 }
-
                 this.reconnectAttempts++;
                 if (this.onReconnecting) this.onReconnecting(true);
-
                 console.log(`🔄 Reconnect attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
-
                 setTimeout(async () => {
                     if (this.roomId && this.username) {
                         try {
@@ -696,12 +647,7 @@
                             if (session && session.encryptionKey) {
                                 await this.encryption.importKey(session.encryptionKey);
                                 await this.connect();
-                                this.ws.send(JSON.stringify({
-                                    type: 'register',
-                                    roomId: this.roomId,
-                                    username: this.username,
-                                    encryptionKey: session.encryptionKey
-                                }));
+                                this.ws.send(JSON.stringify({ type: 'register', roomId: this.roomId, username: this.username, encryptionKey: session.encryptionKey }));
                                 console.log('✅ Reconnected successfully');
                                 if (this.onReconnecting) this.onReconnecting(false);
                             }
@@ -713,42 +659,226 @@
                 }, 3000 * Math.min(this.reconnectAttempts, 5));
             }
 
+            // ===== CALL METHODS =====
+            async startCall(targetUser, callType = 'audio') {
+                if (this.currentCall) {
+                    alert('You are already in a call');
+                    return;
+                }
+
+                try {
+                    // Get local media stream
+                    const constraints = callType === 'video' ? { audio: true, video: true } : { audio: true, video: false };
+                    this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    
+                    // Create peer connection
+                    this.peerConnection = new RTCPeerConnection({
+                        iceServers: [
+                            { urls: 'stun:stun.l.google.com:19302' },
+                            { urls: 'stun:stun1.l.google.com:19302' },
+                            { urls: 'stun:stun2.l.google.com:19302' },
+                            { urls: 'stun:stun3.l.google.com:19302' },
+                            { urls: 'stun:stun4.l.google.com:19302' }
+                        ]
+                    });
+
+                    // Add local tracks
+                    this.localStream.getTracks().forEach(track => {
+                        this.peerConnection.addTrack(track, this.localStream);
+                    });
+
+                    // Handle remote stream
+                    this.peerConnection.ontrack = (event) => {
+                        this.remoteStream = event.streams[0];
+                        if (this.onIncomingCall) {
+                            this.onIncomingCall(this.remoteStream, false);
+                        }
+                    };
+
+                    // Handle ICE candidates
+                    this.peerConnection.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            this.ws.send(JSON.stringify({
+                                type: 'call-ice',
+                                targetUser: targetUser,
+                                candidate: event.candidate
+                            }));
+                        }
+                    };
+
+                    // Create offer
+                    const offer = await this.peerConnection.createOffer();
+                    await this.peerConnection.setLocalDescription(offer);
+
+                    // Send call initiation
+                    this.ws.send(JSON.stringify({
+                        type: 'call-initiate',
+                        targetUser: targetUser,
+                        callType: callType,
+                        offer: offer
+                    }));
+
+                    this.currentCall = {
+                        targetUser: targetUser,
+                        callType: callType,
+                        isInitiator: true,
+                        active: true
+                    };
+
+                    if (this.onCallStatus) {
+                        this.onCallStatus('calling', targetUser);
+                    }
+
+                    console.log(`📞 Call initiated to ${targetUser}`);
+                } catch (error) {
+                    console.error('Call error:', error);
+                    alert('Failed to start call: ' + error.message);
+                }
+            }
+
+            async acceptCall(callId, caller, offer) {
+                if (this.currentCall) {
+                    alert('You are already in a call');
+                    return;
+                }
+
+                try {
+                    const constraints = { audio: true, video: true };
+                    this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    
+                    this.peerConnection = new RTCPeerConnection({
+                        iceServers: [
+                            { urls: 'stun:stun.l.google.com:19302' },
+                            { urls: 'stun:stun1.l.google.com:19302' },
+                            { urls: 'stun:stun2.l.google.com:19302' },
+                            { urls: 'stun:stun3.l.google.com:19302' },
+                            { urls: 'stun:stun4.l.google.com:19302' }
+                        ]
+                    });
+
+                    this.localStream.getTracks().forEach(track => {
+                        this.peerConnection.addTrack(track, this.localStream);
+                    });
+
+                    this.peerConnection.ontrack = (event) => {
+                        this.remoteStream = event.streams[0];
+                        if (this.onIncomingCall) {
+                            this.onIncomingCall(this.remoteStream, true);
+                        }
+                    };
+
+                    this.peerConnection.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            this.ws.send(JSON.stringify({
+                                type: 'call-ice',
+                                targetUser: caller,
+                                candidate: event.candidate
+                            }));
+                        }
+                    };
+
+                    await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+                    const answer = await this.peerConnection.createAnswer();
+                    await this.peerConnection.setLocalDescription(answer);
+
+                    this.ws.send(JSON.stringify({
+                        type: 'call-answer',
+                        callId: callId,
+                        answer: answer
+                    }));
+
+                    this.currentCall = {
+                        targetUser: caller,
+                        callType: 'video',
+                        isInitiator: false,
+                        active: true
+                    };
+
+                    if (this.onCallStatus) {
+                        this.onCallStatus('connected', caller);
+                    }
+
+                    console.log(`📞 Call accepted from ${caller}`);
+                } catch (error) {
+                    console.error('Accept call error:', error);
+                    alert('Failed to accept call: ' + error.message);
+                }
+            }
+
+            endCall() {
+                if (this.currentCall) {
+                    this.ws.send(JSON.stringify({
+                        type: 'call-end',
+                        callId: this.currentCall.callId || Date.now().toString(36),
+                        targetUser: this.currentCall.targetUser
+                    }));
+                }
+                this.cleanupCall();
+            }
+
+            cleanupCall() {
+                if (this.peerConnection) {
+                    this.peerConnection.close();
+                    this.peerConnection = null;
+                }
+                if (this.localStream) {
+                    this.localStream.getTracks().forEach(track => track.stop());
+                    this.localStream = null;
+                }
+                this.remoteStream = null;
+                this.currentCall = null;
+                this.isCallMuted = false;
+                this.isVideoEnabled = true;
+                if (this.callTimer) {
+                    clearInterval(this.callTimer);
+                    this.callTimer = null;
+                }
+                this.callSeconds = 0;
+                if (this.onCallEnded) {
+                    this.onCallEnded();
+                }
+                console.log('📞 Call ended');
+            }
+
+            toggleMute() {
+                if (this.localStream) {
+                    this.isCallMuted = !this.isCallMuted;
+                    this.localStream.getAudioTracks().forEach(track => {
+                        track.enabled = !this.isCallMuted;
+                    });
+                    if (this.onCallMuteToggle) {
+                        this.onCallMuteToggle(this.isCallMuted);
+                    }
+                }
+            }
+
+            toggleVideo() {
+                if (this.localStream) {
+                    this.isVideoEnabled = !this.isVideoEnabled;
+                    this.localStream.getVideoTracks().forEach(track => {
+                        track.enabled = this.isVideoEnabled;
+                    });
+                    if (this.onCallVideoToggle) {
+                        this.onCallVideoToggle(this.isVideoEnabled);
+                    }
+                }
+            }
+
             // ===== GROUP METHODS =====
             createGroup(groupName, members) {
-                this.ws.send(JSON.stringify({
-                    type: 'create-group',
-                    groupName: groupName,
-                    members: members
-                }));
+                this.ws.send(JSON.stringify({ type: 'create-group', groupName: groupName, members: members }));
             }
 
             sendGroupMessage(groupId, text) {
                 if (!text.trim()) return;
-                
                 const id = this.generateMessageId();
                 const encrypted = this.encryption.encrypt(text);
-                
-                this.ws.send(JSON.stringify({
-                    type: 'group-message',
-                    groupId: groupId,
-                    message: encrypted,
-                    id: id
-                }));
-                
-                const msg = {
-                    id: id,
-                    sender: this.username,
-                    message: text,
-                    timestamp: Date.now(),
-                    groupId: groupId
-                };
-                
+                this.ws.send(JSON.stringify({ type: 'group-message', groupId: groupId, message: encrypted, id: id }));
+                const msg = { id: id, sender: this.username, message: text, timestamp: Date.now(), groupId: groupId };
                 this.processedIds.add(id);
                 const chatId = 'group_' + groupId;
                 this.addMessageToChat(chatId, msg, true);
-                if (this.onMessage) {
-                    this.onMessage(msg, true, chatId);
-                }
+                if (this.onMessage) { this.onMessage(msg, true, chatId); }
                 this.saveSession();
                 if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
             }
@@ -758,39 +888,15 @@
                 const fileName = file.name;
                 const fileSize = file.size;
                 const fileType = file.type || 'application/octet-stream';
-                
                 const reader = new FileReader();
                 reader.onload = async (e) => {
                     const base64 = e.target.result.split(',')[1];
-                    
-                    this.ws.send(JSON.stringify({
-                        type: 'group-file',
-                        groupId: groupId,
-                        id: id,
-                        fileName: fileName,
-                        fileSize: fileSize,
-                        fileType: fileType,
-                        fileData: base64
-                    }));
-                    
-                    const msg = {
-                        id: id,
-                        sender: this.username,
-                        fileName: fileName,
-                        fileSize: fileSize,
-                        fileType: fileType,
-                        fileData: base64,
-                        timestamp: Date.now(),
-                        groupId: groupId,
-                        isFile: true
-                    };
-                    
+                    this.ws.send(JSON.stringify({ type: 'group-file', groupId: groupId, id: id, fileName: fileName, fileSize: fileSize, fileType: fileType, fileData: base64 }));
+                    const msg = { id: id, sender: this.username, fileName: fileName, fileSize: fileSize, fileType: fileType, fileData: base64, timestamp: Date.now(), groupId: groupId, isFile: true };
                     this.processedIds.add(id);
                     const chatId = 'group_' + groupId;
                     this.addMessageToChat(chatId, msg, true);
-                    if (this.onMessage) {
-                        this.onMessage(msg, true, chatId);
-                    }
+                    if (this.onMessage) { this.onMessage(msg, true, chatId); }
                     this.saveSession();
                     if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                 };
@@ -798,18 +904,11 @@
             }
 
             addToGroup(groupId, username) {
-                this.ws.send(JSON.stringify({
-                    type: 'add-to-group',
-                    groupId: groupId,
-                    newMember: username
-                }));
+                this.ws.send(JSON.stringify({ type: 'add-to-group', groupId: groupId, newMember: username }));
             }
 
             leaveGroup(groupId) {
-                this.ws.send(JSON.stringify({
-                    type: 'leave-group',
-                    groupId: groupId
-                }));
+                this.ws.send(JSON.stringify({ type: 'leave-group', groupId: groupId }));
                 if (this.groups[groupId]) {
                     delete this.groups[groupId];
                     this.saveSession();
@@ -820,18 +919,9 @@
             deleteMessage(messageId, isPrivate = false, targetUser = null, isGroup = false, groupId = null) {
                 this.deletedIds.add(messageId);
                 if (isGroup && groupId) {
-                    this.ws.send(JSON.stringify({
-                        type: 'delete-group-message',
-                        groupId: groupId,
-                        messageId: messageId
-                    }));
+                    this.ws.send(JSON.stringify({ type: 'delete-group-message', groupId: groupId, messageId: messageId }));
                 } else {
-                    this.ws.send(JSON.stringify({
-                        type: 'delete-message',
-                        messageId: messageId,
-                        isPrivate: isPrivate,
-                        targetUser: targetUser
-                    }));
+                    this.ws.send(JSON.stringify({ type: 'delete-message', messageId: messageId, isPrivate: isPrivate, targetUser: targetUser }));
                 }
                 this.removeMessageFromChat(messageId);
                 this.saveSession();
@@ -855,7 +945,6 @@
                         return;
                     }
                 }
-                
                 for (const [groupId, group] of Object.entries(this.groups)) {
                     const index = group.messages.findIndex(m => m.id === messageId);
                     if (index !== -1) {
@@ -878,15 +967,9 @@
             clearChat(chatId) {
                 if (chatId.startsWith('group_')) {
                     const groupId = chatId.replace('group_', '');
-                    this.ws.send(JSON.stringify({
-                        type: 'clear-chat',
-                        chatType: 'group',
-                        targetUser: groupId
-                    }));
+                    this.ws.send(JSON.stringify({ type: 'clear-chat', chatType: 'group', targetUser: groupId }));
                     if (this.groups[groupId]) {
-                        for (const msg of this.groups[groupId].messages) {
-                            this.deletedIds.add(msg.id);
-                        }
+                        for (const msg of this.groups[groupId].messages) { this.deletedIds.add(msg.id); }
                         this.groups[groupId].messages = [];
                         this.groups[groupId].lastMessage = null;
                         this.groups[groupId].lastTime = 0;
@@ -896,20 +979,11 @@
                     }
                     return;
                 }
-                
                 const isPrivate = chatId.startsWith('private_');
                 const targetUser = isPrivate ? chatId.replace('private_', '') : null;
-                
-                this.ws.send(JSON.stringify({
-                    type: 'clear-chat',
-                    chatType: isPrivate ? 'private' : 'public',
-                    targetUser: targetUser
-                }));
-                
+                this.ws.send(JSON.stringify({ type: 'clear-chat', chatType: isPrivate ? 'private' : 'public', targetUser: targetUser }));
                 if (this.chats[chatId]) {
-                    for (const msg of this.chats[chatId].messages) {
-                        this.deletedIds.add(msg.id);
-                    }
+                    for (const msg of this.chats[chatId].messages) { this.deletedIds.add(msg.id); }
                     this.chats[chatId].messages = [];
                     this.chats[chatId].lastMessage = null;
                     this.chats[chatId].lastTime = 0;
@@ -932,9 +1006,7 @@
                             msg.message = decrypted;
                             if (msg.sender !== this.username) {
                                 const added = this.addMessageToChat(chatId, msg, false);
-                                if (added && this.onMessage) {
-                                    this.onMessage(msg, false, chatId);
-                                }
+                                if (added && this.onMessage) { this.onMessage(msg, false, chatId); }
                             }
                         }
                         this.saveSession();
@@ -952,9 +1024,7 @@
                             msg.isPrivate = true;
                             const isOwn = msg.sender === this.username;
                             const added = this.addMessageToChat(chatId, msg, isOwn);
-                            if (added && this.onMessage) {
-                                this.onMessage(msg, isOwn, chatId);
-                            }
+                            if (added && this.onMessage) { this.onMessage(msg, isOwn, chatId); }
                         }
                         this.saveSession();
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
@@ -972,9 +1042,7 @@
                             const chatId = 'group_' + data.groupId;
                             const isOwn = msg.sender === this.username;
                             const added = this.addMessageToChat(chatId, msg, isOwn);
-                            if (added && this.onMessage) {
-                                this.onMessage(msg, isOwn, chatId);
-                            }
+                            if (added && this.onMessage) { this.onMessage(msg, isOwn, chatId); }
                         }
                         this.saveSession();
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
@@ -982,23 +1050,11 @@
 
                     case 'group-created':
                         if (!this.groups[data.groupId]) {
-                            this.groups[data.groupId] = { 
-                                messages: [], 
-                                unread: 0, 
-                                lastMessage: null, 
-                                lastTime: 0, 
-                                name: data.groupName || 'Group',
-                                members: data.members || []
-                            };
+                            this.groups[data.groupId] = { messages: [], unread: 0, lastMessage: null, lastTime: 0, name: data.groupName || 'Group', members: data.members || [] };
                             this.saveSession();
                             if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                             if (this.onMessage) {
-                                this.onMessage({ 
-                                    sender: 'System', 
-                                    message: `📢 Group "${data.groupName}" created by ${data.createdBy}`,
-                                    timestamp: Date.now(),
-                                    isSystem: true
-                                }, false, 'group_' + data.groupId);
+                                this.onMessage({ sender: 'System', message: `📢 Group "${data.groupName}" created by ${data.createdBy}`, timestamp: Date.now(), isSystem: true }, false, 'group_' + data.groupId);
                             }
                         }
                         break;
@@ -1011,9 +1067,7 @@
                         const gChatId = 'group_' + data.message.groupId;
                         const gIsOwn = data.message.sender === this.username;
                         const gAdded = this.addMessageToChat(gChatId, data.message, gIsOwn);
-                        if (gAdded && this.onMessage) {
-                            this.onMessage(data.message, gIsOwn, gChatId);
-                        }
+                        if (gAdded && this.onMessage) { this.onMessage(data.message, gIsOwn, gChatId); }
                         this.saveSession();
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
@@ -1025,9 +1079,7 @@
                         const gfChatId = 'group_' + data.message.groupId;
                         const gfIsOwn = data.message.sender === this.username;
                         const gfAdded = this.addMessageToChat(gfChatId, data.message, gfIsOwn);
-                        if (gfAdded && this.onMessage) {
-                            this.onMessage(data.message, gfIsOwn, gfChatId);
-                        }
+                        if (gfAdded && this.onMessage) { this.onMessage(data.message, gfIsOwn, gfChatId); }
                         this.saveSession();
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
@@ -1038,12 +1090,7 @@
                             this.saveSession();
                             if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                             if (this.onMessage) {
-                                this.onMessage({ 
-                                    sender: 'System', 
-                                    message: `➕ ${data.member} added to group by ${data.addedBy}`,
-                                    timestamp: Date.now(),
-                                    isSystem: true
-                                }, false, 'group_' + data.groupId);
+                                this.onMessage({ sender: 'System', message: `➕ ${data.member} added to group by ${data.addedBy}`, timestamp: Date.now(), isSystem: true }, false, 'group_' + data.groupId);
                             }
                         }
                         break;
@@ -1054,12 +1101,7 @@
                             this.saveSession();
                             if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                             if (this.onMessage) {
-                                this.onMessage({ 
-                                    sender: 'System', 
-                                    message: `🚪 ${data.member} left the group`,
-                                    timestamp: Date.now(),
-                                    isSystem: true
-                                }, false, 'group_' + data.groupId);
+                                this.onMessage({ sender: 'System', message: `🚪 ${data.member} left the group`, timestamp: Date.now(), isSystem: true }, false, 'group_' + data.groupId);
                             }
                         }
                         break;
@@ -1072,9 +1114,7 @@
                         data.message.message = decrypted;
                         if (data.message.sender !== this.username) {
                             const added = this.addMessageToChat(chatId, data.message, false);
-                            if (added && this.onMessage) {
-                                this.onMessage(data.message, false, chatId);
-                            }
+                            if (added && this.onMessage) { this.onMessage(data.message, false, chatId); }
                         }
                         this.saveSession();
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
@@ -1090,9 +1130,7 @@
                         data.message.isPrivate = true;
                         const isOwn = data.message.sender === this.username;
                         const added = this.addMessageToChat(pChatId, data.message, isOwn);
-                        if (added && this.onMessage) {
-                            this.onMessage(data.message, isOwn, pChatId);
-                        }
+                        if (added && this.onMessage) { this.onMessage(data.message, isOwn, pChatId); }
                         this.saveSession();
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
                         break;
@@ -1111,9 +1149,7 @@
                         data.message.isFile = true;
                         if (data.message.sender !== this.username) {
                             const added = this.addMessageToChat(fileChatId, data.message, false);
-                            if (added && this.onMessage) {
-                                this.onMessage(data.message, false, fileChatId);
-                            }
+                            if (added && this.onMessage) { this.onMessage(data.message, false, fileChatId); }
                         }
                         this.saveSession();
                         if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
@@ -1122,15 +1158,70 @@
                     case 'message-deleted':
                         this.deletedIds.add(data.messageId);
                         this.removeMessageFromChat(data.messageId);
-                        if (this.onMessageDeleted) {
-                            this.onMessageDeleted(data.messageId);
-                        }
+                        if (this.onMessageDeleted) { this.onMessageDeleted(data.messageId); }
                         break;
 
                     case 'chat-cleared':
                         this.handleChatCleared(data.chatId);
-                        if (this.onChatCleared) {
-                            this.onChatCleared(data.chatId);
+                        if (this.onChatCleared) { this.onChatCleared(data.chatId); }
+                        break;
+
+                    // ===== CALL MESSAGES =====
+                    case 'call-incoming':
+                        if (this.onIncomingCall) {
+                            this.onIncomingCall(data.caller, data.callType, data.callId, data.offer);
+                        }
+                        break;
+
+                    case 'call-answered':
+                        if (this.currentCall && this.currentCall.isInitiator) {
+                            // Set remote description from answer
+                            if (this.peerConnection) {
+                                try {
+                                    await this.peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+                                    if (this.onCallStatus) {
+                                        this.onCallStatus('connected', this.currentCall.targetUser);
+                                    }
+                                    // Start timer
+                                    this.callSeconds = 0;
+                                    this.callTimer = setInterval(() => {
+                                        this.callSeconds++;
+                                        if (this.onCallTimer) {
+                                            this.onCallTimer(this.callSeconds);
+                                        }
+                                    }, 1000);
+                                } catch (error) {
+                                    console.error('Set remote description error:', error);
+                                }
+                            }
+                        }
+                        break;
+
+                    case 'call-rejected':
+                        if (this.currentCall) {
+                            if (this.onCallStatus) {
+                                this.onCallStatus('rejected', this.currentCall.targetUser);
+                            }
+                            this.cleanupCall();
+                        }
+                        break;
+
+                    case 'call-ended':
+                        if (this.currentCall) {
+                            if (this.onCallStatus) {
+                                this.onCallStatus('ended', this.currentCall.targetUser);
+                            }
+                            this.cleanupCall();
+                        }
+                        break;
+
+                    case 'call-ice':
+                        if (this.peerConnection) {
+                            try {
+                                await this.peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                            } catch (error) {
+                                console.error('ICE candidate error:', error);
+                            }
                         }
                         break;
 
@@ -1147,9 +1238,7 @@
                         break;
 
                     case 'typing':
-                        if (this.onTyping) {
-                            this.onTyping(data.username, data.isTyping);
-                        }
+                        if (this.onTyping) { this.onTyping(data.username, data.isTyping); }
                         break;
 
                     case 'pong':
@@ -1164,9 +1253,7 @@
                 if (chatId.startsWith('group_')) {
                     const groupId = chatId.replace('group_', '');
                     if (this.groups[groupId]) {
-                        for (const msg of this.groups[groupId].messages) {
-                            this.deletedIds.add(msg.id);
-                        }
+                        for (const msg of this.groups[groupId].messages) { this.deletedIds.add(msg.id); }
                         this.groups[groupId].messages = [];
                         this.groups[groupId].lastMessage = null;
                         this.groups[groupId].lastTime = 0;
@@ -1177,9 +1264,7 @@
                     return;
                 }
                 if (this.chats[chatId]) {
-                    for (const msg of this.chats[chatId].messages) {
-                        this.deletedIds.add(msg.id);
-                    }
+                    for (const msg of this.chats[chatId].messages) { this.deletedIds.add(msg.id); }
                     this.chats[chatId].messages = [];
                     this.chats[chatId].lastMessage = null;
                     this.chats[chatId].lastTime = 0;
@@ -1191,35 +1276,14 @@
 
             async sendMessage(text, isPrivate = false, targetUser = null) {
                 if (!text.trim()) return;
-
                 const id = this.generateMessageId();
                 const encrypted = await this.encryption.encrypt(text);
-                
-                this.ws.send(JSON.stringify({
-                    type: 'message',
-                    message: encrypted,
-                    isPrivate: isPrivate,
-                    targetUser: targetUser,
-                    id: id
-                }));
-
+                this.ws.send(JSON.stringify({ type: 'message', message: encrypted, isPrivate: isPrivate, targetUser: targetUser, id: id }));
                 const chatId = isPrivate ? this.getChatId(targetUser, true) : this.getChatId('room', false);
-                
-                const msg = {
-                    id: id,
-                    sender: this.username,
-                    message: text,
-                    timestamp: Date.now(),
-                    isPrivate: isPrivate,
-                    targetUser: targetUser
-                };
-                
+                const msg = { id: id, sender: this.username, message: text, timestamp: Date.now(), isPrivate: isPrivate, targetUser: targetUser };
                 this.processedIds.add(id);
                 this.addMessageToChat(chatId, msg, true);
-                
-                if (this.onMessage) {
-                    this.onMessage(msg, true, chatId);
-                }
+                if (this.onMessage) { this.onMessage(msg, true, chatId); }
                 this.saveSession();
                 if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
             }
@@ -1229,47 +1293,17 @@
                 const fileName = file.name;
                 const fileSize = file.size;
                 const fileType = file.type || 'application/octet-stream';
-
                 const encryptedData = await this.encryption.encryptFile(file);
                 const uint8Array = new Uint8Array(encryptedData);
                 let binary = '';
-                for (let i = 0; i < uint8Array.length; i++) {
-                    binary += String.fromCharCode(uint8Array[i]);
-                }
+                for (let i = 0; i < uint8Array.length; i++) { binary += String.fromCharCode(uint8Array[i]); }
                 const base64Data = btoa(binary);
-
-                this.ws.send(JSON.stringify({
-                    type: 'file',
-                    id: id,
-                    fileName: fileName,
-                    fileSize: fileSize,
-                    fileType: fileType,
-                    fileData: base64Data,
-                    isPrivate: isPrivate,
-                    targetUser: targetUser
-                }));
-
+                this.ws.send(JSON.stringify({ type: 'file', id: id, fileName: fileName, fileSize: fileSize, fileType: fileType, fileData: base64Data, isPrivate: isPrivate, targetUser: targetUser }));
                 const chatId = isPrivate ? this.getChatId(targetUser, true) : this.getChatId('room', false);
-                
-                const msg = {
-                    id: id,
-                    sender: this.username,
-                    fileName: fileName,
-                    fileSize: fileSize,
-                    fileType: fileType,
-                    fileData: base64Data,
-                    timestamp: Date.now(),
-                    isPrivate: isPrivate,
-                    targetUser: targetUser,
-                    isFile: true
-                };
-                
+                const msg = { id: id, sender: this.username, fileName: fileName, fileSize: fileSize, fileType: fileType, fileData: base64Data, timestamp: Date.now(), isPrivate: isPrivate, targetUser: targetUser, isFile: true };
                 this.processedIds.add(id);
                 this.addMessageToChat(chatId, msg, true);
-                
-                if (this.onMessage) {
-                    this.onMessage(msg, true, chatId);
-                }
+                if (this.onMessage) { this.onMessage(msg, true, chatId); }
                 this.saveSession();
                 if (this.onChatUpdate) this.onChatUpdate(this.getChatList());
             }
@@ -1278,9 +1312,7 @@
                 try {
                     const binaryString = atob(fileData.fileData);
                     const bytes = new Uint8Array(binaryString.length);
-                    for (let i = 0; i < binaryString.length; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
+                    for (let i = 0; i < binaryString.length; i++) { bytes[i] = binaryString.charCodeAt(i); }
                     const decrypted = await this.encryption.decryptFile(bytes.buffer);
                     const blob = new Blob([decrypted], { type: fileData.fileType || 'application/octet-stream' });
                     const url = URL.createObjectURL(blob);
@@ -1299,22 +1331,14 @@
 
             sendTyping(isTyping) {
                 if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
-                this.ws.send(JSON.stringify({
-                    type: 'typing',
-                    isTyping: isTyping
-                }));
+                this.ws.send(JSON.stringify({ type: 'typing', isTyping: isTyping }));
             }
 
-            getUsers() {
-                return this.roomUsers || [];
-            }
+            getUsers() { return this.roomUsers || []; }
 
             leave() {
                 if (this.ws) {
-                    try {
-                        this.ws.send(JSON.stringify({ type: 'leave' }));
-                        this.ws.close();
-                    } catch (e) {}
+                    try { this.ws.send(JSON.stringify({ type: 'leave' })); this.ws.close(); } catch (e) {}
                 }
                 this.clearSession();
                 this.isConnected = false;
@@ -1324,6 +1348,7 @@
                 this.chats = {};
                 this.groups = {};
                 this.currentChatId = null;
+                this.cleanupCall();
             }
 
             startPrivateChat(targetUser) {
@@ -1365,6 +1390,8 @@
             const newChatBtn = document.getElementById('new-chat-btn');
             const newGroupBtn = document.getElementById('new-group-btn');
             const clearChatBtn = document.getElementById('clear-chat-btn');
+            const callBtn = document.getElementById('call-btn');
+            const videoCallBtn = document.getElementById('video-call-btn');
             const modal = document.getElementById('new-chat-modal');
             const closeModal = document.getElementById('close-modal');
             const contactSearch = document.getElementById('contact-search');
@@ -1378,6 +1405,17 @@
             const reconnectBanner = document.getElementById('reconnect-banner');
             const contextMenu = document.getElementById('context-menu');
             const deleteMsgBtn = document.getElementById('delete-msg-btn');
+            const callOverlay = document.getElementById('call-overlay');
+            const callAvatar = document.getElementById('call-avatar');
+            const callerName = document.getElementById('caller-name');
+            const callStatus = document.getElementById('call-status');
+            const callTimer = document.getElementById('call-timer');
+            const callEndBtn = document.getElementById('call-end-btn');
+            const callMuteBtn = document.getElementById('call-mute-btn');
+            const callVideoToggle = document.getElementById('call-video-toggle');
+            const remoteVideo = document.getElementById('remote-video');
+            const localVideo = document.getElementById('local-video');
+            const callVideos = document.getElementById('call-videos');
 
             let currentChatId = null;
             let currentChatType = null;
@@ -1388,6 +1426,162 @@
             let selectedMessageTarget = null;
             let selectedGroupMembers = [];
             let currentGroupId = null;
+            let incomingCallData = null;
+            let isInCall = false;
+
+            // ---- CALL UI FUNCTIONS ----
+            function showCallUI(caller, callType, callId, offer) {
+                isInCall = true;
+                callOverlay.classList.add('active');
+                callAvatar.textContent = callType === 'video' ? '📹' : '📞';
+                callerName.textContent = caller;
+                callStatus.textContent = 'Incoming call...';
+                callTimer.textContent = '';
+                
+                if (callType === 'video') {
+                    callVideoToggle.style.display = 'inline-block';
+                } else {
+                    callVideoToggle.style.display = 'none';
+                }
+                
+                incomingCallData = { caller, callType, callId, offer };
+                
+                // Show accept/reject buttons
+                const buttons = document.querySelector('.call-buttons');
+                buttons.innerHTML = `
+                    <button class="call-end" id="call-reject-btn" style="background:#ff4444;color:#fff;">❌</button>
+                    <button class="call-mute" id="call-accept-btn" style="background:#00ff88;color:#000;">📞</button>
+                `;
+                
+                document.getElementById('call-reject-btn').addEventListener('click', () => {
+                    chat.ws.send(JSON.stringify({
+                        type: 'call-reject',
+                        callId: callId
+                    }));
+                    hideCallUI();
+                });
+                
+                document.getElementById('call-accept-btn').addEventListener('click', () => {
+                    chat.acceptCall(callId, caller, offer);
+                    // Update UI to active call
+                    buttons.innerHTML = `
+                        <button class="call-mute" id="call-mute-btn">🎤</button>
+                        <button class="call-end" id="call-end-btn">📞</button>
+                        ${callType === 'video' ? '<button class="call-video" id="call-video-toggle">📹</button>' : ''}
+                    `;
+                    document.getElementById('call-end-btn').addEventListener('click', () => {
+                        chat.endCall();
+                        hideCallUI();
+                    });
+                    document.getElementById('call-mute-btn').addEventListener('click', () => {
+                        chat.toggleMute();
+                    });
+                    if (callType === 'video') {
+                        document.getElementById('call-video-toggle').addEventListener('click', () => {
+                            chat.toggleVideo();
+                        });
+                    }
+                    callStatus.textContent = 'Connected';
+                    callTimer.textContent = '00:00';
+                    // Show video if video call
+                    if (callType === 'video') {
+                        callVideos.style.display = 'flex';
+                        if (chat.localStream) {
+                            localVideo.srcObject = chat.localStream;
+                        }
+                    }
+                });
+            }
+
+            function hideCallUI() {
+                isInCall = false;
+                callOverlay.classList.remove('active');
+                callVideos.style.display = 'none';
+                remoteVideo.srcObject = null;
+                localVideo.srcObject = null;
+                callTimer.textContent = '';
+                incomingCallData = null;
+                // Reset buttons
+                document.querySelector('.call-buttons').innerHTML = `
+                    <button class="call-mute" id="call-mute-btn">🎤</button>
+                    <button class="call-end" id="call-end-btn">📞</button>
+                    <button class="call-video" id="call-video-toggle" style="display:none;">📹</button>
+                `;
+                // Re-bind events
+                document.getElementById('call-end-btn').addEventListener('click', () => {
+                    chat.endCall();
+                    hideCallUI();
+                });
+                document.getElementById('call-mute-btn').addEventListener('click', () => {
+                    chat.toggleMute();
+                });
+                document.getElementById('call-video-toggle').addEventListener('click', () => {
+                    chat.toggleVideo();
+                });
+            }
+
+            // ---- CALL CALLBACKS ----
+            chat.onIncomingCall = (caller, callType, callId, offer) => {
+                showCallUI(caller, callType, callId, offer);
+            };
+
+            chat.onCallStatus = (status, targetUser) => {
+                if (status === 'calling') {
+                    callStatus.textContent = `Calling ${targetUser}...`;
+                    callTimer.textContent = '';
+                } else if (status === 'connected') {
+                    callStatus.textContent = `Connected to ${targetUser}`;
+                    callTimer.textContent = '00:00';
+                } else if (status === 'rejected') {
+                    callStatus.textContent = `Call rejected`;
+                    setTimeout(hideCallUI, 1500);
+                } else if (status === 'ended') {
+                    callStatus.textContent = `Call ended`;
+                    setTimeout(hideCallUI, 1000);
+                }
+            };
+
+            chat.onCallTimer = (seconds) => {
+                const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+                const secs = String(seconds % 60).padStart(2, '0');
+                callTimer.textContent = `${mins}:${secs}`;
+            };
+
+            chat.onCallEnded = () => {
+                hideCallUI();
+            };
+
+            chat.onCallMuteToggle = (muted) => {
+                if (muted) {
+                    callMuteBtn.textContent = '🔇';
+                    callMuteBtn.classList.add('muted');
+                } else {
+                    callMuteBtn.textContent = '🎤';
+                    callMuteBtn.classList.remove('muted');
+                }
+            };
+
+            chat.onCallVideoToggle = (enabled) => {
+                if (enabled) {
+                    callVideoToggle.textContent = '📹';
+                    callVideoToggle.classList.remove('video-off');
+                } else {
+                    callVideoToggle.textContent = '🚫';
+                    callVideoToggle.classList.add('video-off');
+                }
+            };
+
+            chat.onIncomingCall = (caller, callType, callId, offer) => {
+                // If already in a call, reject
+                if (isInCall) {
+                    chat.ws.send(JSON.stringify({
+                        type: 'call-reject',
+                        callId: callId
+                    }));
+                    return;
+                }
+                showCallUI(caller, callType, callId, offer);
+            };
 
             // ---- RECONNECT BANNER ----
             chat.onReconnecting = (isReconnecting) => {
@@ -1399,20 +1593,13 @@
                 }
             };
 
-            // ============================================================
-            //  AUTO-RESTORE SESSION - NO PROMPT IF KEY EXISTS
-            // ============================================================
+            // ---- RESTORE SESSION ----
             async function restoreSession() {
                 const session = chat.loadSession();
-                
-                // Check if we have a valid saved session with key
                 if (session && session.roomId && session.username && session.encryptionKey) {
                     try {
                         console.log('🔄 Auto-restoring session...');
-                        // Import the saved key
                         await chat.encryption.importKey(session.encryptionKey);
-                        
-                        // Connect and register
                         await chat.connect();
                         chat.ws.send(JSON.stringify({
                             type: 'register',
@@ -1420,30 +1607,23 @@
                             username: session.username,
                             encryptionKey: session.encryptionKey
                         }));
-                        
                         setupScreen.classList.remove('active');
                         chatScreen.classList.add('active');
                         messageInput.disabled = false;
                         sendBtn.disabled = false;
                         fileBtn.disabled = false;
-                        
+                        callBtn.disabled = false;
+                        videoCallBtn.disabled = false;
                         showSystemMessage('🔗 Auto-reconnected to room!');
                         renderChatList();
                         updateContacts();
-                        
-                        if (session.currentChatId) {
-                            selectChat(session.currentChatId);
-                        }
+                        if (session.currentChatId) { selectChat(session.currentChatId); }
                         return true;
                     } catch (e) {
                         console.error('Auto-restore failed:', e);
-                        // Fall through to manual restore
                     }
                 }
-                
-                // No valid session or auto-restore failed - check if we have partial session
                 if (session && session.roomId && session.username) {
-                    // We have room ID and username but no key - ask for key
                     const key = prompt(`Welcome back ${session.username}!\nRoom: ${session.roomId}\nEnter encryption key to reconnect:`);
                     if (key) {
                         try {
@@ -1460,12 +1640,12 @@
                             messageInput.disabled = false;
                             sendBtn.disabled = false;
                             fileBtn.disabled = false;
+                            callBtn.disabled = false;
+                            videoCallBtn.disabled = false;
                             showSystemMessage('🔗 Reconnected to room!');
                             renderChatList();
                             updateContacts();
-                            if (session.currentChatId) {
-                                selectChat(session.currentChatId);
-                            }
+                            if (session.currentChatId) { selectChat(session.currentChatId); }
                             return true;
                         } catch (e) {
                             console.error('Reconnect failed:', e);
@@ -1481,10 +1661,7 @@
                 return false;
             }
 
-            // Try to restore session on load (no user interaction needed if key exists)
-            setTimeout(() => {
-                restoreSession();
-            }, 300);
+            setTimeout(() => { restoreSession(); }, 300);
 
             // ---- CHAT CALLBACKS ----
             chat.onMessage = (msg, isOwn, chatId) => {
@@ -1539,9 +1716,7 @@
                 if (msgElement) {
                     msgElement.classList.add('deleted');
                     setTimeout(() => {
-                        if (msgElement.parentNode) {
-                            msgElement.remove();
-                        }
+                        if (msgElement.parentNode) { msgElement.remove(); }
                     }, 300);
                 }
             };
@@ -1564,15 +1739,11 @@
                     username: u,
                     isOnline: true
                 }));
-                
                 for (const [id, chatData] of Object.entries(chat.chats)) {
                     if (id.startsWith('private_')) {
                         const targetUser = id.replace('private_', '');
                         if (!allContacts.find(c => c.username === targetUser)) {
-                            allContacts.push({
-                                username: targetUser,
-                                isOnline: false
-                            });
+                            allContacts.push({ username: targetUser, isOnline: false });
                         }
                     }
                 }
@@ -1581,10 +1752,7 @@
             // ---- RENDER CONTACT LIST ----
             function renderContacts(filter = '') {
                 const search = filter.toLowerCase();
-                const filtered = allContacts.filter(c => 
-                    c.username.toLowerCase().includes(search)
-                );
-
+                const filtered = allContacts.filter(c => c.username.toLowerCase().includes(search));
                 if (filtered.length === 0) {
                     contactList.innerHTML = `
                         <div class="no-contacts">
@@ -1595,9 +1763,8 @@
                     `;
                     return;
                 }
-
                 contactList.innerHTML = filtered.map(contact => `
-                    <div class="contact-item" onclick="window.startPrivateChat('${contact.username}')">
+                    <div class="contact-item">
                         <div class="avatar">${contact.username.charAt(0).toUpperCase()}</div>
                         <div class="contact-info">
                             <div class="name">${contact.username}</div>
@@ -1605,9 +1772,9 @@
                                 ${contact.isOnline ? '🟢 Online' : '⚪ Offline'}
                             </div>
                         </div>
-                        <button class="start-chat-btn" onclick="event.stopPropagation(); window.startPrivateChat('${contact.username}')">
-                            💬 Chat
-                        </button>
+                        <button class="start-chat-btn" onclick="window.startPrivateChat('${contact.username}')">💬 Chat</button>
+                        ${contact.isOnline ? `<button class="call-btn" onclick="window.startCall('${contact.username}', 'audio')">📞</button>` : ''}
+                        ${contact.isOnline ? `<button class="call-btn" onclick="window.startCall('${contact.username}', 'video')">📹</button>` : ''}
                     </div>
                 `).join('');
             }
@@ -1616,10 +1783,8 @@
             function renderGroupMembers(filter = '') {
                 const search = filter.toLowerCase();
                 const filtered = allContacts.filter(c => 
-                    c.username.toLowerCase().includes(search) && 
-                    !selectedGroupMembers.includes(c.username)
+                    c.username.toLowerCase().includes(search) && !selectedGroupMembers.includes(c.username)
                 );
-
                 if (filtered.length === 0) {
                     groupMemberList.innerHTML = `
                         <div class="no-contacts">
@@ -1630,7 +1795,6 @@
                     `;
                     return;
                 }
-
                 groupMemberList.innerHTML = filtered.map(contact => `
                     <div class="contact-item" onclick="toggleGroupMember('${contact.username}')">
                         <div class="avatar">${contact.username.charAt(0).toUpperCase()}</div>
@@ -1648,11 +1812,7 @@
             // ---- TOGGLE GROUP MEMBER ----
             window.toggleGroupMember = function(username) {
                 const index = selectedGroupMembers.indexOf(username);
-                if (index === -1) {
-                    selectedGroupMembers.push(username);
-                } else {
-                    selectedGroupMembers.splice(index, 1);
-                }
+                if (index === -1) { selectedGroupMembers.push(username); } else { selectedGroupMembers.splice(index, 1); }
                 renderGroupMembers(groupMemberSearch.value);
             };
 
@@ -1660,10 +1820,8 @@
             createBtn.addEventListener('click', async () => {
                 const username = document.getElementById('create-username').value.trim();
                 if (!username) { alert('Please enter a username'); return; }
-
                 createBtn.disabled = true;
                 createBtn.textContent = 'Creating...';
-
                 try {
                     const roomInfo = await chat.createRoom(username);
                     setupScreen.classList.remove('active');
@@ -1671,17 +1829,13 @@
                     messageInput.disabled = false;
                     sendBtn.disabled = false;
                     fileBtn.disabled = false;
-
+                    callBtn.disabled = false;
+                    videoCallBtn.disabled = false;
                     const info = `Room ID: ${roomInfo.roomId}\nEncryption Key: ${roomInfo.encryptionKey}`;
-                    navigator.clipboard.writeText(info).then(() => {
-                        showSystemMessage('📋 Room info copied! Share with friends.');
-                    });
+                    navigator.clipboard.writeText(info).then(() => { showSystemMessage('📋 Room info copied! Share with friends.'); });
                     showSystemMessage(`🚀 Workspace created! ID: ${roomInfo.roomId}`);
                     renderChatList();
-
-                } catch (error) {
-                    alert('Failed: ' + error.message);
-                } finally {
+                } catch (error) { alert('Failed: ' + error.message); } finally {
                     createBtn.disabled = false;
                     createBtn.textContent = 'Create Workspace';
                 }
@@ -1692,15 +1846,9 @@
                 const roomId = document.getElementById('join-room-id').value.trim().toUpperCase();
                 const key = document.getElementById('join-encryption-key').value.trim();
                 const username = document.getElementById('join-username').value.trim();
-
-                if (!roomId || !key || !username) {
-                    alert('Please fill in all fields');
-                    return;
-                }
-
+                if (!roomId || !key || !username) { alert('Please fill in all fields'); return; }
                 joinBtn.disabled = true;
                 joinBtn.textContent = 'Joining...';
-
                 try {
                     await chat.joinRoom(roomId, username, key);
                     setupScreen.classList.remove('active');
@@ -1708,12 +1856,11 @@
                     messageInput.disabled = false;
                     sendBtn.disabled = false;
                     fileBtn.disabled = false;
+                    callBtn.disabled = false;
+                    videoCallBtn.disabled = false;
                     showSystemMessage('🔗 Joined the workspace!');
                     renderChatList();
-
-                } catch (error) {
-                    alert('Failed: ' + error.message);
-                } finally {
+                } catch (error) { alert('Failed: ' + error.message); } finally {
                     joinBtn.disabled = false;
                     joinBtn.textContent = 'Join Workspace';
                 }
@@ -1724,7 +1871,6 @@
                 currentChatId = chatId;
                 chat.currentChatId = chatId;
                 chat.markChatRead(chatId);
-                
                 if (chatId.startsWith('group_')) {
                     currentChatType = 'group';
                     currentGroupId = chatId.replace('group_', '');
@@ -1742,7 +1888,6 @@
                     currentGroupId = null;
                     document.getElementById('chat-title').innerHTML = `💬 Group Chat <span style="font-size:12px;color:#8892b0;font-weight:400;">Public</span>`;
                 }
-                
                 const messages = chat.getChatMessages(chatId);
                 messagesDiv.innerHTML = '';
                 if (messages.length === 0) {
@@ -1757,11 +1902,11 @@
                     });
                 }
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                
                 messageInput.disabled = false;
                 sendBtn.disabled = false;
                 fileBtn.disabled = false;
-                
+                callBtn.disabled = false;
+                videoCallBtn.disabled = false;
                 renderChatList();
                 chat.saveSession();
             }
@@ -1770,12 +1915,8 @@
             function renderChatList() {
                 const chats = chat.getChatList();
                 const searchTerm = searchInput.value.toLowerCase();
-                
                 let filtered = chats;
-                if (searchTerm) {
-                    filtered = chats.filter(c => c.name.toLowerCase().includes(searchTerm));
-                }
-                
+                if (searchTerm) { filtered = chats.filter(c => c.name.toLowerCase().includes(searchTerm)); }
                 if (filtered.length === 0) {
                     chatList.innerHTML = `
                         <div class="no-chats">
@@ -1786,31 +1927,15 @@
                     `;
                     return;
                 }
-                
                 chatList.innerHTML = filtered.map(chatItem => {
                     const isActive = chatItem.id === currentChatId;
                     const unread = chatItem.unread || 0;
                     const lastMsg = chatItem.lastMessage || 'No messages';
                     const time = chatItem.lastTime ? new Date(chatItem.lastTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-                    
-                    let icon = '';
-                    let avatarClass = '';
-                    let badge = '';
-                    
-                    if (chatItem.type === 'group') {
-                        icon = '👥';
-                        avatarClass = 'group';
-                        badge = '<span style="font-size:9px;color:#00ff88;margin-left:4px;">Group</span>';
-                    } else if (chatItem.type === 'private') {
-                        icon = '🔒';
-                        avatarClass = 'private';
-                        badge = '<span style="font-size:9px;color:#ffaa00;margin-left:4px;">Private</span>';
-                    } else {
-                        icon = '💬';
-                        avatarClass = 'public';
-                        badge = '<span style="font-size:9px;color:#00d4ff;margin-left:4px;">Public</span>';
-                    }
-                    
+                    let icon = '', avatarClass = '', badge = '';
+                    if (chatItem.type === 'group') { icon = '👥'; avatarClass = 'group'; badge = '<span style="font-size:9px;color:#00ff88;margin-left:4px;">Group</span>'; }
+                    else if (chatItem.type === 'private') { icon = '🔒'; avatarClass = 'private'; badge = '<span style="font-size:9px;color:#ffaa00;margin-left:4px;">Private</span>'; }
+                    else { icon = '💬'; avatarClass = 'public'; badge = '<span style="font-size:9px;color:#00d4ff;margin-left:4px;">Public</span>'; }
                     return `
                         <div class="chat-list-item ${isActive ? 'active' : ''}" onclick="window.selectChat('${chatItem.id}')">
                             <div class="avatar ${avatarClass}">${icon}</div>
@@ -1844,16 +1969,67 @@
 
             // ---- START PRIVATE CHAT ----
             window.startPrivateChat = function(username) {
-                if (username === chat.username) {
-                    alert("You can't chat with yourself!");
-                    return;
-                }
-                
+                if (username === chat.username) { alert("You can't chat with yourself!"); return; }
                 const chatId = chat.startPrivateChat(username);
                 selectChat(chatId);
                 modal.classList.remove('active');
                 showSystemMessage(`🔒 Started private chat with ${username}`);
             };
+
+            // ---- START CALL ----
+            window.startCall = function(username, callType = 'audio') {
+                if (username === chat.username) { alert("You can't call yourself!"); return; }
+                // Check if target is online
+                const target = allContacts.find(c => c.username === username);
+                if (!target || !target.isOnline) {
+                    alert(`${username} is not online`);
+                    return;
+                }
+                chat.startCall(username, callType);
+            };
+
+            // ---- CALL BUTTONS ----
+            callBtn.addEventListener('click', () => {
+                if (!currentChatId || currentChatType !== 'private') {
+                    alert('Open a private chat first to make a call');
+                    return;
+                }
+                const targetUser = currentChatId.replace('private_', '');
+                const target = allContacts.find(c => c.username === targetUser);
+                if (!target || !target.isOnline) {
+                    alert(`${targetUser} is not online`);
+                    return;
+                }
+                chat.startCall(targetUser, 'audio');
+            });
+
+            videoCallBtn.addEventListener('click', () => {
+                if (!currentChatId || currentChatType !== 'private') {
+                    alert('Open a private chat first to make a call');
+                    return;
+                }
+                const targetUser = currentChatId.replace('private_', '');
+                const target = allContacts.find(c => c.username === targetUser);
+                if (!target || !target.isOnline) {
+                    alert(`${targetUser} is not online`);
+                    return;
+                }
+                chat.startCall(targetUser, 'video');
+            });
+
+            // ---- CALL END BUTTON ----
+            document.getElementById('call-end-btn').addEventListener('click', () => {
+                chat.endCall();
+                hideCallUI();
+            });
+
+            document.getElementById('call-mute-btn').addEventListener('click', () => {
+                chat.toggleMute();
+            });
+
+            document.getElementById('call-video-toggle').addEventListener('click', () => {
+                chat.toggleVideo();
+            });
 
             // ---- DISPLAY MESSAGE ----
             function displayMessage(msg, isOwn) {
@@ -1864,23 +2040,16 @@
                      messagesDiv.children[0].textContent.includes('Chat cleared'))) {
                     messagesDiv.innerHTML = '';
                 }
-
                 const msgElement = document.createElement('div');
                 msgElement.className = `message ${isOwn ? 'own' : 'other'}`;
                 msgElement.dataset.msgId = msg.id || Date.now().toString(36);
                 msgElement.dataset.isPrivate = msg.isPrivate || false;
                 msgElement.dataset.targetUser = msg.targetUser || '';
-                
-                if (chat.deletedIds.has(msg.id)) {
-                    msgElement.classList.add('deleted');
-                }
-                
+                if (chat.deletedIds.has(msg.id)) { msgElement.classList.add('deleted'); }
                 let content = '';
                 if (msg.isFile || msg.fileData) {
                     const fileSize = msg.fileSize ? 
-                        (msg.fileSize > 1024 * 1024 ? 
-                            (msg.fileSize / (1024 * 1024)).toFixed(1) + ' MB' : 
-                            (msg.fileSize / 1024).toFixed(1) + ' KB') 
+                        (msg.fileSize > 1024 * 1024 ? (msg.fileSize / (1024 * 1024)).toFixed(1) + ' MB' : (msg.fileSize / 1024).toFixed(1) + ' KB') 
                         : 'Unknown size';
                     let fileIcon = '📁';
                     if (msg.fileType) {
@@ -1905,17 +2074,14 @@
                 } else {
                     content = msg.message || '';
                 }
-                
                 const isPrivate = msg.isPrivate || false;
                 const privateTag = isPrivate ? ' 🔒' : '';
                 const groupTag = msg.groupId ? ' 👥' : '';
-                
                 msgElement.innerHTML = `
                     <span class="sender-name">${msg.sender}${privateTag}${groupTag}</span>
                     <span>${content}</span>
                     <span class="timestamp">${new Date(msg.timestamp || Date.now()).toLocaleTimeString()}</span>
                 `;
-                
                 if (isOwn && !chat.deletedIds.has(msg.id)) {
                     const delBtn = document.createElement('button');
                     delBtn.className = 'delete-btn';
@@ -1931,7 +2097,6 @@
                     });
                     msgElement.appendChild(delBtn);
                 }
-                
                 messagesDiv.appendChild(msgElement);
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
             }
@@ -1951,20 +2116,16 @@
                     contextMenu.classList.remove('active');
                     return;
                 }
-                
                 e.preventDefault();
                 selectedMessageId = messageEl.dataset.msgId;
                 selectedMessageIsPrivate = messageEl.dataset.isPrivate === 'true';
                 selectedMessageTarget = messageEl.dataset.targetUser || null;
-                
                 contextMenu.style.left = e.clientX + 'px';
                 contextMenu.style.top = e.clientY + 'px';
                 contextMenu.classList.add('active');
             });
 
-            document.addEventListener('click', () => {
-                contextMenu.classList.remove('active');
-            });
+            document.addEventListener('click', () => { contextMenu.classList.remove('active'); });
 
             deleteMsgBtn.addEventListener('click', () => {
                 if (selectedMessageId) {
@@ -1996,19 +2157,11 @@
                 contactSearch.value = '';
             });
 
-            closeModal.addEventListener('click', () => {
-                modal.classList.remove('active');
-            });
-
+            closeModal.addEventListener('click', () => { modal.classList.remove('active'); });
             modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
+                if (e.target === modal) { modal.classList.remove('active'); }
             });
-
-            contactSearch.addEventListener('input', (e) => {
-                renderContacts(e.target.value);
-            });
+            contactSearch.addEventListener('input', (e) => { renderContacts(e.target.value); });
 
             // ---- CREATE GROUP MODAL ----
             newGroupBtn.addEventListener('click', () => {
@@ -2019,36 +2172,20 @@
                 renderGroupMembers();
             });
 
-            closeGroupModal.addEventListener('click', () => {
-                createGroupModal.classList.remove('active');
-            });
-
+            closeGroupModal.addEventListener('click', () => { createGroupModal.classList.remove('active'); });
             createGroupModal.addEventListener('click', (e) => {
-                if (e.target === createGroupModal) {
-                    createGroupModal.classList.remove('active');
-                }
+                if (e.target === createGroupModal) { createGroupModal.classList.remove('active'); }
             });
-
-            groupMemberSearch.addEventListener('input', (e) => {
-                renderGroupMembers(e.target.value);
-            });
+            groupMemberSearch.addEventListener('input', (e) => { renderGroupMembers(e.target.value); });
 
             createGroupBtn.addEventListener('click', () => {
                 const name = groupNameInput.value.trim();
-                if (!name) {
-                    alert('Please enter a group name');
-                    return;
-                }
-                if (selectedGroupMembers.length === 0) {
-                    alert('Please select at least one member');
-                    return;
-                }
+                if (!name) { alert('Please enter a group name'); return; }
+                if (selectedGroupMembers.length === 0) { alert('Please select at least one member'); return; }
                 chat.createGroup(name, selectedGroupMembers);
                 createGroupModal.classList.remove('active');
                 showSystemMessage(`👥 Group "${name}" created with ${selectedGroupMembers.length} members`);
-                setTimeout(() => {
-                    renderChatList();
-                }, 500);
+                setTimeout(() => { renderChatList(); }, 500);
             });
 
             // ---- SEND ----
@@ -2061,15 +2198,12 @@
             messageInput.addEventListener('input', () => {
                 clearTimeout(typingTimer);
                 chat.sendTyping(true);
-                typingTimer = setTimeout(() => {
-                    chat.sendTyping(false);
-                }, 1000);
+                typingTimer = setTimeout(() => { chat.sendTyping(false); }, 1000);
             });
 
             async function sendMessage() {
                 const text = messageInput.value.trim();
                 if (!text || !currentChatId) return;
-
                 try {
                     if (currentChatType === 'group') {
                         chat.sendGroupMessage(currentGroupId, text);
@@ -2080,9 +2214,7 @@
                         await chat.sendMessage(text);
                     }
                     messageInput.value = '';
-                } catch (error) {
-                    console.error('Send error:', error);
-                }
+                } catch (error) { console.error('Send error:', error); }
             }
 
             // ---- FILE SHARING ----
@@ -2090,7 +2222,6 @@
             fileInput.addEventListener('change', async (e) => {
                 const files = e.target.files;
                 if (!files || files.length === 0 || !currentChatId) return;
-
                 for (const file of files) {
                     try {
                         if (currentChatType === 'group') {
@@ -2129,7 +2260,6 @@
                     }
                     return;
                 }
-                
                 if (confirm('Leave the workspace? Your chats will be saved.')) {
                     chat.leave();
                     chatScreen.classList.remove('active');
@@ -2137,6 +2267,8 @@
                     messageInput.disabled = true;
                     sendBtn.disabled = true;
                     fileBtn.disabled = true;
+                    callBtn.disabled = true;
+                    videoCallBtn.disabled = true;
                     messagesDiv.innerHTML = '';
                     chatList.innerHTML = `
                         <div class="no-chats">
@@ -2161,10 +2293,9 @@
             console.log('💬 Secure Chat loaded!');
             console.log(`📡 Server: ${serverUrl}`);
             console.log('🔑 Encryption key is saved locally - no need to re-enter on refresh');
+            console.log('📞 Voice & Video calls supported! Click 📞 or 📹 to call');
             console.log('👥 Group chats supported! Click 👥 to create a group');
-            console.log('🔒 Private messages: ONLY sender + recipient see them');
-            console.log('🗑️ Delete individual messages (hover and click × or right-click)');
-            console.log('🗑️ Clear chat permanently');
+            console.log('📊 History limit: 150 messages per chat');
         });
     </script>
 
